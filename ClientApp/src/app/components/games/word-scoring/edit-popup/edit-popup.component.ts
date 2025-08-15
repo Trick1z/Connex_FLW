@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { EditData } from 'src/app/Components/models/game.model';
+import { EditData } from 'src/app/components/models/game.model';
 
 @Component({
   selector: 'app-edit-popup',

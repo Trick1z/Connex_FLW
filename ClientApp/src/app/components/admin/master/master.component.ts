@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ValueChangedEvent } from 'devextreme/ui/filter_builder';
 import { ValueChangedEvent as TagValueChangedEvent } from 'devextreme/ui/tag_box';
 import { CategoriesDataModel, ProductsDataModel } from './model/tag-option.model';
-import { ApiService } from 'src/app/Services/api-service.service';
+import { ApiService } from 'src/app/services/api-service.service';
 // import { ApiService } from 'src/app/Services/api-service.service';
 
 @Component({

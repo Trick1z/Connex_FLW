@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { RegisterData } from '../../models/auth.model';
-import { ApiService } from '../../../Services/api-service.service';
+import { ApiService } from '../../../services/api-service.service';
 import { Role } from '../login/models/register.model';
 
 @Component({

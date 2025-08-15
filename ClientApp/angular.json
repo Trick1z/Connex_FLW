@@ -51,7 +51,14 @@
               "src/styles.scss",
               "node_modules/devextreme/dist/css/dx.light.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "allowedCommonJsDependencies": [
+              "devextreme-quill",
+              "jszip",
+              "devexpress-diagram",
+              "devexpress-gantt",
+              "sweetalert2"
+            ]
           },
           "configurations": {
             "production": {

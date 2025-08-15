@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from 'src/app/Services/api-service.service';
+import { ApiService } from 'src/app/services/api-service.service';
 import { MappingCategoriesModel, SetUserIdUserName, UnMappingCategoriesModel } from '../models/mapping.model';
 import { CategoriesDataModel, ProductsDataModel } from '../master/model/tag-option.model';
 

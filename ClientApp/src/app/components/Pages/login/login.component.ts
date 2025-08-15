@@ -3,8 +3,8 @@ import { Router } from '@angular/router';
 import { AuthRoute, ViewsRoute } from 'src/app/constants/routes.const';
 import Swal from 'sweetalert2';
 import { UserData } from '../../models/auth.model';
-import { ApiService } from 'src/app/Services/api-service.service';
-import { AuthServiceService } from 'src/app/Services/auth-service.service';
+import { ApiService } from 'src/app/services/api-service.service';
+import { AuthServiceService } from 'src/app/services/auth-service.service';
 
 @Component({
   selector: 'app-login',

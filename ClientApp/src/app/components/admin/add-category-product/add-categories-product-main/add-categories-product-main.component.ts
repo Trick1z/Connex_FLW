@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from 'src/app/Services/api-service.service';
+import { ApiService } from 'src/app/services/api-service.service';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../../master/model/insert-categories.model';
-import { categoriesDeleteFormData, CategoriesUpdateFormData, ProductDeleteFormData, ProductUpdateFormData } from 'src/app/Components/models/categories.model';
+import { categoriesDeleteFormData, CategoriesUpdateFormData, ProductDeleteFormData, ProductUpdateFormData } from 'src/app/components/models/categories.model';
 
 @Component({
   selector: 'app-add-categories-product-main',

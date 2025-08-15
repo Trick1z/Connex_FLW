@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 // import { AdminRoute, AuthRoute } from 'src/app/Constants/routes.const';
 
 import { AdminRoute, AuthRoute, LandingRoute, UserRoute } from 'src/app/constants/routes.const';
-import { ApiService } from 'src/app/Services/api-service.service';
+import { ApiService } from 'src/app/services/api-service.service';
 
 
 
