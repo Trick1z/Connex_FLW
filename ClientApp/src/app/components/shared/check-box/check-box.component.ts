@@ -8,11 +8,13 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class CheckBoxComponent {
   @Input() value: boolean = false; // รับค่าจาก parent
   @Input() text: string = '';      // ข้อความ label
+   @Input() options: { id: number, text: string, selected: boolean }[] = [];
+  @Output() optionsChange = new EventEmitter<{ id: number, text: string, selected: boolean }[]>();
 
-  @Output() valueChange = new EventEmitter<boolean>();
-
-  onValueChanged(e: any) {
-    this.value = e.value;
-    this.valueChange.emit(e.value);
+  onValueChanged(opt: any, e: any) {
+    opt.selected = e.value;
+    this.optionsChange.emit(this.options); // ส่งค่า updated กลับแม่
   }
+
 }
+

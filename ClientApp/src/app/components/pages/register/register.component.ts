@@ -25,6 +25,8 @@ ngOnInit(): void {
     role: 0
   }
 
+  error :string [] = [];
+
   onSubmit() {
 
 

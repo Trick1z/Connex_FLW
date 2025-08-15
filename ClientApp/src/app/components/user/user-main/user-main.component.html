@@ -13,28 +13,37 @@
 
   <app-button [message]="'Search'"></app-button>
 </div>-->
-<div class="search-box">
-  <app-text-box [value]="'temp'"></app-text-box>
+
+<div class="max-w-sm ml-10 search-box">
+  <app-text-box [value]="FieldDocNo" [placeHolder]="'DocNo'"></app-text-box>
+  <app-text-box [value]="ProductName" [placeHolder]="'ProductName'"></app-text-box>
+
+</div>
+
+<div class="flex flex-col items-start m-10 space-y-4">
+  <div class="check-box">
+    <app-check-box [text]="'IssueCategories'" [options]="options" (optionsChange)="onOptionsChanged($event)">
+    </app-check-box>
+  </div>
+
+  <div class="check-box">
+    <app-check-box [text]="'Status'" [options]="statusOptions" (optionsChange)="onStatusOptionsChanged($event)">
+    </app-check-box>
+  </div>
 </div>
 
 
+
 <!-- Master Grid -->
-<div class="flex p-16 dx-grid">
-  <dx-data-grid
-    [dataSource]="orders"
-    keyExpr="id"
-    [showBorders]="true"
-    [masterDetail]="{ enabled: true, template: 'detailTemplate' }"
-    [paging]="{ enabled: true, pageSize: 5 }">
+<div class="flex m-10 dx-grid">
+  <dx-data-grid [dataSource]="orders" keyExpr="id" [showBorders]="true"
+    [masterDetail]="{ enabled: true, template: 'detailTemplate' }" [paging]="{ enabled: true, pageSize: 5 }">
 
     <dxo-paging [pageSize]="5"></dxo-paging>
     <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
 
     <div *dxTemplate="let masterData of 'detailTemplate'">
-      <dx-data-grid
-        [dataSource]="getOrderItems(masterData.key)"
-        [showBorders]="true"
-        [columnAutoWidth]="true">
+      <dx-data-grid [dataSource]="getOrderItems(masterData.key)" [showBorders]="true" [columnAutoWidth]="true">
       </dx-data-grid>
     </div>
   </dx-data-grid>

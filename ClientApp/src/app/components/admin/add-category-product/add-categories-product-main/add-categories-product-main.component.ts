@@ -76,12 +76,14 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     this.api.get("api/IssueProduct/Categories/item").subscribe((res: any) => {
 
+      // console.log(res);
 
       this.categoryDataList = res
     })
 
     this.api.get("api/IssueProduct/Products/item").subscribe((res: any) => {
 
+      // console.log(res);
 
       this.productDataList = res
     })

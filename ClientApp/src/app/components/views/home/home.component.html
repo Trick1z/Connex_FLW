@@ -3,8 +3,8 @@
 
     <app-number-box [value]="number" [min]="0" [max]="120" [step]="2"></app-number-box>
 
-    <app-check-box [(value)]="isActive" text="Active">
-    </app-check-box>
+    <app-check-box [options]="Checkoptions" (optionsChange)="onOptionsChanged($event)">
+  </app-check-box>
 
     <app-select-box [items]="categories" [(value)]="categoryId" displayExpr="name" valueExpr="id"
         placeholder="Select category">

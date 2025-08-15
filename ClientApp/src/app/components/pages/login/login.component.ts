@@ -14,8 +14,8 @@ import { AuthServiceService } from 'src/app/services/auth-service.service';
 export class LoginComponent {
   constructor(
     private router: Router,
-  private api: ApiService,
-  private authService: AuthServiceService
+    private api: ApiService,
+    private authService: AuthServiceService
 
   ) { }
 
@@ -25,7 +25,15 @@ export class LoginComponent {
     password: ""
   }
 
-  usernameError:string ="" ;
+  usernameError: string[] = [];
+  showError : boolean = false
+ handleCloseError() {
+    this.showError = false;
+  }
+  triggerError() {
+    
+    this.showError = true;
+  }
 
 
   NavigateToRegisterPage() {
@@ -43,14 +51,24 @@ export class LoginComponent {
     this.authService.login(this.userData).subscribe({
       next: () => {
         console.log('next work');
-        
-        this.usernameError = ''
-                this.router.navigate([ViewsRoute.HomeFullPath]);
+
+        this.usernameError = []
+        this.router.navigate([ViewsRoute.HomeFullPath]);
 
       },
       error: (err) => {
-       if (err.error && err.error.messages) {
-          this.usernameError = err.error.messages.username || '';
+        // console.log(err);
+
+        if (err.error && err.error.messages) {
+          // this.usernameError = err.error.messages.username || '';
+          // // this.usernameError.push(err.error.messages.username || '') ;
+          //       alert(err.error.messages.username.system[0])
+
+          // alert(err.error.messages.system)
+
+          this.usernameError.push(err.error.messages.system)
+
+
         }
       }
     });

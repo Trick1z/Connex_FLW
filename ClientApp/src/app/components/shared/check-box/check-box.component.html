@@ -1,5 +1,24 @@
-<dx-check-box
-  [value]="value"
-  [text]="text"
-  (onValueChanged)="onValueChanged($event)">
-</dx-check-box>
+<!-- <div class="flex " id="">
+  <label class="mr-2 " for="check-box">
+    {{text}} :
+  </label>
+  <div *ngFor="let opt of options">
+
+    <dx-check-box id="check-box" [value]="opt.selected" [text]="opt.text"
+      (onValueChanged)="opt.selected = $event.value">
+    </dx-check-box>
+  </div>
+</div> -->
+
+<div class="flex items-center" id="">
+  <label class="mr-2 text-end">{{ text }} :</label>
+  <div class="flex space-x-2">
+    <dx-check-box
+      *ngFor="let opt of options"
+      [id]="'check-box-' + opt.id"
+      [value]="opt.selected"
+      [text]="opt.text"
+      (onValueChanged)="onValueChanged(opt, $event)">
+    </dx-check-box>
+  </div>
+</div>

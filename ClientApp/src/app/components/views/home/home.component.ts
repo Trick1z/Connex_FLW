@@ -19,7 +19,15 @@ export class HomeComponent {
   // number
   number: number = 0;
   // check
-  isActive: boolean = true;
+Checkoptions = [
+    { id: 1, text: 'Option A', selected: false },
+    { id: 2, text: 'Option B', selected: true },
+    { id: 3, text: 'Option C', selected: false },
+  ];
+  onOptionsChanged(updatedOptions: any[]) {
+    console.log('Selected options:', updatedOptions.filter(o => o.selected));
+  }
+  
   // select
   categoryId: number = 3;
 

@@ -19,7 +19,7 @@ export class AppComponent  implements OnInit{
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(event => {
-        const hiddenRoutes = ['/', `/${AuthRoute.Login}`,`/${AuthRoute.RegisterFullPath}` , `/${LandingRoute.LandingFullPath}`];
+        const hiddenRoutes = ['/', `/${AuthRoute.Login}`,'/auth/login',`/${AuthRoute.RegisterFullPath}` ,'/auth/register', `/${LandingRoute.LandingFullPath}`];
         this.showNavbar = !hiddenRoutes.includes(event.urlAfterRedirects);
         console.log('Current URL:', event.urlAfterRedirects, 'showNavbar:', this.showNavbar);
       });
