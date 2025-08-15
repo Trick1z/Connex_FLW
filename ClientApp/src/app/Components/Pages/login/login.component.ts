@@ -45,6 +45,7 @@ export class LoginComponent {
         console.log('next work');
         
         this.usernameError = ''
+                this.router.navigate([ViewsRoute.HomeFullPath]);
 
       },
       error: (err) => {
@@ -55,7 +56,6 @@ export class LoginComponent {
     });
 
 
-                this.router.navigate([ViewsRoute.HomeFullPath]);
 
 
   }

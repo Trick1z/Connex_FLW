@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Domain.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Domain.ViewModels.IssueProduct
+namespace Domain.ViewModels
 {
     public class InsertCategories
     {
@@ -52,6 +53,45 @@ namespace Domain.ViewModels.IssueProduct
         public string ProductName { get; set; }
     }
 
+    public class MappingItem
+    {
+        public int UserId { get; set; }
+        public int IssueCategoriesId { get; set; }
+    }
+    public class UnMappingItem
+    {
+        public int UserId { get; set; }
+        public int IssueCategoriesId { get; set; }
+        public DateTime CreateTime { get; set; }
+    }
+    public class ServiceResult
+    {
+        public bool Success { get; set; }
+        public string? Message { get; set; }
+    }
+
+    public class MappingUserCategoriesItem
+    {
+        public int UserId { get; set; }
+        public List<int> CategoriesId { get; set; }
+    }
+
+
+
+    //out
+    public class MappingCategoriesProductItem
+    {
+        public int CategoriesId { get; set; }
+        public List<int> ProductsId { get; set; }
+    }
+
+    public class UserWithRoleViewModel
+    {
+        public int UserId { get; set; }
+        public string Username { get; set; }
+        public int RoleId { get; set; }
+        public string RoleName { get; set; }
+    }
 
 
 }

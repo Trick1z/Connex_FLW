@@ -1,8 +1,7 @@
 ﻿using Domain.Exceptions;
-using Domain.Interfaces.IssueProduct;
+using Domain.Interfaces;
 using Domain.Models;
-using Domain.ViewModels.IssueProduct;
-using Domain.ViewModels.MappingCategoriesProduct;
+using Domain.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -30,11 +29,7 @@ namespace Services.Implements
             await IsNullOrEmptyString(requried, validate);
             await IsCategoryInTable(requried, validate);
 
-            //var dateNow = DateTime.Now
-
             validate.Throw();
-
-
 
             IssueCategories data = PackedData(requried);
 
@@ -51,7 +46,6 @@ namespace Services.Implements
         {
 
             var dateNow = DateTime.Now;
-
 
             IssueCategories data = new IssueCategories();
             data.IssueCategoriesName = requried.IssueCategoriesName;

@@ -1,6 +1,6 @@
 ﻿using Braintree;
 using Domain.Exceptions;
-using Domain.Interfaces.Auth;
+using Domain.Interfaces;
 using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Identity;
@@ -23,9 +23,6 @@ namespace Services.Implements.Auth
         private readonly IConfiguration _config;
         private readonly MYGAMEContext _context;
         private readonly IPasswordHasher<object> _hasher;
-
-
-
 
 
         public AuthenticationService(IPasswordHasher<object> hasher,MYGAMEContext context, IConfiguration config)
@@ -58,11 +55,8 @@ namespace Services.Implements.Auth
 
             return new LoginResponseViewModel
             {
-                //UserId = user.UserId,
                 Username = user.Username,
-                //Role = user.Role.RoleName,  // สำหรับ display
                 Token = token,
-                //AccessPages = accessPages
             };
         }
 
@@ -106,7 +100,6 @@ namespace Services.Implements.Auth
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-        //End new2
 
         public bool IsNullOrEmptyString(LoginViewModel request, ValidateException validateException)
         {
@@ -130,58 +123,6 @@ namespace Services.Implements.Auth
 
             return dataExists;
         }
-
-
-
-        //public async Task<string> UserLoginAsync(LoginViewModel request)
-        //{
-
-        //    var validateException = new ValidateException();
-
-        //    IsNullOrEmptySpace(request, validateException);
-
-        //    User user = await IsUserInTable(request, validateException);
-
-        //    validateException.Throw();
-
-        //    var hasher = new PasswordHasher<object>();
-        //    var result = hasher.VerifyHashedPassword(null, user.Password, request.Password);
-
-
-
-        //    if (!(result == PasswordVerificationResult.Success))
-        //        validateException.Add("Username,Password", "Username and password are incorrect.");
-        //    //validateException.Throw();
-
-
-        //    return "Login Successfuly";
-
-        //}
-
-        //public bool IsNullOrEmptySpace(LoginViewModel request, ValidateException validateException)
-        //{
-
-        //    if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
-        //        validateException.Add("Username", "Field Username Much Not Empty");
-
-        //    return false;
-
-        //}
-
-        //public async Task<User> IsUserInTable(LoginViewModel request, ValidateException validateException)
-        //{
-
-
-        //    var user = await _context.User
-        //       .FirstOrDefaultAsync(u => u.Username == request.Username);
-
-        //    if (user == null)
-        //        validateException.Add("Username,Password", "Username and password are incorrect.");
-
-        //    return user;
-
-        //}
-
 
 
 
@@ -259,9 +200,6 @@ namespace Services.Implements.Auth
             return true;
         }
 
-
-
-
         public bool IsNullOrEmptyString(UserRegisterViewModel request, ValidateException validate)
         {
 
@@ -278,8 +216,6 @@ namespace Services.Implements.Auth
             if (string.IsNullOrWhiteSpace(request.ConfirmPassword))
                 validate.Add("ConfirmPassword", "Field ConfirmPassword are required");
 
-            //if (string.IsNullOrWhiteSpace(request.Role))
-            //    validate.Add("Role", "Field Role are required");
 
             if (request.Role <= 0)
             {
@@ -292,7 +228,6 @@ namespace Services.Implements.Auth
 
         public async Task<bool> IsUsernameInTable(UserRegisterViewModel request, ValidateException validate)
         {
-            //var validat = new ValidateException();
 
             var isExists = await _context.User.FirstOrDefaultAsync(u => u.Username == request.Username);
 

@@ -23,7 +23,7 @@
 
 
 <!-- popup products -->
-
+<!-- 
 <div class="products-popup">
 
     <dx-popup [width]="500" [height]="400" [(visible)]="productVisible" [width]="400" [showTitle]="true"
@@ -43,4 +43,37 @@
             </div>
         </div>
     </dx-popup>
+</div> -->
+
+<div class="products-popup">
+  <dx-popup
+    [width]="400"
+    [height]="400"
+    [(visible)]="productVisible"
+    [showTitle]="true"
+    [dragEnabled]="true"
+    [closeOnOutsideClick]="true"
+    title="Map Categories Product"
+    (onHiding)="productPopupHide()">
+
+    <div class="popup-content">
+      <div class="flex justify-start mb-5 text-2xl user-box">
+        <span class="label">Categories :</span>
+        <span class="ml-5 username">{{ CategoriesName }}</span>
+      </div>
+
+      <dx-tag-box
+        [dataSource]="ProductTagOptions"
+        displayExpr="productName"
+        valueExpr="productId"
+        [(value)]="productSelectedTags"
+        [showSelectionControls]="true">
+      </dx-tag-box>
+
+      <div class="flex justify-center gap-2 mt-4">
+        <app-button (clicked)="onProductSaveData()" [message]="'Save'"></app-button>
+        <app-button color="red" (clicked)="productPopupHide()" [message]="'Close'"></app-button>
+      </div>
+    </div>
+  </dx-popup>
 </div>

@@ -92,7 +92,7 @@ export class NavbarTopComponent {
   }
 
   // เรียก backend ตรวจสอบสิทธิ์
-  this.api.post('api/User/check-access', { pageUrl: path }).subscribe({
+  this.api.post('api/Authentication/check-access', { pageUrl: path }).subscribe({
     next: (res: any) => {
       if (res.allowed) {
         this.route.navigate([path]); 

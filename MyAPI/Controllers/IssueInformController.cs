@@ -8,12 +8,12 @@ namespace MyAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class InsertFormController : Controller
+    public class IssueInformController : Controller
     {
 
         private readonly IInsertFormService _insertFormService;
 
-        public InsertFormController(IInsertFormService insertFormService)
+        public IssueInformController(IInsertFormService insertFormService)
         {
             _insertFormService = insertFormService;
         }

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {  Router } from '@angular/router';
+import { ViewsRoute } from 'src/app/Constants/routes.const';
 
 @Component({
   selector: 'app-landing',
@@ -6,5 +8,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent {
-
+  constructor(
+    private route : Router
+  ){}
+NavToHome(){
+  this.route.navigate([ViewsRoute.HomeFullPath])
+}
 }

@@ -1,6 +1,6 @@
-﻿using Domain.Interfaces.ConfigSupport;
+﻿using Domain.Interfaces;
 using Domain.Models;
-using Domain.ViewModels.MappingCategories;
+using Domain.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -19,8 +19,6 @@ namespace Services.Implements
         {
             _context = context;
         }
-
-//testc push c#
 
         public async Task<Rel_User_Categories> InsertMapUserCategories(MappingUserCategoriesItem param)
         {

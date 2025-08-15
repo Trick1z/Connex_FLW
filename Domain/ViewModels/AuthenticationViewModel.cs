@@ -6,11 +6,29 @@ using System.Threading.Tasks;
 
 namespace Domain.ViewModels
 {
+    public class MemberRegisterViewModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+        public bool IsVip { get; set; }
+    }
+
+
+    public class UserRegisterViewModel
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+
+        public int Role { get; set; }
+    }
+
     public class LoginViewModel
     {
 
-        public  string Username { get; set; }
-        public  string Password { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
     }
 
     public class LoginResponseViewModel
@@ -21,8 +39,6 @@ namespace Domain.ViewModels
         public string Token { get; set; }     // JWT token
         //public List<string> AccessPages { get; set; } // รายการหน้าที่เข้าถึงได้
     }
-
-
 
 
 

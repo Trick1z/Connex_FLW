@@ -1,10 +1,8 @@
-﻿using Domain.Interfaces.Auth;
+﻿using Domain.Interfaces;
 using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-//using Services.Auth;
-//using Services.CalculateScore;
 using System.Security.Claims;
 
 namespace MyAPI.Controllers
@@ -12,17 +10,14 @@ namespace MyAPI.Controllers
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
-    public class UserController : Controller
+    public class AuthenticationController : Controller
     {
-        //private readonly IUserRegisterService _userRegisterService;
-        //private readonly IUserLoginService _userLoginService;
+       
         private readonly IAuthenticationService _authenticationService;
 
-        public UserController(IAuthenticationService authenticationService)
+        public AuthenticationController(IAuthenticationService authenticationService)
         {
 
-            //_userRegisterService = userRegisterService;
-            //_userLoginService = userLoginService;
             _authenticationService = authenticationService;
         }
 
@@ -40,10 +35,7 @@ namespace MyAPI.Controllers
         {
             return Ok(await _authenticationService.UserLoginAsync(request));
         }
-
-       
-
-        
+   
         [HttpPost("check-access")]
         public async Task<IActionResult> CheckAccess([FromBody] CheckAccessRequestViewModel request)
         {

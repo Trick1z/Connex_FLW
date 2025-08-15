@@ -1,8 +1,7 @@
 ﻿using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.ViewModels.MappingCategories;
-using Domain.ViewModels.MappingCategoriesProduct;
+using Domain.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -22,24 +21,38 @@ namespace Services.Implements
             _context = context;
         }
 
-        public async Task<CategoriesWithSelectionDto> GetUserMapCategoriesDropDown(int userId)
+        public async Task<CategoriesWithSelectedItem> GetUserMapCategoriesDropDown(int userId)
         {
-            // ดึง category ทั้งหมดที่ active
-            var allCategories = await _context.IssueCategories
-                .Where(c => c.IsActive)
-                .ToListAsync();
 
-            // ดึง categoryId ที่ user แมพอยู่
-            var selectedCategoryIds = await _context.Rel_User_Categories
-                .Where(rc => rc.UserId == userId)
-                .Select(rc => rc.IssueCategoriesId)
-                .ToListAsync();
+
+            var allCategories = await _context.IssueCategories
+                        .Where(c => c.IsActive)
+                        .Select(c => new AllCategories
+                        {
+                            IssueCategoriesId = c.IssueCategoriesId,
+                            IssueCategoriesName = c.IssueCategoriesName
+                        })
+                        .ToListAsync();
+
+            var selectedCategories = await _context.Rel_User_Categories
+                        .Where(rc => rc.UserId == userId)
+                        .Join(
+                            _context.IssueCategories,
+                            rc => rc.IssueCategoriesId,
+                            c => c.IssueCategoriesId,
+                            (rc, c) => new AllCategories
+                            {
+                                IssueCategoriesId = c.IssueCategoriesId,
+                                IssueCategoriesName = c.IssueCategoriesName
+                            })
+                        .ToListAsync();
+
 
             // สร้าง DTO
-            var data = new CategoriesWithSelectionDto
+            var data = new CategoriesWithSelectedItem
             {
-                AllProducts = allCategories,
-                SelectedCategories = selectedCategoryIds
+                AllCategories = allCategories,
+                SelectedCategories = selectedCategories
             };
 
             return data;
@@ -47,41 +60,35 @@ namespace Services.Implements
 
         public async Task<ProductWithSelectionDto> GetProductsWithSelection(int categoryId)
         {
+            // ดึงสินค้าทั้งหมดที่ Active
             var allProducts = await _context.Product
                 .Where(p => p.IsActive)
+                .Select(p => new AllProducts
+                {
+                    ProductId = p.ProductId,
+                    ProductName = p.ProductName
+                })
                 .ToListAsync();
 
-            var selectedProductIds = allProducts
-                .Where(p => _context.RelCategoriesProduct
-                    .Any(rc => rc.IssueCategoriesId == categoryId && rc.ProductId == p.ProductId))
-                .Select(p => p.ProductId)
-                .ToList();
+            // ดึงสินค้าที่ถูกเลือก (mapped กับ categoryId)
+            var selectedProductIds = await _context.RelCategoriesProduct
+                .Where(rc => rc.IssueCategoriesId == categoryId)
+                .Select(rc => rc.ProductId)
+                .ToListAsync();
 
+            // ส่งข้อมูลออก (AllProducts = ตัวเลือกทั้งหมด, SelectedProduct = id ที่เลือกไว้)
+            var productWithSelection = new ProductWithSelectionDto
+            {
+                AllProducts = allProducts,
+                SelectedProduct = allProducts
+                    .Where(p => selectedProductIds.Contains(p.ProductId))
+                    .ToList()
+            };
 
-            ProductWithSelectionDto data = new ProductWithSelectionDto();
-            data.AllProducts = allProducts;
-            data.SelectedProductIds = selectedProductIds;
-
-            return data;
+            return productWithSelection;
         }
 
 
-        //public async Task<IEnumerable<UserWithRoleViewModel>> GetUserByRoleSupport()
-        //{
-        //    var usersWithRole = await (from u in _context.User
-        //                               join r in _context.Role
-        //                                   on u.RoleId equals r.RoleId
-        //                               where r.RoleId == 3
-        //                               select new UserWithRoleViewModel
-        //                               {
-        //                                   UserId = u.UserId,
-        //                                   Username = u.Username,
-        //                                   RoleId = r.RoleId,
-        //                                   RoleName = r.RoleName
-        //                               }).ToListAsync();
-
-        //    return usersWithRole;
-        //}
 
         public async Task<IEnumerable<Role>> GetRoleItem()
         {
@@ -97,47 +104,7 @@ namespace Services.Implements
             return role;
         }
 
-        //public async Task<IEnumerable<IssueCategories>> GetCategoriesItems()
-        //{
-        //    var categories = await _context.IssueCategories
-        //        .Where(c => c.IsActive == true)
-        //                .Select(c => new IssueCategories
-        //                {
-        //                    IssueCategoriesId = c.IssueCategoriesId,
-        //                    IssueCategoriesName = c.IssueCategoriesName,
-        //                    IsProgramIssue = c.IsProgramIssue,
-        //                    IsActive = c.IsActive,
-        //                    CreatedTime = c.CreatedTime,
-        //                    ModifiedTime = c.ModifiedTime
-        //                })
-        //                .ToListAsync();
-
-        //    return categories;
-        //}
-
-
-        //public async Task<IEnumerable<Product>> GetProductItems()
-        //{
-        //    var products = await _context.Product
-        //            .Where(c => c.IsActive == true)
-        //                .Select(p => new Product
-        //                {
-        //                    ProductId = p.ProductId,
-        //                    ProductName = p.ProductName,
-        //                    IsActive = p.IsActive,
-
-        //                    CreatedTime = p.CreatedTime
-        //                    ,
-        //                    ModifiedTime = p.ModifiedTime
-
-
-        //                })
-        //                .ToListAsync();
-
-        //    return products;
-        //}
-
-
+       
 
     }
 

@@ -1,10 +1,9 @@
-﻿using Domain.Interfaces.IssueProduct;
-using Domain.ViewModels.IssueProduct;
-using Domain.ViewModels.MappingCategoriesProduct;
+﻿using Domain.Interfaces;
+using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyAPI.Controllers.IssueProduct
+namespace MyAPI.Controllers
 {
     [ApiController]
     [Authorize]
@@ -69,13 +68,6 @@ namespace MyAPI.Controllers.IssueProduct
         }
 
 
-
-        //[HttpPost("MappingCategoriesProduct")]
-        //public async Task<IActionResult> InsertMappingCategoriesProductItem(MappingCategoriesProductItem req)
-        //{
-
-        //    return Ok(await _insertMapCategoriesProductService.InsertMapCategoriesProduct(req));
-        //}
 
         [HttpGet("Categories/item")]
         public async Task<IActionResult> GetCategoryItem()

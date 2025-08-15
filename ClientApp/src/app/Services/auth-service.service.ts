@@ -55,12 +55,12 @@ export class AuthServiceService {
 
   // Login: เก็บ token, roleId, accessPages ลง localStorage
   login(credentials: { username: string; password: string }): Observable<any> {
-    return this.api.post('api/User/login', credentials).pipe(
+    return this.api.post('api/Authentication/login', credentials).pipe(
       tap((res: any) => {
         if (res?.token) {
           this.setToken(res.token);
-          this.setRole(res.roleId);
-          this.setAccessPages(res.accessPages);
+          // this.setRole(res.roleId);
+          // this.setAccessPages(res.accessPages);
         }
       })
     );

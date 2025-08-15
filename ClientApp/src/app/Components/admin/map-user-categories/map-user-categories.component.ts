@@ -72,14 +72,14 @@ export class MapUserCategoriesComponent implements OnInit {
     // ดึงข้อมูลทั้งหมดจาก backend (รวม mapped/unmapped)
     this.api.get(`api/DropDown/userMapCategoriesByUserId/${id}`).subscribe((res: any) => {
       // products สำหรับ TagBox
-      this.categoriesTagOptions = res.allProducts.map((res: any) => ({
+      this.categoriesTagOptions = res.allCategories.map((res: any) => ({
         issueCategoriesId : res.issueCategoriesId,
         issueCategoriesName: res.issueCategoriesName,
         isActive: res.isActive
       }));
 
       // ค่าเริ่มต้น selected สำหรับ TagBox
-      this.categoriesSelectedTags = res.selectedCategories;
+    this.categoriesSelectedTags = res.selectedCategories.map((c: any) => c.issueCategoriesId);
     });
   }
 

@@ -1,9 +1,9 @@
-﻿using Domain.Interfaces.ConfigSupport;
-using Domain.ViewModels.MappingCategories;
+﻿using Domain.Interfaces;
+using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MyAPI.Controllers.ConfigSupportController
+namespace MyAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -15,18 +15,6 @@ namespace MyAPI.Controllers.ConfigSupportController
         {
             _configSupportService = configSupportService;
         }
-
-        //[HttpPost("Categories")]
-        //public async Task<IActionResult> UpdateCategoryItem([FromBody] UpdateCategories req)
-        //{
-        //    return Ok(await _updateCategoriesProducts.UpdateCategoriesItems(req));
-        //}
-
-        //[HttpPost("Product")]
-        //public async Task<IActionResult> UpdateProductItem([FromBody] UpdateProduct req)
-        //{
-        //    return Ok(await _updateCategoriesProducts.UpdateProductItems(req));
-        //}
 
         [HttpPost("InsertMappingUserCategories")]
         public async Task<IActionResult> InsertMappingUserCategoriesItem(MappingUserCategoriesItem req)

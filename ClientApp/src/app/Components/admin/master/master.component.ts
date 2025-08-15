@@ -29,12 +29,6 @@ export class MasterComponent implements OnInit {
 
   globalId: number = 0;
 
-  // categoriesTagOptions = [
-  //   { id: 1, name: 'Angular' },
-  //   { id: 2, name: 'DevExtreme' },
-  //   { id: 3, name: 'TypeScript' },
-  //   { id: 4, name: 'C#' }
-  // ];
 
   categoriesDataList: CategoriesDataModel[] = [];
   ProductTagOptions: ProductsDataModel[] = [];
@@ -83,7 +77,7 @@ export class MasterComponent implements OnInit {
 
     this.api.get("api/IssueProduct/Categories/item").subscribe((res: any) => {
       this.categoriesDataList = res
-      // console.log(res);
+      console.log(res);
 
     })
 
@@ -91,21 +85,39 @@ export class MasterComponent implements OnInit {
   }
 
 
+// loadProductsForCategory(id: number) {
+//   // ดึงข้อมูลทั้งหมดจาก backend (รวม mapped/unmapped)
+//   this.api.get(`api/DropDown/GetProductsWithSelection/${id}`).subscribe((res: any) => {
+//     // products สำหรับ TagBox
+//     this.ProductTagOptions = res.allProducts.map((p: any) => ({
+//       productId: p.productId,
+//       productName: p.productName,
+//       isActive: p.isActive
+//     }));
+
+//     // ค่าเริ่มต้น selected สำหรับ TagBox
+//     // this.productSelectedTags = res.selectedProduct;
+//     this.productSelectedTags = res.selectedProduct.map((p: any) => p.productId);
+
+//     console.log('All Products:', this.ProductTagOptions);
+//     console.log('Selected Products:', this.productSelectedTags);
+//   });
+// }
+
 loadProductsForCategory(id: number) {
-  // ดึงข้อมูลทั้งหมดจาก backend (รวม mapped/unmapped)
   this.api.get(`api/DropDown/GetProductsWithSelection/${id}`).subscribe((res: any) => {
-    // products สำหรับ TagBox
+    // กำหนด options ให้ TagBox
     this.ProductTagOptions = res.allProducts.map((p: any) => ({
       productId: p.productId,
       productName: p.productName,
       isActive: p.isActive
     }));
 
-    // ค่าเริ่มต้น selected สำหรับ TagBox
-    this.productSelectedTags = res.selectedProductIds;
+    // กำหนดค่าที่เลือกไว้ให้ TagBox (ต้องเป็น array ของ productId)
+    this.productSelectedTags = res.selectedProduct.map((p: any) => p.productId);
 
     console.log('All Products:', this.ProductTagOptions);
-    console.log('Selected Products:', this.productSelectedTags);
+    console.log('Selected Product IDs:', this.productSelectedTags);
   });
 }
 

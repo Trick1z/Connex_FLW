@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { AuthRoute } from './Constants/routes.const';
+import { AuthRoute, LandingRoute } from './Constants/routes.const';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +19,7 @@ export class AppComponent  implements OnInit{
     this.router.events
       .pipe(filter((event): event is NavigationEnd => event instanceof NavigationEnd))
       .subscribe(event => {
-        const hiddenRoutes = ['/', '/auth/login', '/auth/register'];
+        const hiddenRoutes = ['/', `/${AuthRoute.Login}`,`/${AuthRoute.RegisterFullPath}` , `/${LandingRoute.LandingFullPath}`];
         this.showNavbar = !hiddenRoutes.includes(event.urlAfterRedirects);
         console.log('Current URL:', event.urlAfterRedirects, 'showNavbar:', this.showNavbar);
       });
