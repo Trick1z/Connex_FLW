@@ -1,0 +1,8 @@
+<!-- file-upload.component.html -->
+<dx-file-uploader
+  [multiple]="multiple"
+  [allowedFileExtensions]="allowedExtensions"
+  [uploadMode]="'useForm'"
+  [uploadUrl]="uploadUrl"
+  (onValueChanged)="onValueChanged($event)">
+</dx-file-uploader>

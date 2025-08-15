@@ -1,0 +1,13 @@
+
+
+<dx-radio-group
+    [items]="options"
+    displayExpr="name"
+    valueExpr="id"
+    [(value)]="selectedOption">
+    <div *dxTemplate="let data of 'item'">
+        <span style="color: blue; font-weight: bold;">
+            {{ data.name }}
+        </span>
+    </div>
+</dx-radio-group>

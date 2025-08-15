@@ -1,0 +1,46 @@
+<app-head-underline [title]="'Relation mapping'"></app-head-underline>
+
+<div class="mt-20 ml-20 mr-20 products-box">
+    <app-head-underline [title]="'Map Categories Product'"></app-head-underline>
+
+    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="categoriesDataList" [showBorders]="true"
+        [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
+        <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
+        <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
+        <dxi-column dataField="isProgramIssue" caption="ProgramIssue" minWidth="150" alignment="center"></dxi-column>
+
+        <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
+            alignment="center">
+        </dxi-column>
+        <div *dxTemplate="let cell of 'actionTemplate'">
+            <!-- <dx-button class="m-2" text="Info" type="default" stylingMode="contained"></dx-button> -->
+            <dx-button class="m-2" (onClick)="productPopupShow(cell.data) " text="Map" type="success"
+                stylingMode="contained"></dx-button>
+        </div>
+    </dx-data-grid>
+
+</div>
+
+
+<!-- popup products -->
+
+<div class="products-popup">
+
+    <dx-popup [width]="500" [height]="400" [(visible)]="productVisible" [width]="400" [showTitle]="true"
+        [dragEnabled]="true" [closeOnOutsideClick]="true" title="Map Categories Product"
+        (onHiding)="productPopupHide()">
+        <div class="popup-content">
+            <div class="flex justify-start text-2xl user-box">
+                <span class="label">Categories : </span>
+                <span class="mb-5 ml-5 username"> {{ CategoriesName }}</span>
+            </div>
+            <dx-tag-box [dataSource]="ProductTagOptions" displayExpr="productName" valueExpr="productId"
+                [(value)]="productSelectedTags" [showSelectionControls]="true">
+            </dx-tag-box>
+            <div class="flex justify-center gap-2 mt-4">
+                <app-button (clicked)="onProductSaveData()" [message]="'Save'"></app-button>
+                <app-button color="red" (clicked)="productPopupHide()" [message]="'Close'"></app-button>
+            </div>
+        </div>
+    </dx-popup>
+</div>

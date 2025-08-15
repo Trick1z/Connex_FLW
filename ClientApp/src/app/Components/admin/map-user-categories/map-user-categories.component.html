@@ -1,0 +1,51 @@
+<app-head-underline [title]="'Mapping User - Categories'"></app-head-underline>
+
+<div class="mt-20 ml-20 mr-20 categroy-box ">
+    <app-head-underline [title]="'Support User'"></app-head-underline>
+
+    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="userDataList" [showBorders]="true"
+        [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
+        <dxi-column dataField="userId" caption="ID" width="80" alignment="center"></dxi-column>
+        <dxi-column dataField="username" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
+        <dxi-column dataField="roleName" caption="Role" minWidth="150" alignment="center"></dxi-column>
+
+        <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
+            alignment="center">
+        </dxi-column>
+        <div *dxTemplate="let cell of 'actionTemplate'">
+            <dx-button class="m-2" (onClick)="onMapDetailPopupShow(cell.data)" text="Map" type="success"
+                stylingMode="contained"></dx-button>
+        </div>
+    </dx-data-grid>
+</div>
+
+<div class="product-popup">
+
+    <dx-popup [height]="300" [(visible)]="mapDetailVisible" [width]="500" [showTitle]="true"
+        [closeOnOutsideClick]="true" title="Map Categories" (onHiding)="onMapDetailPopupHide()">
+        <div class="popup-content">
+            <div class="flex justify-start" id="">
+                <div class="flex justify-start text-2xl user-box">
+                    <span class="label">User : </span>
+                    <span class="mb-5 ml-5 username"> {{ labelUsername }}</span>
+                </div>
+
+                <div class="flex justify-start ml-10 text-2xl user-box">
+                    <span class="label">Role : </span>
+                    <span class="mb-5 ml-5 username"> {{ labelRole }}</span>
+                </div>
+
+            </div>
+
+            <dx-tag-box [dataSource]="categoriesTagOptions" displayExpr="issueCategoriesName"
+                valueExpr="issueCategoriesId" [(value)]="categoriesSelectedTags" [showSelectionControls]="true">
+            </dx-tag-box>
+            <div class="flex items-end justify-center gap-2 h-28">
+                <app-button (clicked)="onSaveSubmit()" [message]="'Save'"></app-button>
+                <app-button (clicked)="productPopupHide() " color="red" [message]="'Close'"></app-button>
+            </div>
+
+    
+        </div>
+    </dx-popup>
+</div>

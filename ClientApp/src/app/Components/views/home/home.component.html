@@ -1,0 +1,54 @@
+<div class="grid items-center grid-cols-3 p-10 mt-10 gap-y-10 gap-x-10">
+    <app-text-box [value]="username" [placeHolder]="'Enter your username'"></app-text-box>
+
+    <app-number-box [value]="number" [min]="0" [max]="120" [step]="2"></app-number-box>
+
+    <app-check-box [(value)]="isActive" text="Active">
+    </app-check-box>
+
+    <app-select-box [items]="categories" [(value)]="categoryId" displayExpr="name" valueExpr="id"
+        placeholder="Select category">
+    </app-select-box>
+
+    <app-radio [options]="options"></app-radio>
+
+    <app-tag-box [items]="tagOptions" [(values)]="selectedTags" displayExpr="name" valueExpr="id"
+        placeholder="Select frameworks">
+    </app-tag-box>
+
+    <app-date-box class="max-w-xl" [selectedDate]="myDate">
+    </app-date-box>
+
+    <app-file-upload [multiple]="true" [allowedExtensions]="['.jpg', '.png', '.pdf']"
+        (filesSelected)="handleFiles($event)">
+    </app-file-upload>
+
+    <app-data-grid [dataSource]="users" [columns]="[
+    { dataField: 'id', caption: 'ID' },
+    { dataField: 'username', caption: 'Username' },
+    { dataField: 'email', caption: 'Email' }
+  ]" [allowPaging]="true" [pageSize]="5" (rowClicked)="handleUserClick($event)">
+    </app-data-grid>
+
+    <app-data-grid [dataSource]="dataSource" [columns]="columns" [groups]="groups" (rowUpdated)="onRowUpdated($event)">
+    </app-data-grid>
+
+    <app-button [message]="'test'"></app-button>
+
+    <app-button (clicked)="openPopup()" [message]="'open popup'"></app-button>
+    <app-popup [visible]="showPopup" [title]="'Edit User'" [data]="popupData" (close)="handleClose()"
+        (save)="handleSave($event)">
+    </app-popup>
+
+
+    <app-button (clicked)="triggerError()" [message]="'Show Error Panel'"></app-button>
+    <app-error-panel [visible]="showError" [messages]="errorMessages" (close)="handleCloseError()">
+    </app-error-panel>
+
+
+
+
+
+
+
+</div>

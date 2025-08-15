@@ -1,0 +1,9 @@
+<div *ngIf="visible" class="p-4 bg-red-100 border border-red-500 rounded error-panel">
+  <div class="flex items-center justify-between mb-2">
+    <strong class="text-red-700">Error</strong>
+    <button (click)="onClose()" class="font-bold text-red-700">X</button>
+  </div>
+  <ul>
+    <li *ngFor="let msg of messages" class="text-red-600">{{ msg }}</li>
+  </ul>
+</div>

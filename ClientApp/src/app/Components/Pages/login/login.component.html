@@ -1,0 +1,36 @@
+<div class="container mx-auto">
+    <div class="px-6 py-24 bg-white isolate sm:py-32 lg:px-8">
+
+        <div class="max-w-2xl mx-auto text-center">
+            <h2 class="text-4xl font-semibold tracking-tight text-gray-900 text-balance sm:text-5xl">เข้าสู่ระบบ</h2>
+        </div>
+        <dx-form class="flex justify-center max-w-md mx-auto mt-16 text-end sm:mt-20" id="form" [formData]="userData"
+            [colCount]="1">
+            <dxi-item itemType="group">
+                <dxi-item dataField="username" [label]="{ text: 'ชื่อผู้ใช้' }"
+                    [editorOptions]="{ showClearButton: true }"></dxi-item>
+
+
+                <dxi-item dataField="password" [label]="{ text: 'รหัสผ่าน' }"
+                    [editorOptions]="{ mode: passwordMode, showClearButton: true }"></dxi-item>
+            </dxi-item>
+        </dx-form>
+
+        <!-- DevExtreme Toast -->
+         <div class="flex justify-center mt-1 text-xl text-red-500" *ngIf="usernameError">
+            
+                    {{ usernameError }}
+                </div>
+        <div class="flex justify-center mt-10">
+            <button (click)="onSubmit()" type="submit"
+                class="max-w-xs block w-full rounded-md bg-indigo-600 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">เข้าสู่ระบบ</button>
+        </div>
+        <p class="mt-10 text-center text-gray-400 text-sm/6">
+            ไม่ใช่สมาชิก
+            <button (click)="NavigateToRegisterPage()"
+                class="ml-1 font-semibold text-indigo-400 transition hover:text-indigo-500">
+                สมัคที่นี่
+            </button>
+        </p>
+    </div>
+</div>

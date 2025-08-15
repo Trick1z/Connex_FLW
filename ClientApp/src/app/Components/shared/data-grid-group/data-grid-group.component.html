@@ -1,0 +1,21 @@
+<dx-data-grid
+  [dataSource]="dataSource"
+  [showBorders]="true"
+  [columnAutoWidth]="true"
+  (onRowUpdating)="onRowUpdating($event)"
+>
+  <!-- Loop group -->
+  <dxi-column *ngFor="let group of groups" [caption]="group.caption">
+    <!-- Loop columns ในกลุ่ม -->
+    <dxi-column *ngFor="let colField of group.columns" [dataField]="colField" [caption]="getColumnCaption(colField)">
+      <ng-template dxTemplate="cell" let-cellData>
+        <ng-container [ngSwitch]="getEditorType(colField)">
+          <input *ngSwitchCase="'textbox'" [(ngModel)]="cellData.value" class="dx-textbox"/>
+          <input *ngSwitchCase="'numberbox'" [(ngModel)]="cellData.value" type="number" class="dx-numberbox"/>
+          <input *ngSwitchCase="'datebox'" [(ngModel)]="cellData.value" type="date" class="dx-datebox"/>
+          <input *ngSwitchCase="'checkbox'" [(ngModel)]="cellData.value" type="checkbox" class="dx-checkbox"/>
+        </ng-container>
+      </ng-template>
+    </dxi-column>
+  </dxi-column>
+</dx-data-grid>

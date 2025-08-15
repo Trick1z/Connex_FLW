@@ -1,0 +1,20 @@
+<app-head-underline [title]="'User Form'"></app-head-underline>
+
+<div class="search ml-5">
+  <div
+    class="mb-3 flex items-center border border-gray-300 rounded-lg overflow-hidden w-80"
+  >
+    <input
+      type="text"
+      placeholder="Search..."
+      class="flex-1 px-3 py-2 outline-none"
+    />
+  </div>
+
+  <app-button [message]="'Search'"></app-button>
+</div>
+
+
+<app-grid-customer class="max-w-auto flex flex-wrap justify-center m-5" [dataList]="dataList" [columnList]="columns"></app-grid-customer>
+
+

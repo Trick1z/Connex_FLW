@@ -1,0 +1,14 @@
+<dx-popup [(visible)]="visible" [showTitle]="true" [title]="title" [width]="400" [height]="300">
+  <div *ngIf="data">
+    <ng-container *ngFor="let key of objectKeys(data)">
+      <div class="mb-2">
+        <label>{{key}}</label>
+        <input [(ngModel)]="data[key]" class="dx-textbox"/>
+      </div>
+    </ng-container>
+    <div class="mt-4">
+      <button (click)="onSave()">Save</button>
+      <button (click)="onClose()">Cancel</button>
+    </div>
+  </div>
+</dx-popup>

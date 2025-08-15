@@ -1,0 +1,135 @@
+<!-- <div class="container pt-5 m-4 mx-auto" >
+        <dx-data-grid id="gridContainer" [dataSource]="wordList" [showBorders]="true">
+
+
+            <dxo-editing mode="row" [allowAdding]="false" [allowUpdating]="false" [allowDeleting]="false">
+            </dxo-editing>
+            <dxo-editing mode="row"> </dxo-editing>
+            <dxi-column dataField="word" caption="คำ" [width]="300" cellTemplate="wordTemplate">
+            </dxi-column>
+
+            <dxi-column cellTemplate="scoreTemplate" dataField="score" [width]="80" [caption]="'คะแนน'">
+            </dxi-column>
+
+
+
+
+            <dxi-column cellTemplate="dateTemplate" alignment="center" dataField="date" caption="วันที่">
+
+            </dxi-column>
+
+            <dxi-column [caption]="'#'" [width]="210" cellTemplate="cellTemplateButton"></dxi-column>
+
+            <div class="flex flex-wrap items-center justify-center gap-2"
+                *dxTemplate="let data of 'cellTemplateButton'">
+
+                <div class="btn">
+                    <dx-button stylingMode="contained" text="Delete" type="danger" [width]="90">
+                    </dx-button>
+                </div>
+            </div>
+
+
+
+
+
+            <dxo-paging [pageSize]="10"></dxo-paging>
+            <dxo-search-panel [visible]="true"></dxo-search-panel>
+        </dx-data-grid>
+    </div> -->
+
+<!-- <div class="container pt-5 m-4 mx-auto">
+  <dx-data-grid
+    id="gridContainer"
+    [dataSource]="dataList"
+    [showBorders]="true"
+  >
+    <dxo-editing
+      mode="row"
+      [allowAdding]="false"
+      [allowUpdating]="false"
+      [allowDeleting]="false"
+    ></dxo-editing>
+
+    <dxi-column
+      dataField="word"
+      caption="คำ"
+      [width]="300"
+      cellTemplate="wordTemplate"
+    ></dxi-column>
+
+    <dxi-column
+      dataField="score"
+      caption="คะแนน"
+      [width]="80"
+      cellTemplate="scoreTemplate"
+    ></dxi-column>
+
+    <dxi-column
+      dataField="date"
+      caption="วันที่"
+      alignment="center"
+      cellTemplate="dateTemplate"
+    ></dxi-column>
+
+    <dxi-column
+      [caption]="'#'"
+      [width]="210"
+      cellTemplate="cellTemplateButton"
+    ></dxi-column>
+
+    <ng-template dxTemplate="wordTemplate" let-data>
+      <div class="font-medium text-gray-800">{{ data.data.word }}</div>
+    </ng-template>
+
+    <ng-template dxTemplate="scoreTemplate" let-data>
+      <div class="font-bold text-center text-blue-700">
+        {{ data.data.score }}
+      </div>
+    </ng-template>
+
+    <ng-template dxTemplate="dateTemplate" let-data>
+      <div class="text-sm text-gray-500">
+        {{ data.data.date | date: 'dd/MM/yyyy' }}
+      </div>
+    </ng-template>
+
+    <ng-template dxTemplate="cellTemplateButton" let-data>
+
+ -->
+
+
+<dx-data-grid [dataSource]="dataList" [columns]="columnList" [showBorders]="true">
+  <dxo-paging [pageSize]="10"></dxo-paging>
+
+  <!-- <dxi-column *ngFor="let col of columnList"
+              [dataField]="col.dataField"
+              [caption]="col.caption"
+              [width]="col.width"
+              [fixed]="col.fixed"
+              [fixedPosition]="col.fixedPosition">
+  </dxi-column> -->
+  <dxi-column *ngFor="let col of columnList" [dataField]="col.dataField" [caption]="col.caption" [width]="col.width"
+    [alignment]="col.alignment">
+  </dxi-column>
+
+  <!-- [calculateCellValue]="(data) => calculateCellValue(data, col)" -->
+
+
+
+  <dxi-column [caption]="'#'" [width]="120" cellTemplate="cellTemplateButton" fixed="true" fixedPosition="right"
+    alignment="center">
+
+    ></dxi-column>
+
+  <ng-template #dateCellTemplate let-cellData>
+    {{ cellData.value | date:'shortDate' }}
+  </ng-template>
+
+
+
+  <div class="flex items-center justify-center" *dxTemplate="let data of 'cellTemplateButton'">
+    <dx-button text="Delete" type="danger" stylingMode="contained" [width]="90"></dx-button>
+  </div>
+
+</dx-data-grid>

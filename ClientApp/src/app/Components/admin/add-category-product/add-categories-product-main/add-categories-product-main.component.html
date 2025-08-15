@@ -1,0 +1,227 @@
+<app-head-underline [title]="'Categories Products'"></app-head-underline>
+
+<!-- grid category -->
+<div class="mt-20 ml-20 mr-20 categroy-box ">
+    <app-head-underline [title]="'Issue Categories'"></app-head-underline>
+
+    <!-- (click)="categoryPopupShow()" -->
+    <app-button (clicked)="categoryPopupShow()"  class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
+
+    <dx-data-grid  class="flex m-10 max-w-max " [dataSource]="categoryDataList" [showBorders]="true" [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
+        <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
+        <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
+        <dxi-column dataField="createTime" caption="Create Time" width="150" alignment="center"
+            [cellTemplate]="'dateCellTemplate'"></dxi-column>
+        <dxi-column dataField="modifiedTime" caption="Modified Time" width="150" alignment="center"
+            [cellTemplate]="'dateCellTemplate'"></dxi-column>
+
+        <dxi-column dataField="isActive" caption="Active" width="80" alignment="center"></dxi-column>
+        <dxi-column dataField="isProgramIssue"  caption="isProgram" width="140" alignment="center"></dxi-column>
+        <div *dxTemplate="let cell of 'dateCellTemplate'">
+            {{ cell.value | date : "dd MMMM yyyy" : '' : 'en-EN' }}
+        </div>
+        <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate" alignment="center">
+        </dxi-column>
+        <!-- Template ปุ่มใน cell -->
+        <div  *dxTemplate="let cell of 'actionTemplate'"  >
+            <dx-button class="m-2"  (onClick)="onEditCategoriesPopupShow(cell.data)" text="Edit" type="success" stylingMode="contained"
+               ></dx-button>
+            <dx-button class="m-2" (onClick)="onDeleteCategory(cell.data)"  text="Delete" type="danger" stylingMode="contained"
+               ></dx-button>
+        </div>
+    </dx-data-grid>
+</div>
+
+
+<!-- grid product -->
+<div class="mt-20 ml-20 mr-20 Product-box ">
+    <app-head-underline [title]="'Product'"></app-head-underline>
+    <app-button (clicked)="productPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
+
+
+
+    <dx-data-grid  class="flex m-10 max-w-max " [dataSource]="productDataList" [showBorders]="true" [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
+
+        <dxi-column dataField="productId" caption="ID" width="80" alignment="center"></dxi-column>
+
+        <dxi-column dataField="productName" caption="ชื่อ" width="150" alignment="left"></dxi-column>
+
+        <dxi-column dataField="createTime" caption="Create Time" width="150" alignment="center"
+            [cellTemplate]="'dateCellTemplate'"></dxi-column>
+        <dxi-column dataField="modifiedTime" caption="Modified Time" width="150" alignment="center"
+            [cellTemplate]="'dateCellTemplate'"></dxi-column>
+
+        <dxi-column dataField="isActive" caption="Active" width="80" alignment="center"></dxi-column>
+
+
+        <div *dxTemplate="let cell of 'dateCellTemplate'">
+            {{ cell.value | date : "dd MMMM yyyy" : '' : 'en-EN' }}
+        </div>
+
+        <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate" alignment="center">
+        </dxi-column>
+        
+        <!-- Template ปุ่มใน cell -->
+        <div  *dxTemplate="let cell of 'actionTemplate'"  >
+            <dx-button class="m-2" (onClick)="onEditProductPopupShow(cell.data)" text="Edit" type="success" stylingMode="contained"
+               ></dx-button>
+            <dx-button class="m-2" (onClick)="onDeleteProduct(cell.data)" text="Delete" type="danger" stylingMode="contained"
+               ></dx-button>
+        </div>
+    </dx-data-grid>
+</div>
+
+
+
+<!--add category-popup -->
+
+<div class="category-popup">
+
+    <dx-popup [width]="400" [height]="300" [(visible)]="categoryVisible" [width]="400" [showTitle]="true"
+        [dragEnabled]="true" [closeOnOutsideClick]="true" title="Add Category Issue" (onHiding)="categoryPopupHide()">
+        <div class="popup-content">
+
+            <div class="flex items-center checkbox text-end">
+
+                <label for="textBox" class="mr-2">Name : </label>
+
+                <dx-text-box id="textBox" [value]="categoryTextValue" (onValueChanged)="onTextValueChanged($event)"
+                    placeholder="กรอกข้อความ" stylingMode="outlined">
+                </dx-text-box>
+
+
+            </div>
+
+            <div class="mt-5 checkbox">
+                <label for="programCheck">Program Issue</label>
+
+                <dx-check-box class="ml-5" id="programCheck" [(ngModel)]="isProgram"></dx-check-box>
+            </div>
+
+
+
+
+            <div class="flex justify-center gap-2 mt-10">
+                <!-- <button (click)="categoryPopupHide()">ปิด</button> -->
+
+
+                <app-button (clicked)="onCategoriesSubmit()" [message]="'Save'"></app-button>
+
+                <app-button (clicked)="categoryPopupHide()" color="red" [message]="'Close'"></app-button>
+
+            </div>
+        </div>
+    </dx-popup>
+</div>
+
+<!--add product-popup -->
+
+
+
+<div class="product-popup">
+
+    <dx-popup [width]="400" [height]="250" [(visible)]="productVisible" [width]="400" [showTitle]="true"
+        [dragEnabled]="true" [closeOnOutsideClick]="true" title="Add Products" (onHiding)="productPopupHide()">
+        <div class="popup-content">
+
+            <div class="flex items-center checkbox text-end">
+
+                <label for="textBox" class="mr-2">Name : </label>
+
+                <dx-text-box id="textBox" [value]="productTextValue" (onValueChanged)="onProductTextValueChanged($event)"
+                    placeholder="กรอกข้อความ" stylingMode="outlined">
+                </dx-text-box>
+
+
+            </div>
+
+            <div class="flex justify-center gap-2 mt-10">
+                <!-- <button (click)="categoryPopupHide()">ปิด</button> -->
+
+
+                <app-button (clicked)="onProductSubmit()" [message]="'Save'"></app-button>
+
+                <app-button (clicked)="productPopupHide()" color="red" [message]="'Close'"></app-button>
+
+            </div>
+        </div>
+    </dx-popup>
+</div>
+
+
+
+
+
+
+<!-- edit popup -->
+ <!-- product -->
+  <div class="edit-product-popup">
+
+    <dx-popup [width]="400" [height]="250" [(visible)]="editProductVisible" [width]="400" [showTitle]="true"
+        [dragEnabled]="true" [closeOnOutsideClick]="true" title="Edit Product" (onHiding)="onEditProductPopupHide()">
+        <div class="popup-content">
+
+            <div class="flex items-center checkbox text-end">
+
+                <label for="textBox" class="mr-2">Name : </label>
+
+                <dx-text-box id="textBox" [(ngModel)]="editProductText"
+                    placeholder="กรอกข้อความ" stylingMode="outlined">
+                </dx-text-box>
+
+
+            </div>
+
+            <div class="flex justify-center gap-2 mt-10">
+                <!-- <button (click)="categoryPopupHide()">ปิด</button> -->
+
+
+                <app-button (clicked)="onEditPopupSubmit()" [message]="'Save'"></app-button>
+
+                <app-button (clicked)="onEditProductPopupHide()" color="red" [message]="'Close'"></app-button>
+
+            </div>
+        </div>
+    </dx-popup>
+</div>
+<!-- categories -->
+
+<div class="category-popup">
+
+    <dx-popup [width]="400" [height]="300" [(visible)]="editCategoriesVisible" [width]="400" [showTitle]="true"
+        [dragEnabled]="true" [closeOnOutsideClick]="true" title="Add Category Issue" (onHiding)="onEditCategoriesPopupHide()">
+        <div class="popup-content">
+
+            <div class="flex items-center checkbox text-end">
+
+                <label for="textBox" class="mr-2">Name : </label>
+
+                <dx-text-box id="textBox" [(ngModel)]="editCategoriesText"
+                    placeholder="กรอกข้อความ" stylingMode="outlined">
+                </dx-text-box>
+
+
+            </div>
+
+            <div class="mt-5 checkbox">
+                <label for="programCheck">Program Issue</label>
+
+                <dx-check-box class="ml-5" id="programCheck" [(ngModel)]="this.editCategoriesFormData.isProgramIssue"></dx-check-box>
+            </div>
+
+
+
+
+            <div class="flex justify-center gap-2 mt-10">
+
+
+                <app-button (clicked)="onEditCategoriesPopupSubmit()"  [message]="'Save'"></app-button>
+
+                <app-button (clicked)="onEditCategoriesPopupHide()" color="red" [message]="'Close'"></app-button>
+
+            </div>
+        </div>
+    </dx-popup>
+</div>
+
+
