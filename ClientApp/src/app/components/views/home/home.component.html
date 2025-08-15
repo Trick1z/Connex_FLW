@@ -1,4 +1,4 @@
-<div class="grid items-center grid-cols-3 p-10 mt-10 gap-y-10 gap-x-10">
+<!-- <div class="grid items-center grid-cols-3 p-10 mt-10 gap-y-10 gap-x-10">
     <app-text-box [value]="username" [placeHolder]="'Enter your username'"></app-text-box>
 
     <app-number-box [value]="number" [min]="0" [max]="120" [step]="2"></app-number-box>
@@ -20,8 +20,9 @@
     </app-date-box>
 
     <app-file-upload [multiple]="true" [allowedExtensions]="['.jpg', '.png', '.pdf']"
-        (filesSelected)="handleFiles($event)">
+        >
     </app-file-upload>
+    (filesSelected)="handleFiles($event)"
 
     <app-data-grid [dataSource]="users" [columns]="[
     { dataField: 'id', caption: 'ID' },
@@ -42,13 +43,15 @@
 
 
     <app-button (clicked)="triggerError()" [message]="'Show Error Panel'"></app-button>
-    <app-error-panel [visible]="showError" [messages]="errorMessages" (close)="handleCloseError()">
+    <app-error-panel [visible]="false" (close)="handleCloseError()">
     </app-error-panel>
 
+     [messages]="errorMessages"
 
 
 
 
 
 
-</div>
+
+</div> -->

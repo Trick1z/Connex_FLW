@@ -12,7 +12,7 @@ namespace Domain.Interfaces
     {
 
         public Task<ProductWithSelectionDto> GetProductsWithSelection(int categoryId);
-        public Task<CategoriesWithSelectedItem> GetUserMapCategoriesDropDown(int userId);
+        public Task<List<DropDownViewModel>> GetUserMapCategoriesDropDown();
 
         public Task<IEnumerable<Role>> GetRoleItem();
 

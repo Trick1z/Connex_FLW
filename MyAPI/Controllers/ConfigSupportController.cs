@@ -17,9 +17,9 @@ namespace MyAPI.Controllers
         }
 
         [HttpPost("InsertMappingUserCategories")]
-        public async Task<IActionResult> InsertMappingUserCategoriesItem(MappingUserCategoriesItem req)
+        public async Task<IActionResult> InsertMappingUserCategoriesItem(SaveUserCategoriesParam req)
         {
-            return Ok(await _configSupportService.InsertMapUserCategories(req));
+            return Ok(await _configSupportService.SaveUserCategories(req));
         }
 
         [HttpGet("userByRole")]
@@ -27,6 +27,13 @@ namespace MyAPI.Controllers
         {
             return Ok(await _configSupportService.GetUserByRoleSupport());
         }
+        [HttpGet("loadUser/{id}")]
+        public async Task<IActionResult> LoadUser(int id)
+        {
+            return Ok(await _configSupportService.LoadUser(id));
+        }
+
+        
 
 
     }

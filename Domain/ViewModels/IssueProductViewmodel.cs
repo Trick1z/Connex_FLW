@@ -70,10 +70,12 @@ namespace Domain.ViewModels
         public string? Message { get; set; }
     }
 
-    public class MappingUserCategoriesItem
+    public class SaveUserCategoriesParam
     {
         public int UserId { get; set; }
-        public List<int> CategoriesId { get; set; }
+        public List<int> Categories { get; set; }
+
+        public DateTime? ModifiedTime { get; set; }
     }
 
 
@@ -91,6 +93,15 @@ namespace Domain.ViewModels
         public string Username { get; set; }
         public int RoleId { get; set; }
         public string RoleName { get; set; }
+    }
+    public class UserMapCategoriesViewModel
+    {
+        public int UserId { get; set; }
+        //public string Username { get; set; }
+
+        public List<string> Categories { get; set; }
+        public string CategoriesText { get; set; }
+        public DateTime? ModifiedTime { get; set; }
     }
 
 

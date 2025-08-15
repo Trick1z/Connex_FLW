@@ -31,10 +31,10 @@ namespace MyAPI.Controllers
             return Ok(await _getDropdownService.GetProductsWithSelection(id));
         }
 
-        [HttpGet("userMapCategoriesByUserId/{id}")]
-        public async Task<IActionResult> GetmappedCategoryItems(int id)
+        [HttpGet("userMapCategoriesByUserId")]
+        public async Task<IActionResult> GetmappedCategoryItems()
         {
-            return Ok(await _getDropdownService.GetUserMapCategoriesDropDown(id));
+            return Ok(await _getDropdownService.GetUserMapCategoriesDropDown());
         }
 
         [AllowAnonymous]

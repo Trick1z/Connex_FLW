@@ -21,41 +21,22 @@ namespace Services.Implements
             _context = context;
         }
 
-        public async Task<CategoriesWithSelectedItem> GetUserMapCategoriesDropDown(int userId)
+        public async Task<List<DropDownViewModel>> GetUserMapCategoriesDropDown()
         {
 
 
-            var allCategories = await _context.IssueCategories
+            var allCategories = await _context.IssueCategories.AsNoTracking()
                         .Where(c => c.IsActive)
-                        .Select(c => new AllCategories
+                        .Select(c => new DropDownViewModel
                         {
-                            IssueCategoriesId = c.IssueCategoriesId,
-                            IssueCategoriesName = c.IssueCategoriesName
+                            ShowText = c.IssueCategoriesName,
+                            Value = c.IssueCategoriesId.ToString(),
                         })
                         .ToListAsync();
 
-            var selectedCategories = await _context.Rel_User_Categories
-                        .Where(rc => rc.UserId == userId)
-                        .Join(
-                            _context.IssueCategories,
-                            rc => rc.IssueCategoriesId,
-                            c => c.IssueCategoriesId,
-                            (rc, c) => new AllCategories
-                            {
-                                IssueCategoriesId = c.IssueCategoriesId,
-                                IssueCategoriesName = c.IssueCategoriesName
-                            })
-                        .ToListAsync();
+          
 
-
-            // สร้าง DTO
-            var data = new CategoriesWithSelectedItem
-            {
-                AllCategories = allCategories,
-                SelectedCategories = selectedCategories
-            };
-
-            return data;
+            return allCategories;
         }
 
         public async Task<ProductWithSelectionDto> GetProductsWithSelection(int categoryId)

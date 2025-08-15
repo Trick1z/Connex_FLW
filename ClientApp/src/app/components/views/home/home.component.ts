@@ -47,24 +47,24 @@ Checkoptions = [
     { id: 4, name: 'Svelte' }
   ];
 
-  // fileupload 
-  handleFiles(files: File[]) {
-    console.log('Selected files:', files);
+  // // fileupload 
+  // handleFiles(e : File[]) {
+  //   console.log('Selected files:', files);
 
-    // ตัวอย่าง: อ่านไฟล์แบบ local
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = () => console.log('File content:', reader.result);
-      reader.readAsText(file);
-    });
-
-
+  //   // ตัวอย่าง: อ่านไฟล์แบบ local
+  //   files.forEach(file => {
+  //     const reader = new FileReader();
+  //     reader.onload = () => console.log('File content:', reader.result);
+  //     reader.readAsText(file);
+  //   });
 
 
 
 
 
-  }
+
+
+  // }
   // grid
 
   users = [

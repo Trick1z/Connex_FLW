@@ -11,10 +11,8 @@ namespace Domain.Interfaces
     public interface IConfigSupportService
     {
 
-        public Task<Rel_User_Categories> InsertMapUserCategories(MappingUserCategoriesItem req);
+        public Task<Rel_User_Categories> SaveUserCategories(SaveUserCategoriesParam req);
         public Task<IEnumerable<UserWithRoleViewModel>> GetUserByRoleSupport();
-
-
-
+        public Task<UserMapCategoriesViewModel> LoadUser(int id);
     }
 }

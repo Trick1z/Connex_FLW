@@ -7,6 +7,13 @@ using System.Threading.Tasks;
 
 namespace Domain.ViewModels
 {
+
+    public class DropDownViewModel{
+    
+     public string ShowText { get; set; }
+        public string Value { get; set; }
+    }
+
     public class ProductWithSelectionDto
     {
         public IEnumerable<AllProducts> AllProducts { get; set; }
@@ -14,13 +21,13 @@ namespace Domain.ViewModels
         public IEnumerable<AllProducts> SelectedProduct { get; set; }
     }
 
-    public class CategoriesWithSelectedItem
-    {
-        public IEnumerable<AllCategories> AllCategories { get; set; }
-        //public List<int> SelectedCategories { get; set; }
-        public IEnumerable<AllCategories> SelectedCategories { get; set; }
+    //public class CategoriesWithSelectedItem
+    //{
+    //    public IEnumerable<AllCategories> AllCategories { get; set; }
+    //    //public List<int> SelectedCategories { get; set; }
+    //    public IEnumerable<AllCategories> SelectedCategories { get; set; }
 
-    }
+    //}
 
 
 
