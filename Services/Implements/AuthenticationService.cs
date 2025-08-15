@@ -121,14 +121,14 @@ namespace Services.Implements.Auth
             return false;
         }
 
-        public async Task<User> IsUsernameInTable(LoginViewModel request, ValidateException validateException)
+        public async Task<User> GetExistUsernameInTable(LoginViewModel request, ValidateException validateException)
         {
-            var isExists = await _context.User.FirstOrDefaultAsync(u => u.Username == request.Username);
+            var dataExists = await _context.User.FirstOrDefaultAsync(u => u.Username == request.Username);
 
-            if (isExists == null)
+            if (dataExists == null)
                 validateException.Add("Username,Password", "Username or Password are in correct !");
 
-            return isExists;
+            return dataExists;
         }
 
 

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Implements.IssueProduct
+namespace Services.Implements
 {
     public class IssueProductService : IIssueProductService
     {
@@ -147,7 +147,7 @@ namespace Services.Implements.IssueProduct
             IsCategoriesIdValidate(req, validate);
             IsCategoriesFieldNullOrEmptyString(req, validate);
 
-            IssueCategories resp = await IsCategoriesInDatabase(req, validate);
+            IssueCategories resp = await GetExistCategoriesInDatabase(req, validate);
 
             validate.Throw();
 
@@ -171,7 +171,7 @@ namespace Services.Implements.IssueProduct
 
             IsProductIdValidate(req, validate);
             IsProductFieldNullOrEmptyString(req, validate);
-            Product resp = await IsProductInDatabase(req, validate);
+            Product resp = await GetExistProductInDatabase(req, validate);
 
             validate.Throw();
 
@@ -190,14 +190,14 @@ namespace Services.Implements.IssueProduct
 
 
 
-        private async Task<IssueCategories> IsCategoriesInDatabase(UpdateCategories req, ValidateException validate)
+        private async Task<IssueCategories> GetExistCategoriesInDatabase(UpdateCategories req, ValidateException validate)
         {
-            var IsInDb = await _context.IssueCategories.FirstOrDefaultAsync(u => u.IssueCategoriesId == req.IssueCategoriesId);
+            var DataInDb = await _context.IssueCategories.FirstOrDefaultAsync(u => u.IssueCategoriesId == req.IssueCategoriesId);
 
-            if (IsInDb == null)
+            if (DataInDb == null)
                 validate.Add("Categories", "Not Found Categories");
 
-            return IsInDb;
+            return DataInDb;
         }
 
 
@@ -248,7 +248,7 @@ namespace Services.Implements.IssueProduct
             return false;
         }
 
-        private async Task<Product> IsProductInDatabase(UpdateProduct req, ValidateException validate)
+        private async Task<Product> GetExistProductInDatabase(UpdateProduct req, ValidateException validate)
         {
             var IsInDb = await _context.Product.FirstOrDefaultAsync(u => u.ProductId == req.ProductId);
 
@@ -268,7 +268,7 @@ namespace Services.Implements.IssueProduct
 
             var validate = new ValidateException();
 
-            IssueCategories res = await IsExists(req, validate);
+            IssueCategories res = await GetIssueCategoriesExists(req, validate);
 
             validate.Throw();
 
@@ -303,30 +303,30 @@ namespace Services.Implements.IssueProduct
         }
 
         //futures
-        private async Task<IssueCategories> IsExists(DeleteCategories req, ValidateException validate)
+        private async Task<IssueCategories> GetIssueCategoriesExists(DeleteCategories req, ValidateException validate)
         {
-            var isExists = await _context.IssueCategories
+            var DataExists = await _context.IssueCategories
                             .FirstOrDefaultAsync(u => u.IssueCategoriesName == req.IssueCategoriesName &&
                                         u.IssueCategoriesId == req.IssueCategoriesId);
 
-            if (isExists == null)
+            if (DataExists == null)
                 validate.Add("Categories", "Not Found This Categories");
 
 
-            return isExists;
+            return DataExists;
         }
 
         private async Task<Product> IsProductExists(DeleteProduct req, ValidateException validate)
         {
-            var isExists = await _context.Product
+            var dataExists = await _context.Product
                             .FirstOrDefaultAsync(u => u.ProductName == req.ProductName &&
                                         u.ProductId == req.ProductId);
 
-            if (isExists == null)
+            if (dataExists == null)
                 validate.Add("Product", "Not Found This Product");
 
 
-            return isExists;
+            return dataExists;
         }
 
 
