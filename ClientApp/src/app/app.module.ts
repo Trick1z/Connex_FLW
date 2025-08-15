@@ -3,14 +3,14 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { RegisterComponent } from './components/Pages/register/register.component';
+import { RegisterComponent } from './components/pages/register/register.component';
 import { HomeComponent } from './components/views/home/home.component';
 import { WordScoringComponent } from './components/games/word-scoring/word-scoring.component';
 import { FormsModule } from '@angular/forms';
 import dxDataGrid from 'devextreme/ui/data_grid';
 import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxDateBoxModule, DxDropDownBoxModule, DxFileUploaderModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxRadioGroupModule, DxSelectBoxModule, DxTagBoxModule, DxTemplateModule, DxTextBoxModule, DxToastModule } from 'devextreme-angular';
 import { NavbarTopComponent } from './components/navbar/navbar-top/navbar-top.component';
-import { LandingComponent } from './components/Pages/landing/landing.component';
+import { LandingComponent } from './components/pages/landing/landing.component';
 import dxForm from 'devextreme/ui/form';
 import { EditPopupComponent } from './components/games/word-scoring/edit-popup/edit-popup.component';
 import { GridCustomerComponent } from './components/shared/grid-customer/grid-customer.component';
@@ -41,7 +41,7 @@ import { DataGridComponent } from './components/shared/data-grid/data-grid.compo
 import { DataGridGroupComponent } from './components/shared/data-grid-group/data-grid-group.component';
 import { ErrorPanelComponent } from './components/shared/error-panel/error-panel.component';
 import { AuthInterceptor } from './services/auth.interceptor';
-import { LoginComponent } from './components/Pages/login/login.component';
+import { LoginComponent } from './components/pages/login/login.component';
 
 
 @NgModule({
