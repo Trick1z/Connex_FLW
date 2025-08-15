@@ -6,7 +6,7 @@ import {
   ViewsRoute,
   GamesRoute,
   CustomerRoute,
-} from 'src/app/Constants/routes.const';
+} from 'src/app/constants/routes.const';
 import { CustomerPageComponent } from './customer-page/customer-page.component';
 import { CustomerAddPageComponent } from './customer-add-page/customer-add-page.component';
 

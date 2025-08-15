@@ -7,7 +7,7 @@ import {
   GamesRoute,
   CustomerRoute,
   AdminRoute,
-} from 'src/app/Constants/routes.const';
+} from 'src/app/constants/routes.const';
 import { MasterComponent } from './master/master.component';
 import { AddCategoriesProductMainComponent } from './add-category-product/add-categories-product-main/add-categories-product-main.component';
 import { MapUserCategoriesComponent } from './map-user-categories/map-user-categories.component';

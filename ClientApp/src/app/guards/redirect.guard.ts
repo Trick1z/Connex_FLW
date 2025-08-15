@@ -7,7 +7,7 @@
 
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { AuthRoute } from '../Constants/routes.const';
+import { AuthRoute } from '../constants/routes.const';
 
 @Injectable({ providedIn: 'root' })
 export class RedirectGuard implements CanActivate {

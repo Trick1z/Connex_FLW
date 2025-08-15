@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from './api-service.service';
 import { Router } from '@angular/router';
-import { AuthRoute } from '../Constants/routes.const';
+import { AuthRoute } from '../constants/routes.const';
 
 @Injectable({
   providedIn: 'root'

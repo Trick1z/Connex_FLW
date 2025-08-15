@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './Components/Pages/login/login.component';
-import { AdminRoute, AuthRoute, CustomerRoute, GamesRoute, LandingRoute, UserRoute, ViewsRoute } from './Constants/routes.const';
+import { AdminRoute, AuthRoute, CustomerRoute, GamesRoute, LandingRoute, UserRoute, ViewsRoute } from './constants/routes.const';
 import { ViewsRoutingModule } from './Components/views/views-routing.module';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';

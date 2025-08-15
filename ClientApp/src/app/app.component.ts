@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
-import { AuthRoute, LandingRoute } from './Constants/routes.const';
+import { AuthRoute, LandingRoute } from './constants/routes.const';
 
 @Component({
   selector: 'app-root',

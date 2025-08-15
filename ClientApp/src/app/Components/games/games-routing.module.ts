@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthRoute, ViewsRoute, GamesRoute} from 'src/app/Constants/routes.const';
+import { AuthRoute, ViewsRoute, GamesRoute} from 'src/app/constants/routes.const';
 import { WordScoringComponent } from './word-scoring/word-scoring.component';
 
 

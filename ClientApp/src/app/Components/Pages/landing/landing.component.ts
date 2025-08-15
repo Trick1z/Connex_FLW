@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {  Router } from '@angular/router';
-import { ViewsRoute } from 'src/app/Constants/routes.const';
+import { ViewsRoute } from 'src/app/constants/routes.const';
 
 @Component({
   selector: 'app-landing',

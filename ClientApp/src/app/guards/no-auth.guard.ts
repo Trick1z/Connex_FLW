@@ -7,7 +7,7 @@
 
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { ViewsRoute } from '../Constants/routes.const';
+import { ViewsRoute } from '../constants/routes.const';
 
 @Injectable({ providedIn: 'root' })
 export class NoAuthGuard implements CanActivate {

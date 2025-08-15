@@ -1,8 +1,8 @@
 <app-head-underline [title]="'User Form'"></app-head-underline>
-
-<div class="search ml-5">
+<!-- 
+<div class="ml-5 search">
   <div
-    class="mb-3 flex items-center border border-gray-300 rounded-lg overflow-hidden w-80"
+    class="flex items-center mb-3 overflow-hidden border border-gray-300 rounded-lg w-80"
   >
     <input
       type="text"
@@ -12,9 +12,30 @@
   </div>
 
   <app-button [message]="'Search'"></app-button>
+</div>-->
+<div class="search-box">
+  <app-text-box [value]="D"></app-text-box>
 </div>
 
 
-<app-grid-customer class="max-w-auto flex flex-wrap justify-center m-5" [dataList]="dataList" [columnList]="columns"></app-grid-customer>
+<!-- Master Grid -->
+<div class="flex p-16 dx-grid">
+  <dx-data-grid
+    [dataSource]="orders"
+    keyExpr="id"
+    [showBorders]="true"
+    [masterDetail]="{ enabled: true, template: 'detailTemplate' }"
+    [paging]="{ enabled: true, pageSize: 5 }">
 
+    <dxo-paging [pageSize]="5"></dxo-paging>
+    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
 
+    <div *dxTemplate="let masterData of 'detailTemplate'">
+      <dx-data-grid
+        [dataSource]="getOrderItems(masterData.key)"
+        [showBorders]="true"
+        [columnAutoWidth]="true">
+      </dx-data-grid>
+    </div>
+  </dx-data-grid>
+</div>

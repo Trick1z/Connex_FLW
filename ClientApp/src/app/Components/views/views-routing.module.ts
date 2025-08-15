@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthRoute, ViewsRoute,  } from 'src/app/Constants/routes.const';
+import { AuthRoute, ViewsRoute,  } from 'src/app/constants/routes.const';
 import { HomeComponent } from './home/home.component';
 
 
