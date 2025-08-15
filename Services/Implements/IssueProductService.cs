@@ -1,7 +1,7 @@
 ﻿using Domain.Exceptions;
 using Domain.Interfaces.IssueProduct;
 using Domain.Models;
-using Domain.ViewModels.CategoriesProduct;
+using Domain.ViewModels.IssueProduct;
 using Domain.ViewModels.MappingCategoriesProduct;
 using Microsoft.EntityFrameworkCore;
 using System;

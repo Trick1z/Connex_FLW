@@ -1,5 +1,5 @@
 ﻿using Domain.Interfaces.IssueProduct;
-using Domain.ViewModels.CategoriesProduct;
+using Domain.ViewModels.IssueProduct;
 using Domain.ViewModels.MappingCategoriesProduct;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

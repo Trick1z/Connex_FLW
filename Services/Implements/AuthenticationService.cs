@@ -48,21 +48,21 @@ namespace Services.Implements.Auth
                 throw new Exception("Username or Password are incorrect");
 
             // Query access pages
-            var accessPages = await (from pr in _context.Rel_Page_Role
-                                     join p in _context.Pages on pr.PageId equals p.PageId
-                                     where pr.RoleId == user.RoleId && !p.IsDeleted
-                                     select p.PageUrl).ToListAsync();
+            //var accessPages = await (from pr in _context.Rel_Page_Role
+            //                         join p in _context.Pages on pr.PageId equals p.PageId
+            //                         where pr.RoleId == user.RoleId && !p.IsDeleted
+            //                         select p.PageUrl).ToListAsync();
 
             // สร้าง JWT โดยใช้ RoleId (int)
             var token = GenerateJwtToken(user.UserId, user.RoleId);
 
             return new LoginResponseViewModel
             {
-                UserId = user.UserId,
+                //UserId = user.UserId,
                 Username = user.Username,
-                Role = user.Role.RoleName,  // สำหรับ display
+                //Role = user.Role.RoleName,  // สำหรับ display
                 Token = token,
-                AccessPages = accessPages
+                //AccessPages = accessPages
             };
         }
 

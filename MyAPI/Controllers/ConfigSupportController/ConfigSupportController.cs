@@ -1,5 +1,4 @@
 ﻿using Domain.Interfaces.ConfigSupport;
-using Domain.ViewModels.CategoriesProduct;
 using Domain.ViewModels.MappingCategories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

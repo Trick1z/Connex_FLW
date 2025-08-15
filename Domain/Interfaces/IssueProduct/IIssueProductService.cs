@@ -1,5 +1,5 @@
 ﻿using Domain.Models;
-using Domain.ViewModels.CategoriesProduct;
+using Domain.ViewModels.IssueProduct;
 using Domain.ViewModels.MappingCategoriesProduct;
 using System;
 using System.Collections.Generic;
