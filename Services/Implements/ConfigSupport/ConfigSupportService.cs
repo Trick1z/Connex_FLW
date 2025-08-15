@@ -20,6 +20,8 @@ namespace Services.Implements.ConfigSupport
             _context = context;
         }
 
+//testc push c#
+
         public async Task<Rel_User_Categories> InsertMapUserCategories(MappingUserCategoriesItem param)
         {
             // ดึง user พร้อม relation ปัจจุบัน
