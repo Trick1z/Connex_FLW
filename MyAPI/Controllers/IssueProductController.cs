@@ -2,6 +2,7 @@
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MyAPI.Controllers
 {
@@ -45,14 +46,14 @@ namespace MyAPI.Controllers
         public async Task<IActionResult> InsertCategoriesItems([FromBody] InsertCategories request)
         {
 
-            return Ok(await _issueProduct.InsertCategoriesItems(request));
+            return Ok(await _issueProduct.InsertCategoriesItems(request ));
         }
 
 
         [HttpPost("SaveProduct")]
         public async Task<IActionResult> InsertProductItems([FromBody] InsertProduct request)
         {
-            return Ok(await _issueProduct.InsertProductItem(request));
+            return Ok(await _issueProduct.InsertProductItem(request ));
         }
 
         [HttpPost("UpdateCategories")]

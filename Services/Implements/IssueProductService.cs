@@ -3,10 +3,12 @@ using Domain.Interfaces;
 using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNet.Identity;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,33 +18,47 @@ namespace Services.Implements
     {
 
 
-
+        private readonly IHttpContextAccessor _contextAccessor;
         private readonly MYGAMEContext _context;
 
-        public IssueProductService(MYGAMEContext context)
+        public IssueProductService(MYGAMEContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _contextAccessor = httpContextAccessor;
+
         }
         //InsertCategories
-        public async Task<IEnumerable<IssueCategories>> InsertCategoriesItems(InsertCategories requried)
+        public async Task<IEnumerable<IssueCategories>> InsertCategoriesItems(InsertCategories requried )
         {
             var validate = new ValidateException();
             await IsNullOrEmptyString(requried, validate);
             await IsCategoryInTable(requried, validate);
-
-
-        
 
             validate.Throw();
 
             IssueCategories data = PackedData(requried);
 
             _context.IssueCategories.Add(data);
+            //log
+
+            Log_categories log = PrepairLogData(GetCurrentUserId());
+
+            _context.Log_categories.Add(log);
+
             await _context.SaveChangesAsync();
 
             //return data;
             return new List<IssueCategories> { data };
 
+        }
+
+        private static Log_categories PrepairLogData(int userId)
+        {
+            var log = new Log_categories();
+            log.ActionBy = userId;
+            log.ActionTime = DateTime.Now;
+            log.ActionType = "Save Categories";
+            return log;
         }
 
         private static IssueCategories PackedData(InsertCategories requried)
@@ -82,7 +98,7 @@ namespace Services.Implements
         }
 
         //InsertProduct
-        public async Task<IEnumerable<Product>> InsertProductItem(InsertProduct requried)
+        public async Task<IEnumerable<Product>> InsertProductItem(InsertProduct requried )
         {
             var validate = new ValidateException();
 
@@ -92,12 +108,25 @@ namespace Services.Implements
             validate.Throw();
 
             Product data = PackedData(requried);
+
+            Log_categories log = AddLog(GetCurrentUserId());
+
             _context.Product.Add(data);
+            _context.Log_categories.Add(log);
             await _context.SaveChangesAsync();
 
 
             return new List<Product> { data };
 
+        }
+
+        private static Log_categories AddLog(int userId)
+        {
+            var log = new Log_categories();
+            log.ActionBy = userId;
+            log.ActionTime = DateTime.Now;
+            log.ActionType = "Save Products";
+            return log;
         }
 
         public static Product PackedData(InsertProduct requried)
@@ -166,6 +195,13 @@ namespace Services.Implements
             resp.IsProgramIssue = param.IsProgramIssue;
             resp.ModifiedTime = dateNow;
 
+            var log = new Log_categories();
+
+            log.ActionTime = DateTime.Now;
+            log.ActionBy = GetCurrentUserId();
+            log.ActionType = "Update Categories";
+            _context.Log_categories.Add(log);
+
             await _context.SaveChangesAsync();
 
 
@@ -201,6 +237,15 @@ namespace Services.Implements
             var dateNow = DateTime.Now;
             resp.ProductName = param.ProductName;
             resp.ModifiedTime = dateNow;
+
+            var log = new Log_categories();
+
+            log.ActionTime = DateTime.Now;
+            log.ActionBy = GetCurrentUserId();
+            log.ActionType = "Update Product";
+
+            _context.Log_categories.Add(log);
+
 
             await _context.SaveChangesAsync();
 
@@ -300,6 +345,15 @@ namespace Services.Implements
             //update isactive and save 
             res.IsActive = false;
             res.ModifiedTime = dateNow;
+
+            var log = new Log_categories();
+
+            log.ActionTime = DateTime.Now;
+            log.ActionBy = GetCurrentUserId();
+            log.ActionType = "Delete Categories";
+
+            _context.Log_categories.Add(log);
+
             await _context.SaveChangesAsync();
 
             return new List<IssueCategories> { res };
@@ -319,6 +373,15 @@ namespace Services.Implements
             //update isactive and save 
             res.IsActive = false;
             res.ModifiedTime = dateNow;
+
+            var log = new Log_categories();
+
+            log.ActionTime = DateTime.Now;
+            log.ActionBy = GetCurrentUserId();
+            log.ActionType = "Delete Categories";
+
+            _context.Log_categories.Add(log);
+
             await _context.SaveChangesAsync();
 
             return new List<Product> { res };
@@ -470,6 +533,16 @@ namespace Services.Implements
             };
             return data;
         }
+
+
+        public int GetCurrentUserId()
+        {
+            var user = _contextAccessor.HttpContext?.User;
+            //if (user == null) throw new Exception("User not found");
+
+            return int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
+        }
+
 
     }
 }

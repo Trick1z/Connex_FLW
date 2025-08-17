@@ -10,13 +10,13 @@ namespace Domain.Interfaces
 {
     public interface IIssueProductService
     {
-        public Task<IEnumerable<IssueCategories>> DeleteCategoriesItems(DeleteCategories req);
-        public Task<IEnumerable<Product>> DeleteProductItems(DeleteProduct req);
+        public Task<IEnumerable<IssueCategories>> DeleteCategoriesItems(DeleteCategories param);
+        public Task<IEnumerable<Product>> DeleteProductItems(DeleteProduct param);
         public Task<IEnumerable<IssueCategories>> InsertCategoriesItems(InsertCategories requried);
         //public Task<IEnumerable<RelCategoriesProduct>> InsertMapCategoriesProduct(MappingCategoriesProductItem req);
-        public Task<IEnumerable<Product>> InsertProductItem(InsertProduct request);
+        public Task<IEnumerable<Product>> InsertProductItem(InsertProduct param );
         public Task<IssueCategories> UpdateCategoriesItems(UpdateCategories req);
-        public Task<Product> UpdateProductItems(UpdateProduct req);
+        public Task<Product> UpdateProductItems(UpdateProduct param);
 
         public Task<IEnumerable<IssueCategories>> GetCategoriesItems();
         public Task<IEnumerable<Product>> GetProductItems();

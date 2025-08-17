@@ -28,6 +28,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Log_categories]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Log_Rel_User_Categories]",
          "ObjectType": 0
       },
