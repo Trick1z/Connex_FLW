@@ -64,13 +64,13 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
 
 
-  testLog() {
+  // testLog() {
 
-    console.log(this.categoryTextValue,
-      this.isProgram);
-    console.log(this.productTextValue);
+  //   console.log(this.categoryTextValue,
+  //     this.isProgram);
+  //   console.log(this.productTextValue);
 
-  }
+  // }
 
 
   getCategoriesProductDataList() {
@@ -98,6 +98,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
       IssueCategoriesName: this.categoryTextValue,
       isProgramIssue: this.isProgram
 
+
     }
 
     this.api.post('api/IssueProduct/SaveCategories', data).subscribe({
@@ -115,7 +116,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
       },
       error: (err) => {
-        console.error('❌ API Error:', err);
+        // console.error('❌ API Error:', err);
       }
 
     })
@@ -144,7 +145,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
       },
       error: (err) => {
-        console.error('❌ API Error:', err);
+        // console.error('❌ API Error:', err);
       }
     })
   }
@@ -160,7 +161,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     this.api.post(`api/IssueProduct/DeleteCategories`, newData).subscribe({
       next: (res: any) => {
-        console.log(res);
+        // console.log(res);
         this.getCategoriesProductDataList();
         Swal.fire({
           title: 'สำเร็จ',
@@ -171,7 +172,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('❌ API Error:', err);
+        // console.error('❌ API Error:', err);
       }
     })
 
@@ -189,7 +190,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     this.api.post(`api/IssueProduct/DeleteProduct`, newData).subscribe({
       next: (res: any) => {
-        console.log(res);
+        // console.log(res);
         this.getCategoriesProductDataList();
         Swal.fire({
           title: 'สำเร็จ',
@@ -200,7 +201,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
         });
       },
       error: (err) => {
-        console.error('❌ API Error:', err);
+        // console.error('❌ API Error:', err);
       }
     })
 
@@ -219,9 +220,10 @@ export class AddCategoriesProductMainComponent implements OnInit {
     this.editProductText = data.productName;
 
     this.editProductFormData.productId = data.productId
-    this.editProductFormData.productName = this.editProductText,
+    this.editProductFormData.productName = this.editProductText
+    this.editProductFormData.modifiedTime = data.modifiedTime;
 
-      console.log(this.editProductFormData);
+      // console.log(this.editProductFormData);
 
 
   }
@@ -232,6 +234,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
     this.editProductFormData = {
       productId: 0,
       productName: "",
+      modifiedTime: undefined // Reset modifiedTime
     }
   }
 
@@ -239,13 +242,14 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     var newData = {
       productId: this.editProductFormData.productId,
-      productName: this.editProductText
+      productName: this.editProductText,
+      modifiedTime: this.editProductFormData.modifiedTime
     }
 
 
     this.api.post("api/IssueProduct/UpdateProduct", newData).subscribe({
       next: (res: any) => {
-        console.log(res);
+        // console.log(res);
         this.onEditProductPopupHide();
         this.getCategoriesProductDataList();
 
@@ -265,7 +269,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
           return Swal.fire({
             title: 'error',
-            text: `บันทึกข้อมูลไม่สำเร็จ: ${err.error.messages.product}`,
+            text: `บันทึกข้อมูลไม่สำเร็จ: ${err.error.messages.modifiedTime}`,
             icon: 'error',
 
             confirmButtonText: 'ตกลง',
@@ -312,8 +316,9 @@ export class AddCategoriesProductMainComponent implements OnInit {
     this.editCategoriesText = data.issueCategoriesName;
 
     this.editCategoriesFormData.issueCategoriesId = data.issueCategoriesId
-    this.editCategoriesFormData.issueCategoriesName = this.editCategoriesText,
-      this.editCategoriesFormData.isProgramIssue = data.isProgramIssue
+    this.editCategoriesFormData.issueCategoriesName = this.editCategoriesText
+    this.editCategoriesFormData.isProgramIssue = data.isProgramIssue
+    this.editCategoriesFormData.modifiedTime = data.modifiedTime;
 
     // console.log(this.editCategoriesFormData);
 
@@ -327,7 +332,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
     this.editCategoriesFormData = {
       issueCategoriesId: 0,
       issueCategoriesName: "",
-      isProgramIssue: false
+      isProgramIssue: false,
+      modifiedTime: undefined // Reset modifiedTime
     }
 
   }
@@ -337,14 +343,15 @@ export class AddCategoriesProductMainComponent implements OnInit {
     var newData = {
       issueCategoriesId: this.editCategoriesFormData.issueCategoriesId,
       issueCategoriesName: this.editCategoriesText,
-      isProgramIssue: this.editCategoriesFormData.isProgramIssue
+      isProgramIssue: this.editCategoriesFormData.isProgramIssue,
+      modifiedTime: this.editCategoriesFormData.modifiedTime
     }
 
 
 
     this.api.post("api/IssueProduct/UpdateCategories", newData).subscribe({
       next: (res: any) => {
-        console.log(res);
+        // console.log(res);
         this.onEditCategoriesPopupHide();
         this.getCategoriesProductDataList();
 
@@ -364,7 +371,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
           return Swal.fire({
             title: 'บันทึกข้อมูลไม่สำเร็จ',
-            text: `${err.error.messages.categories}`,
+            text: `${err.error.messages.modifiedTime}`,
             icon: 'error',
 
             confirmButtonText: 'ตกลง',
@@ -392,7 +399,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
   }
 
   onAddProduct() {
-    console.log('Button clicked in parent!');
+    // console.log('Button clicked in parent!');
     // ทำงานอื่น ๆ เช่น เปิด popup, call API
   }
 

@@ -37,7 +37,7 @@ namespace Services.Implements.Auth
             var user = await _context.User.Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
 
-            if (user == null) throw new Exception("User not found");
+            if (user == null) throw new Exception("Username or Password are incorrect");
 
             var hasher = new PasswordHasher<object>();
             var result = hasher.VerifyHashedPassword(null, user.Password, request.Password);

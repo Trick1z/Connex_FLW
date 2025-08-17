@@ -73,7 +73,7 @@ Checkoptions = [
   ];
 
   handleUserClick(user: any) {
-    console.log('Selected User:', user);
+    // console.log('Selected User:', user);
   }
 
 
@@ -97,7 +97,7 @@ Checkoptions = [
 
   // Method handle event จาก DataGrid
   onRowUpdated(e: any) {
-    console.log('Row Updated:', e);
+    // console.log('Row Updated:', e);
     // ใส่ logic update backend หรือ state
   }
 
@@ -116,7 +116,7 @@ Checkoptions = [
   }
 
   handleSave(data: any) {
-    console.log('Saved Data:', data);
+    // console.log('Saved Data:', data);
     this.showPopup = false;
   }
 

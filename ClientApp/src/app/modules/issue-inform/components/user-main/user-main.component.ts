@@ -28,7 +28,7 @@ statusOptions = [
     { id: 2, text: 'Process', selected: false }
   ];
   onRowClick(e: any) {
-    console.log('Row clicked:', e.data);
+    // console.log('Row clicked:', e.data);
   }
 
   getOrderItems(orderId: number) {
@@ -42,10 +42,10 @@ statusOptions = [
   ];
 
   onOptionsChanged(updatedOptions: any[]) {
-    console.log('Selected options:', updatedOptions.filter(o => o.selected));
+    // console.log('Selected options:', updatedOptions.filter(o => o.selected));
   }
 
   onStatusOptionsChanged(updatedOptions: any[]) {
-    console.log('Selected options:', updatedOptions.filter(o => o.selected));
+    // console.log('Selected options:', updatedOptions.filter(o => o.selected));
   }
 }

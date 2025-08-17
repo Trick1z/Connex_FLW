@@ -26,12 +26,12 @@ export class LoginComponent {
   }
 
   usernameError: string[] = [];
-  showError : boolean = false
- handleCloseError() {
+  showError: boolean = false
+  handleCloseError() {
     this.showError = false;
   }
   triggerError() {
-    
+
     this.showError = true;
   }
 
@@ -51,33 +51,32 @@ export class LoginComponent {
     this.authService.login(this.userData).subscribe({
       next: () => {
 
-    Swal.fire({
-            title: 'สำเร็จ',  
-            text: 'เข้าสู่ระบบสำเร็จ',
-            icon: 'success',  
-            confirmButtonText: 'ตกลง',
-            timer: 1500,
-          });
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'เข้าสู่ระบบสำเร็จ',
+          icon: 'success',
+          confirmButtonText: 'ตกลง',
+          timer: 1500,
+        });
 
-        console.log('next work');
+        // console.log('next work');
 
-        this.usernameError = []
+
         this.router.navigate([ViewsRoute.HomeFullPath]);
 
       },
       error: (err) => {
         // console.log(err);
-
+        this.usernameError = []
         if (err.error && err.error.messages) {
-          // this.usernameError = err.error.messages.username || '';
-          // // this.usernameError.push(err.error.messages.username || '') ;
-          //       alert(err.error.messages.username.system[0])
-
-          // alert(err.error.messages.system)
-
-          this.usernameError.push(err.error.messages.system)
-
-
+          Object.keys(err.error.messages).forEach((key) => {
+            const val = err.error.messages[key];
+            if (Array.isArray(val)) {
+              this.usernameError.push(...val); // push array ทั้งหมด
+            } else {
+              this.usernameError.push(val);    // push string เดียว
+            }
+          });
         }
       }
     });

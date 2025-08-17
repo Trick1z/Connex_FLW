@@ -33,12 +33,15 @@ namespace Domain.ViewModels
         public int IssueCategoriesId { get; set; }
         public string IssueCategoriesName { get; set; }
         public bool IsProgramIssue { get; set; }
+
+        public DateTime? ModifiedTime { get; set; }
     }
 
     public class UpdateProduct
     {
         public int ProductId { get; set; }
         public string ProductName { get; set; }
+        public DateTime? ModifiedTime { get; set; }
     }
 
     public class DeleteCategories

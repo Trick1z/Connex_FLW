@@ -10,10 +10,12 @@
     <dxi-column dataField="isProgramIssue" caption="Program Issue" width="150" alignment="center"></dxi-column>
 
 
-    <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'"  cellTemplate="actionTemplate"
+    <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
       alignment="center">
     </dxi-column>
     <div *dxTemplate="let cell of 'actionTemplate'">
+      <dx-button class="m-2" (onClick)="getViewProductDetail(cell.data) " text="Info" type="default"
+        stylingMode="contained"></dx-button>
       <dx-button class="m-2" (onClick)="productPopupShow(cell.data) " text="Map" type="success"
         stylingMode="contained"></dx-button>
     </div>
@@ -21,11 +23,11 @@
 
 </div>
 <!-- *ngIf="categoriesMapProduct" -->
-<div class="products-popup" >
-  <dx-popup  [width]="400" [height]="400" [(visible)]="productVisible" [showTitle]="true" [dragEnabled]="true"
+<div class="products-popup">
+  <dx-popup [width]="400" [height]="400" [(visible)]="productVisible" [showTitle]="true" [dragEnabled]="true"
     [closeOnOutsideClick]="true" title="Map Categories Product" (onHiding)="productPopupHide()">
 
-    <div class="popup-content"  *ngIf="categoriesMapProduct ">
+    <div class="popup-content" *ngIf="categoriesMapProduct ">
       <div class="flex justify-start mb-5 text-2xl user-box">
         <span class="label">Categories :</span>
         <span class="ml-5 username">{{ CategoriesName }}</span>
@@ -39,6 +41,47 @@
         <app-button (clicked)="onProductSaveData()" [message]="'Save'"></app-button>
         <app-button color="red" (clicked)="productPopupHide()" [message]="'Close'"></app-button>
       </div>
-    </div>    
+    </div>
   </dx-popup>
 </div>
+
+
+
+
+
+
+<!-- viewDetail -->
+
+
+<dx-popup [height]="300" [(visible)]="viewPopupDetail" [width]="500" [showTitle]="true" [closeOnOutsideClick]="true"
+  title="Categories Info" (onHiding)="onViewPopupHide()">
+  <div class="popup-content">
+    <div class="flex justify-start" id="">
+      <div class="flex justify-start text-2xl user-box">
+        <span class="label">Category : </span>
+        <span class=" ml-5 username"> {{ viewUserCategoriesName }}</span>
+      </div>
+
+      <!-- <div class="flex justify-start ml-10 text-2xl user-box">
+                <span class="label">Role : </span>
+                <span class=" ml-5 username"> {{ viewRole }}</span>
+            </div> -->
+
+    </div>
+    <app-head-underline [title]="'Products'"></app-head-underline>
+
+    <div class="categories-item grid grid-cols-5 gap-1 mt-5" *ngIf="viewCategoriesDetail.length > 0 ;else noViewData">
+
+
+      <app-button *ngFor="let item of viewCategoriesDetail" [color]="'blue'" [message]="item"></app-button>
+
+
+    </div>
+
+    <ng-template #noViewData>
+      <div class="flex justify-center mt-10">
+        <p class="text-gray-500">No products mapped for this categories.</p>
+      </div>
+    </ng-template>
+  </div>
+</dx-popup>

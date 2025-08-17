@@ -18,6 +18,12 @@ export interface UserMapCategoriesViewModel {
     categoriesText: string;
     modifiedTime: string | null;
 }
+export interface ViewUserModel {
+    userId: number;
+    categories: number[];
+    categoriesText: string;
+}
+
 
 
 export interface categoriesMapProductViewModel {

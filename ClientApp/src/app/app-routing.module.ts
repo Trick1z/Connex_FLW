@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminRoute, AuthRoute, CustomerRoute, GamesRoute, UserRoute, ViewsRoute } from './constants/routes.const';
 import { RedirectGuard } from './guards/redirect.guard';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
 
@@ -16,17 +17,17 @@ const routes: Routes = [
         // , canActivate: [NoAuthGuard],
       },
       {
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
         path: ViewsRoute.prefix,
         loadChildren: () => import('./components/views/views-routing.module').then(m => m.ViewsRoutingModule)
       },
       {
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
         path: UserRoute.prefix,
         loadChildren: () => import('./modules/issue-inform/issue-inform.module').then(m => m.IssueInformModule)
       },
       {
-        // canActivate: [AuthGuard],
+        canActivate: [AuthGuard],
         path: AdminRoute.prefix,
         loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
       } ,

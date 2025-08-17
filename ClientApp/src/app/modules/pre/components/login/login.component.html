@@ -1,16 +1,16 @@
 <div class="container mx-auto">
     <div class="px-6 py-24 bg-white isolate sm:py-32 lg:px-8">
 
-        <div class="max-w-2xl mx-auto text-center">
+        <div class="max-w-2xl mx-auto text-center mb-10">
             <h2 class="text-4xl font-semibold tracking-tight text-gray-900 text-balance sm:text-5xl">เข้าสู่ระบบ</h2>
         </div>
 
 
-        <div class="max-w-md mx-auto" *ngIf="this.usernameError.length >0">
+        <div class="max-w-md mt-2 mx-auto" *ngIf="this.usernameError.length >0">
             <app-error-panel [visible]="showError" [messages]="usernameError"
                 (close)="handleCloseError()"></app-error-panel>
         </div>
-        <dx-form class="flex justify-center max-w-md mx-auto text-end sm:mt-20" id="form" [formData]="userData"
+        <dx-form class="flex justify-center max-w-md mx-auto text-end sm:mt-2" id="form" [formData]="userData"
             [colCount]="1">
             <dxi-item itemType="group">
                 <dxi-item dataField="username" [label]="{ text: 'ชื่อผู้ใช้' }"

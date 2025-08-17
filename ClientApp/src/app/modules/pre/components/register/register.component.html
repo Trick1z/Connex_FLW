@@ -1,5 +1,5 @@
 <div class="container mx-auto">
-    <div class="px-6 py-24 bg-white isolate sm:py-32 lg:px-8">
+    <div class="px-6 pt-24 bg-white isolate sm:pt-24 lg:px-8">
         <div class="max-w-2xl mx-auto text-center">
             <h2 class="text-4xl font-semibold tracking-tight text-gray-900 text-balance sm:text-5xl">สร้างบัญชี</h2>
         </div>
@@ -21,13 +21,13 @@
                         [label]="{ text: 'ยืนยันรหัสผ่าน' }"></dxi-item>
 
                     <dxi-item dataField="role" [label]="{ text: 'ประเภท' }" editorType="dxSelectBox" [editorOptions]="{ 
-    dataSource: customerRole, 
-    valueExpr: 'roleId', 
-    displayExpr: 'roleName' 
-  }">
+                                dataSource: customerRole, 
+                                valueExpr: 'roleId', 
+                                displayExpr: 'roleName' 
+                            }">
 
                     </dxi-item>
-                </dxi-item>
+                </dxi-item>F
             </dx-form>
             <div class="flex justify-center mt-10 ml-20">
                 <button type="submit"
@@ -36,5 +36,13 @@
             </div>
         </form>
     </div>
+
+    <p class="text-center mt-10 text-gray-400 text-sm/6">
+        เป็นสมาชิกอยู่แล้ว?
+        <button (click)="NavigateToLoginPage()"
+            class="ml-1 font-semibold text-indigo-400 transition hover:text-indigo-500">
+            เข้าสู่ระบบที่นี่
+        </button>
+    </p>
 
 </div>

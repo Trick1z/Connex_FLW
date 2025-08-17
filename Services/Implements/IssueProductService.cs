@@ -30,6 +30,9 @@ namespace Services.Implements
             await IsNullOrEmptyString(requried, validate);
             await IsCategoryInTable(requried, validate);
 
+
+        
+
             validate.Throw();
 
             IssueCategories data = PackedData(requried);
@@ -135,20 +138,32 @@ namespace Services.Implements
 
 
         //Update
-        public async Task<IssueCategories> UpdateCategoriesItems(UpdateCategories req)
+        public async Task<IssueCategories> UpdateCategoriesItems(UpdateCategories param)
         {
             var validate = new ValidateException();
 
-            IsCategoriesIdValidate(req, validate);
-            IsCategoriesFieldNullOrEmptyString(req, validate);
+            IsCategoriesIdValidate(param, validate);
+            IsCategoriesFieldNullOrEmptyString(param, validate);
 
-            IssueCategories resp = await GetExistCategoriesInDatabase(req, validate);
+            IssueCategories resp = await GetExistCategoriesInDatabase(param, validate);
+
+            var categoriesItem = await _context.IssueCategories.Where(r => r.IssueCategoriesId == param.IssueCategoriesId).ToListAsync();
+
+
+            var dbModifiedTime = categoriesItem.Select(s => s.ModifiedTime).Max();
+
+
+            if (param.ModifiedTime != dbModifiedTime)
+            {
+                validate.Add("ModifiedTime", "Please f5 and try again");
+            }
+
 
             validate.Throw();
 
             var dateNow = DateTime.Now;
-            resp.IssueCategoriesName = req.IssueCategoriesName;
-            resp.IsProgramIssue = req.IsProgramIssue;
+            resp.IssueCategoriesName = param.IssueCategoriesName;
+            resp.IsProgramIssue = param.IsProgramIssue;
             resp.ModifiedTime = dateNow;
 
             await _context.SaveChangesAsync();
@@ -160,18 +175,31 @@ namespace Services.Implements
 
         }
 
-        public async Task<Product> UpdateProductItems(UpdateProduct req)
+        public async Task<Product> UpdateProductItems(UpdateProduct param)
         {
             var validate = new ValidateException();
 
-            IsProductIdValidate(req, validate);
-            IsProductFieldNullOrEmptyString(req, validate);
-            Product resp = await GetExistProductInDatabase(req, validate);
+            IsProductIdValidate(param, validate);
+            IsProductFieldNullOrEmptyString(param, validate);
+            Product resp = await GetExistProductInDatabase(param, validate);
+
+            var productItem = await _context.Product
+                .Where(r => r.ProductId == param.ProductId).ToListAsync();
+
+
+            var dbModifiedTime = productItem.Select(s => s.ModifiedTime).Max();
+
+
+            if (param.ModifiedTime != dbModifiedTime)
+            {
+                validate.Add("ModifiedTime", "Please Reload Page and try again");
+            }
+
 
             validate.Throw();
 
             var dateNow = DateTime.Now;
-            resp.ProductName = req.ProductName;
+            resp.ProductName = param.ProductName;
             resp.ModifiedTime = dateNow;
 
             await _context.SaveChangesAsync();

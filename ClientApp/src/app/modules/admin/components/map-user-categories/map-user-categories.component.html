@@ -5,6 +5,9 @@
 
     <dx-data-grid class="flex m-10 max-w-max " [dataSource]="userDataList" [showBorders]="true"
         [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
+        <dxo-search-panel [visible]="true" [width]="240" placeholder="Search..."></dxo-search-panel>
+
+
         <dxi-column dataField="userId" caption="ID" width="80" alignment="center"></dxi-column>
         <dxi-column dataField="username" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
         <dxi-column dataField="roleName" caption="Role" minWidth="150" alignment="center"></dxi-column>
@@ -13,6 +16,8 @@
             alignment="center">
         </dxi-column>
         <div *dxTemplate="let cell of 'actionTemplate'">
+            <dx-button class="m-2" (onClick)="getViewUserDetail(cell.data)" text="Info" type="default"
+                stylingMode="contained"></dx-button>
             <dx-button class="m-2" (onClick)="onMapDetailPopupShow(cell.data)" text="Map" type="success"
                 stylingMode="contained"></dx-button>
         </div>
@@ -36,15 +41,43 @@
                 </div>
 
             </div>
-            <dx-tag-box [dataSource]="categoriesTagDataSource" displayExpr="showText"
-                valueExpr="value" (onValueChanged)="onChange($event)" [value]="userMapCategories.categories" [showSelectionControls]="true">
+            <dx-tag-box [dataSource]="categoriesTagDataSource" displayExpr="showText" valueExpr="value"
+                (onValueChanged)="onChange($event)" [value]="userMapCategories.categories"
+                [showSelectionControls]="true">
             </dx-tag-box>
             <div class="flex items-end justify-center gap-2 h-28">
                 <app-button (clicked)="onSaveSubmit()" [message]="'Save'"></app-button>
                 <app-button (clicked)="productPopupHide() " color="red" [message]="'Close'"></app-button>
             </div>
 
-    
+
         </div>
     </dx-popup>
 </div>
+<!-- view popup-->
+<dx-popup [height]="300" [(visible)]="viewPopupDetail" [width]="500" [showTitle]="true" [closeOnOutsideClick]="true"
+    title="User Info" (onHiding)="onViewPopupHide()">
+    <div class="popup-content">
+        <div class="flex justify-start" id="">
+            <div class="flex justify-start text-2xl user-box">
+                <span class="label">User : </span>
+                <span class=" ml-5 username"> {{ viewUsername }}</span>
+            </div>
+
+            <div class="flex justify-start ml-10 text-2xl user-box">
+                <span class="label">Role : </span>
+                <span class=" ml-5 username"> {{ viewRole }}</span>
+            </div>
+
+        </div>
+        <app-head-underline [title]="'Categories'"></app-head-underline>
+        <div class="categories-item grid grid-cols-5 gap-1 mt-5" *ngIf="viewUserDetail.length > 0 ;else noViewData">
+            <app-button *ngFor="let item of viewUserDetail" [color]="'blue'" [message]="item"></app-button>
+        </div>
+        <ng-template #noViewData>
+            <div class="flex justify-center mt-10">
+                <p class="text-gray-500">No categories mapped for this user.</p>
+            </div>
+        </ng-template>
+    </div>
+</dx-popup>

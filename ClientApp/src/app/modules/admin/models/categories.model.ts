@@ -13,6 +13,7 @@ export interface ProductDeleteFormData {
 export interface ProductUpdateFormData {
   productId: number;
   productName: string ;
+  modifiedTime?: string; // Optional field for modified time
 
 } 
  
@@ -21,6 +22,7 @@ export interface CategoriesUpdateFormData {
 issueCategoriesId: number;
   issueCategoriesName: string ;
   isProgramIssue: boolean;
+  modifiedTime?: string; // Optional field for modified time
 } 
  
  

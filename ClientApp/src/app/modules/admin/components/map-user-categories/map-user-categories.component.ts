@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api-service.service';
 import { DropDownList, ProductsDataModel, UserMapCategoriesViewModel } from '../../models/tag-option.model';
 import { MappingCategoriesModel, UnMappingCategoriesModel } from '../../models/mapping.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-map-user-categories',
@@ -26,120 +27,109 @@ export class MapUserCategoriesComponent implements OnInit {
   globalId: number = 0;
   unmappedItem: UnMappingCategoriesModel[] = [];
   mappedItem: MappingCategoriesModel[] = []
-
-
-
-
-  // getUserByRoleSupport() {
-  //   this.api.get("api/ConfigSupport/userByRole").subscribe((res: any) => {
-  //     console.log(res);
-
-  //     this.userDataList = res
-  //   })
-
-  // }
+  categoriesVisible = false;
+  categoriesTagDataSource: DropDownList[] = [];
+  userMapCategories!: UserMapCategoriesViewModel;
+  viewPopupDetail: boolean = false;
+  viewUserDetail: Array<string> = [];
+  viewUsername: string = '';
+  viewRole: string = '';
 
   getUserByRoleSupport() {
     this.api.get("api/ConfigSupport/userByRole").subscribe({
       next: (res: any) => {
-        console.log("✅ Success:", res);
+        // console.log("✅ Success:", res);
         this.userDataList = res;
       },
       error: (err) => {
-        console.error("❌ API Error:", err);
+        // console.error("❌ API Error:", err);
       },
       complete: () => {
-        console.log("ℹ️ API call completed");
+        // console.log("ℹ️ API call completed");
       }
     });
   }
-  // label 
-
 
   onMapDetailPopupHide() {
     this.mapDetailVisible = false;
   }
+
   onMapDetailPopupShow(data: any) {
     this.globalId = data.userId
     this.labelUsername = data.username
     this.labelRole = data.roleName
-
     this.getCategoriesForUser(data.userId)
-
     this.mapDetailVisible = true;
-    // console.log(data);
-
-
 
   }
   productPopupHide() {
     this.mapDetailVisible = false
   }
 
+  getViewUserDetail(data: any) {
 
-
-  categoriesVisible = false;
-
-  categoriesTagDataSource: DropDownList[] = [];
-  // categoriesSelectedTags: number[] = [];
-
-  userMapCategories!: UserMapCategoriesViewModel;
+    var id = data.userId;
+    this.viewUsername = data.username;
+    this.viewRole = data.roleName;
+    this.viewPopupDetail = true;
+    this.api.get(`api/ConfigSupport/loadUser/${id}`).subscribe({
+      next: (res: UserMapCategoriesViewModel) => {
+        this.viewUserDetail = res.categoriesText.split(',').map((item: string) => item.trim());
+      }, error: (err) => {
+        this.viewUserDetail = [];
+      }
+    });
+  }
+  onViewPopupHide() {
+    this.viewPopupDetail = false;
+  }
 
   getCategoriesForUser(id: number) {
-    // ดึงข้อมูลทั้งหมดจาก backend (รวม mapped/unmapped)
     this.api.get(`api/ConfigSupport/loadUser/${id}`).subscribe({
       next: (res: UserMapCategoriesViewModel) => {
         this.userMapCategories = res
-
-
       }, error: (err) => {
-        console.error('❌ API Error:', err);
         this.userMapCategories = {
-
           userId: id,
           categories: [],
           categoriesText: '',
           modifiedTime: null
         };
-      }, complete: () => {
-        console.log('ℹ️ API call completed');
       }
     });
 
-
-
-    this.api.get(`api/DropDown/userMapCategoriesByUserId`).subscribe((res: DropDownList[]) => {
-      this.categoriesTagDataSource = res
-    });
+    this.api.get(`api/DropDown/userMapCategoriesByUserId`).subscribe({
+      next: (res: DropDownList[]) => {
+        this.categoriesTagDataSource = res
+      },
+      error: (err) => {
+        this.categoriesTagDataSource = [];
+      }
+    })
   }
 
   onSaveSubmit() {
-
-
-    // var newData = {
-    //   userId: this.globalId,
-    //   categoriesId: this.userMapCategories
-
-
-    // }
-
-    // console.log(this.userMapCategories);
-
-
-
-    this.api.post(`api/ConfigSupport/InsertMappingUserCategories`, this.userMapCategories).subscribe((res: any) => {
-
-      // console.log(res);
-      this.productPopupHide();
-
+    this.api.post(`api/ConfigSupport/InsertMappingUserCategories`, this.userMapCategories).subscribe({
+      next: (res: any) => {
+        // console.log("✅ Success:", res);
+        this.mapDetailVisible = false;
+        this.getUserByRoleSupport();
+      },
+      error: (err) => {
+        this.mapDetailVisible = false;
+        Swal.fire({
+          title: 'ไม่สามารถบันทึกข้อมูลได้',
+          text: 'กรุณาลองรีเฟรชหน้าเว็บและลองอีกครั้ง',
+          icon: 'error',
+          confirmButtonText: 'ตกลง'
+        });
+      }
     })
   }
 
   onChange(e: any) {
     this.userMapCategories.categories = e.value
-    console.log(e);
+    // console.log(e);
 
   }
-
-  // 
 }

@@ -45,13 +45,14 @@ export class RegisterComponent implements OnInit {
           confirmButtonText: 'ตกลง'
         })
         
-        console.log("✅ success:", res);
+        // console.log("✅ success:", res);
         this.navigator.navigate([AuthRoute.LoginFullPath]);
       },
       error: (err: any) => {
         // if (err.error && err.error.messages) {
         //   this.error.push(err.error.messages.username)
         // }
+        this.error = [];
         if (err.error && err.error.messages) {
           Object.keys(err.error.messages).forEach((key) => {
             const val = err.error.messages[key];
@@ -75,4 +76,9 @@ export class RegisterComponent implements OnInit {
 
     })
   }
+
+  NavigateToLoginPage(){
+    this.navigator.navigate([AuthRoute.LoginFullPath]);
+  }
+
 }
