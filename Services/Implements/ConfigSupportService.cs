@@ -55,16 +55,6 @@ namespace Services.Implements
             validate.Throw();
 
 
-
-
-
-
-
-
-
-
-
-
             // ดึง categories ที่ active และอยู่ใน request
             var categories = await _context.IssueCategories
                 .Where(c => c.IsActive && param.Categories.Contains(c.IssueCategoriesId))

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from 'src/app/services/api-service.service';
 import { categoriesDeleteFormData, CategoriesUpdateFormData, ProductDeleteFormData, ProductUpdateFormData } from 'src/app/modules/admin/models/categories.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../../models/insert-categories.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-categories-product-main',
@@ -99,13 +100,24 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     }
 
-    this.api.post('api/IssueProduct/SaveCategories', data).subscribe((res: any) => {
+    this.api.post('api/IssueProduct/SaveCategories', data).subscribe({
+      next: (res: any) => {
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'บันทึกข้อมูลสำเร็จ',
+          icon: 'success',
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+        });
+        this.getCategoriesProductDataList();
 
-      console.log(res);
+        return this.categoryPopupHide()
 
-      this.getCategoriesProductDataList();
+      },
+      error: (err) => {
+        console.error('❌ API Error:', err);
+      }
 
-      return this.categoryPopupHide()
     })
   }
 
@@ -116,14 +128,24 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     }
 
-    this.api.post('api/IssueProduct/SaveProduct', data).subscribe((res: any) => {
-      console.log(res);
+    this.api.post('api/IssueProduct/SaveProduct', data).subscribe({
 
-      this.getCategoriesProductDataList();
+      next: (res: any) => {
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'บันทึกข้อมูลสำเร็จ',
+          icon: 'success',
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+        });
+        this.getCategoriesProductDataList();
 
-      return this.productPopupHide()
+        return this.productPopupHide()
 
-
+      },
+      error: (err) => {
+        console.error('❌ API Error:', err);
+      }
     })
   }
 
@@ -136,11 +158,22 @@ export class AddCategoriesProductMainComponent implements OnInit {
     }
 
 
-    this.api.post(`api/IssueProduct/DeleteCategories`, newData).subscribe((res: any) => {
-
-      console.log(res);
-      this.getCategoriesProductDataList();
-    });
+    this.api.post(`api/IssueProduct/DeleteCategories`, newData).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.getCategoriesProductDataList();
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'ลบข้อมูลสำเร็จ',
+          icon: 'success',
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+        });
+      },
+      error: (err) => {
+        console.error('❌ API Error:', err);
+      }
+    })
 
 
   }
@@ -154,11 +187,22 @@ export class AddCategoriesProductMainComponent implements OnInit {
     }
 
 
-    this.api.post(`api/IssueProduct/DeleteProduct`, newData).subscribe((res: any) => {
-
-      console.log(res);
-      this.getCategoriesProductDataList();
-    });
+    this.api.post(`api/IssueProduct/DeleteProduct`, newData).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.getCategoriesProductDataList();
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'ลบข้อมูลสำเร็จ',
+          icon: 'success',
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+        });
+      },
+      error: (err) => {
+        console.error('❌ API Error:', err);
+      }
+    })
 
 
   }
@@ -199,11 +243,54 @@ export class AddCategoriesProductMainComponent implements OnInit {
     }
 
 
-    this.api.post("api/IssueProduct/UpdateProduct", newData).subscribe((res: any) => {
-      console.log(res);
-      this.onEditProductPopupHide();
-      this.getCategoriesProductDataList();
-    })
+    this.api.post("api/IssueProduct/UpdateProduct", newData).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.onEditProductPopupHide();
+        this.getCategoriesProductDataList();
+
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'บันทึกข้อมูลสำเร็จ',
+          icon: 'success',
+
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+        });
+      },
+      error: (err) => {
+
+        if (err.error && err.error.messages) {
+          this.editProductVisible = false;
+
+          return Swal.fire({
+            title: 'error',
+            text: `บันทึกข้อมูลไม่สำเร็จ: ${err.error.messages.product}`,
+            icon: 'error',
+
+            confirmButtonText: 'ตกลง',
+            timer: 3000
+          });
+
+
+
+        }
+
+        this.editProductVisible = false;
+
+        return Swal.fire({
+          title: 'error',
+          text: 'บันทึกข้อมูลไม่สำเร็จ',
+          icon: 'error',
+
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+
+        });
+      }
+    });
+
+
 
     // console.log(this.editFormData);
 
@@ -255,10 +342,49 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
 
 
-    this.api.post("api/IssueProduct/UpdateCategories", newData).subscribe((res: any) => {
-      console.log(res);
-      this.onEditCategoriesPopupHide();
-      this.getCategoriesProductDataList();
+    this.api.post("api/IssueProduct/UpdateCategories", newData).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.onEditCategoriesPopupHide();
+        this.getCategoriesProductDataList();
+
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'บันทึกข้อมูลสำเร็จ',
+          icon: 'success',
+
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+        });
+      },
+      error: (err) => {
+
+        if (err.error && err.error.messages) {
+          this.editCategoriesVisible = false;
+
+          return Swal.fire({
+            title: 'บันทึกข้อมูลไม่สำเร็จ',
+            text: `${err.error.messages.categories}`,
+            icon: 'error',
+
+            confirmButtonText: 'ตกลง',
+            timer: 3000
+          });
+
+        }
+
+        this.editCategoriesVisible = false;
+
+        return Swal.fire({
+          title: 'error',
+          text: 'บันทึกข้อมูลไม่สำเร็จ',
+          icon: 'error',
+
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+
+        });
+      }
     })
 
     // console.log(this.editFormData);

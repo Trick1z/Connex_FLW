@@ -78,6 +78,17 @@ namespace Domain.ViewModels
         public DateTime? ModifiedTime { get; set; }
     }
 
+    public class SaveCategoriesProductParam
+    {
+        public int CategoriesId { get; set; }
+        public List<int> product { get; set; }
+
+        public DateTime? ModifiedTime { get; set; }
+    }
+
+
+
+
 
 
     //out
@@ -101,6 +112,15 @@ namespace Domain.ViewModels
 
         public List<string> Categories { get; set; }
         public string CategoriesText { get; set; }
+        public DateTime? ModifiedTime { get; set; }
+    }
+    public class CategoriesMapProductViewModel
+    {
+        public int CategoriesId { get; set; }
+        //public string Username { get; set; }
+
+        public List<string> product { get; set; }
+        public string ProductText { get; set; }
         public DateTime? ModifiedTime { get; set; }
     }
 

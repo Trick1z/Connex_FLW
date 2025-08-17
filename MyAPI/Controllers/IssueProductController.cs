@@ -21,10 +21,10 @@ namespace MyAPI.Controllers
 
 
         [HttpPost("SaveIssueMapProduct")]
-        public async Task<IActionResult> InsertMappingCategoriesProductItem(MappingCategoriesProductItem req)
+        public async Task<IActionResult> InsertMappingCategoriesProductItem(SaveCategoriesProductParam req)
         {
 
-            return Ok(await _issueProduct.InsertMapCategoriesProduct(req));
+            return Ok(await _issueProduct.SaveCategoriesProduct(req));
         }
 
 
@@ -80,7 +80,11 @@ namespace MyAPI.Controllers
         {
             return Ok(await _issueProduct.GetProductItems());
         }
+
+        [HttpGet("LoadCategories/{id}")]
+        public async Task<IActionResult> LoadCategories(int id)
+        {
+            return Ok(await _issueProduct.LoadCategories(id));
+        }
     }
-
-
 }

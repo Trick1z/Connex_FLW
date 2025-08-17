@@ -11,13 +11,7 @@ public partial class RelCategoriesProduct
 
     public int ProductId { get; set; }
 
-    public bool IsActive { get; set; }
-
-    public string DeleteFlag { get; set; }
-
     public DateTime CreatedTime { get; set; }
-
-    public DateTime ModifiedTime { get; set; }
 
     public virtual IssueCategories IssueCategories { get; set; }
 

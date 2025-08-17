@@ -153,7 +153,7 @@ namespace Services.Implements.Auth
 
 
         //register
-        public async Task<string> UserRegisterAsync(UserRegisterViewModel request)
+        public async Task<bool> UserRegisterAsync(UserRegisterViewModel request)
         {
             var validate = new ValidateException();
             IsNullOrEmptyString(request, validate);
@@ -172,7 +172,7 @@ namespace Services.Implements.Auth
             _context.User.Add(data);
             await _context.SaveChangesAsync();
 
-            return "Register Successfully";
+            return true;
 
         }
 
@@ -219,7 +219,7 @@ namespace Services.Implements.Auth
 
             if (request.Role <= 0)
             {
-                validate.Add("Role", "Field Role is required and must be greater than 0");
+                validate.Add("Role", "Field Role is required");
             }
 
 

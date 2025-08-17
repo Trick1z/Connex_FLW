@@ -35,7 +35,7 @@ const routes: Routes = [
       // {
       //   // canActivate: [AuthGuard],
       //   path: LandingRoute.prefix,
-      //   loadChildren: () => import('./modules/pre/pre.module').then(m => m.PreModule   )  }
+      //   loadChildren: () => import('./components/views/landing/landing-routing.module').then(m => m.LandingRoutingModule   )  }
     ]
 
 

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 // import { AdminRoute, AuthRoute } from 'src/app/Constants/routes.const';
 
-import { AdminRoute, AuthRoute, LandingRoute, UserRoute } from 'src/app/constants/routes.const';
+import { AdminRoute, AuthRoute, UserRoute, ViewsRoute } from 'src/app/constants/routes.const';
 import { ApiService } from 'src/app/services/api-service.service';
 
 
@@ -33,8 +33,8 @@ export class NavbarTopComponent {
   ]
   userRoutes: any = [
     {
-      name:  UserRoute.UserFormName,
-      path:  UserRoute.UserFormFullPath
+      name: UserRoute.UserFormName,
+      path: UserRoute.UserFormFullPath
     }
   ]
 
@@ -47,7 +47,7 @@ export class NavbarTopComponent {
     this.setUser();
   }
   constructor(private route: Router,
-    private api : ApiService
+    private api: ApiService
   ) { }
 
   setUser() {
@@ -62,20 +62,20 @@ export class NavbarTopComponent {
     }
   }
 
-  
-// set dropdown f
+
+  // set dropdown f
   adminToggleDropdown() {
     this.adminDropdownOpen = !this.adminDropdownOpen;
   }
-   userToggleDropdown() {
+  userToggleDropdown() {
     this.userDropdownOpen = !this.userDropdownOpen;
   }
 
-   CloseDropdown() {
+  CloseDropdown() {
     this.adminDropdownOpen = false;
     this.userDropdownOpen = false;
   }
- 
+
 
 
   // navigateTo(path: string) {
@@ -83,30 +83,30 @@ export class NavbarTopComponent {
   //   this.route.navigate([path]);
   // }
   navigateTo(path: string) {
-  console.log('Trying to navigate to:', path);
+    console.log('Trying to navigate to:', path);
 
-  const token = localStorage.getItem('token');
-  if (!token) {
-    this.route.navigate([AuthRoute.Login]);
-    return;
-  }
-
-  // เรียก backend ตรวจสอบสิทธิ์
-  this.api.post('api/Authentication/check-access', { pageUrl: path }).subscribe({
-    next: (res: any) => {
-      if (res.allowed) {
-        this.route.navigate([path]); 
-        
-        // ถ้า allowed → navigate
-      } else {
-        this.route.navigate([LandingRoute.LandingFullPath]); // ถ้าไม่ allowed → redirect
-      }
-    },
-    error: () => {
-    this.route.navigate([LandingRoute.LandingFullPath]);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      this.route.navigate([AuthRoute.Login]);
+      return;
     }
-  });
-}
+
+    // เรียก backend ตรวจสอบสิทธิ์
+    this.api.post('api/Authentication/check-access', { pageUrl: path }).subscribe({
+      next: (res: any) => {
+        if (res.allowed) {
+          this.route.navigate([path]);
+
+          // ถ้า allowed → navigate
+        } else {
+          this.route.navigate([ViewsRoute.LandingFullPath]); // ถ้าไม่ allowed → redirect
+        }
+      },
+      error: () => {
+        this.route.navigate([ViewsRoute.LandingFullPath]);
+      }
+    });
+  }
 
 
 
@@ -114,6 +114,6 @@ export class NavbarTopComponent {
 
   onLogout() {
     sessionStorage.clear();
-    return this.route.navigate([AuthRoute.Login]);
+    return this.route.navigate([AuthRoute.LoginFullPath]);
   }
 }

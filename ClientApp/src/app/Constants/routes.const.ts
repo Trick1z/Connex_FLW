@@ -16,6 +16,10 @@ export class ViewsRoute {
 
   static Home: string = `home`;
   static HomeFullPath: string = `${ViewsRoute.prefix}/${ViewsRoute.Home}`;
+
+    static Landing: string = `landing`;
+  static LandingFullPath: string = `${ViewsRoute.prefix}/${ViewsRoute.Landing}`;
+  static LandingName: string = `landing`;
 }
 
 export class GamesRoute {
@@ -64,11 +68,9 @@ export class AdminRoute {
 
 }
 
-export class LandingRoute {
-  static prefix: string = `error`;
+// export class LandingRoute {
+//   static prefix: string = `error`;
 
-  static Landing: string = `landing`;
-  static LandingFullPath: string = `${LandingRoute.prefix}/${LandingRoute.Landing}`;
-  static LandingName: string = `landing`;
 
-}
+
+// }

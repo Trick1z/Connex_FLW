@@ -2,6 +2,7 @@
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ViewModels;
+using Microsoft.AspNet.Identity;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -325,37 +326,55 @@ namespace Services.Implements
 
 
         //mapIssueProduct
-        public async Task<IEnumerable<RelCategoriesProduct>> InsertMapCategoriesProduct(MappingCategoriesProductItem req)
+        public async Task<bool> SaveCategoriesProduct(SaveCategoriesProductParam param)
         {
+            var validate = new ValidateException();
 
+            var categories = await _context.IssueCategories
+                .Include(c => c.RelCategoriesProduct)
+                .FirstOrDefaultAsync(c => c.IssueCategoriesId == param.CategoriesId);
 
-            var category = await _context.IssueCategories.Include(x => x.RelCategoriesProduct)
-                .FirstOrDefaultAsync(x => x.IssueCategoriesId == req.CategoriesId);
+            if (categories == null)
+               validate.Add("Categories","Categories not found");
 
-            var products = await _context.Product.Where(x => x.IsActive == true)
-                .Where(x => req.ProductsId.Contains(x.ProductId)).ToListAsync();
+            var productList = await _context.RelCategoriesProduct
+                .Where(r => r.IssueCategoriesId == param.CategoriesId)
+                .ToListAsync();
 
-
-            var list = new List<RelCategoriesProduct>();
-            foreach (var item in products)
+            if (productList.Count > 0)
             {
-                list.Add(new RelCategoriesProduct()
+                // validate
+                var dbModifiedTime = productList.Select(s => s.CreatedTime).Max();
+
+                if (param.ModifiedTime != dbModifiedTime)
                 {
-                    Product = item,
-                    IssueCategories = category,
-                    IsActive = true,
-                    DeleteFlag = "N",
-                    CreatedTime = DateTime.Now,
-                    ModifiedTime = DateTime.Now
-                });
+                    // validate
+                    validate.Add("ModifiedTime", "Time Not Match!");
+                }
             }
 
-            category.RelCategoriesProduct = list;
+            validate.Throw();
+
+            // ดึง products ที่ active และอยู่ใน request
+            var products = await _context.Product
+                .Where(p => p.IsActive && param.product.Contains(p.ProductId))
+                .ToListAsync();
+
+            // สร้าง relation ใหม่
+            var newRelations = products.Select(p => new RelCategoriesProduct
+            {
+                IssueCategories = categories,
+                Product = p,
+                CreatedTime = DateTime.Now
+            }).ToList();
+
+            // แทนที่ relation เดิม
+            categories.RelCategoriesProduct = newRelations;
 
             await _context.SaveChangesAsync();
 
+            return true;
 
-            return null;
         }
 
         public async Task<IEnumerable<IssueCategories>> GetCategoriesItems()
@@ -396,6 +415,32 @@ namespace Services.Implements
                         .ToListAsync();
 
             return products;
+        }
+
+        public async Task<CategoriesMapProductViewModel> LoadCategories(int id)
+        {
+            var validate = new ValidateException();
+
+            var selectedProducts = await _context.RelCategoriesProduct
+                .Include(x => x.Product)
+                     .Where(rc => rc.IssueCategoriesId == id)
+
+
+                     .ToListAsync();
+
+
+            validate.Throw();
+
+
+            //สร้าง DTO
+            var data = new CategoriesMapProductViewModel
+            {
+                CategoriesId = id,
+                product = selectedProducts.Select(x => x.ProductId.ToString()).ToList(),
+                ModifiedTime = selectedProducts.Max(x => x.CreatedTime),
+                ProductText = string.Join(", ", selectedProducts.Select(x => x.Product.ProductName))
+            };
+            return data;
         }
 
     }

@@ -36,7 +36,6 @@
                 </div>
 
             </div>
-<!-- {{categoriesSelectedTags | json}} -->
             <dx-tag-box [dataSource]="categoriesTagDataSource" displayExpr="showText"
                 valueExpr="value" (onValueChanged)="onChange($event)" [value]="userMapCategories.categories" [showSelectionControls]="true">
             </dx-tag-box>

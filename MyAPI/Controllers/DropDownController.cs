@@ -25,10 +25,10 @@ namespace MyAPI.Controllers
         }
 
 
-        [HttpGet("GetProductsWithSelection/{id}")]
-        public async Task<IActionResult> GetProductsWithSelection(int id)
+        [HttpGet("CategoriesMapProductDropDown")]
+        public async Task<IActionResult> CategoriesMapProductDropDown()
         {
-            return Ok(await _getDropdownService.GetProductsWithSelection(id));
+            return Ok(await _getDropdownService.GetCategoriesProductsDropDown());
         }
 
         [HttpGet("userMapCategoriesByUserId")]

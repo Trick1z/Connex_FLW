@@ -4,6 +4,7 @@ import { AuthRoute, ViewsRoute } from 'src/app/constants/routes.const';
 import { ApiService } from 'src/app/services/api-service.service';
 import { AuthServiceService } from 'src/app/services/auth-service.service';
 import { UserData } from '../../models/login.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-login',
@@ -49,6 +50,15 @@ export class LoginComponent {
   onSubmit() {
     this.authService.login(this.userData).subscribe({
       next: () => {
+
+    Swal.fire({
+            title: 'สำเร็จ',  
+            text: 'เข้าสู่ระบบสำเร็จ',
+            icon: 'success',  
+            confirmButtonText: 'ตกลง',
+            timer: 1500,
+          });
+
         console.log('next work');
 
         this.usernameError = []

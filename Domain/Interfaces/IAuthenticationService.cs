@@ -11,7 +11,7 @@ namespace Domain.Interfaces
     {
         public Task<LoginResponseViewModel> UserLoginAsync(LoginViewModel request);
         public Task<object> CheckAccessAsync(int roleId, string pageUrl);
-        public Task<string> UserRegisterAsync(UserRegisterViewModel request);
+        public Task<bool> UserRegisterAsync(UserRegisterViewModel request);
 
     }
 }

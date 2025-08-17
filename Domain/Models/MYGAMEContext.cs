@@ -124,11 +124,6 @@ public partial class MYGAMEContext : DbContext
             entity.HasKey(e => new { e.IssueCategoriesId, e.ProductId }).HasName("PK_rel_Categories_Product");
 
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
-            entity.Property(e => e.DeleteFlag)
-                .IsRequired()
-                .HasMaxLength(1)
-                .IsFixedLength();
-            entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
 
             entity.HasOne(d => d.IssueCategories).WithMany(p => p.RelCategoriesProduct)
                 .HasForeignKey(d => d.IssueCategoriesId)

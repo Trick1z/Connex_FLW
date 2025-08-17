@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { NavbarTopComponent } from './components/navbar/navbar-top/navbar-top.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
-import { LandingComponent } from './components/landing/landing.component';
+import { LandingComponent } from './components/views/landing/landing.component';
 import { SharedModule } from './modules/shared/shared.module';
 
 

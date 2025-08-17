@@ -30,13 +30,28 @@ export class MapUserCategoriesComponent implements OnInit {
 
 
 
+  // getUserByRoleSupport() {
+  //   this.api.get("api/ConfigSupport/userByRole").subscribe((res: any) => {
+  //     console.log(res);
+
+  //     this.userDataList = res
+  //   })
+
+  // }
+
   getUserByRoleSupport() {
-    this.api.get("api/ConfigSupport/userByRole").subscribe((res: any) => {
-      // console.log(res);
-
-      this.userDataList = res
-    })
-
+    this.api.get("api/ConfigSupport/userByRole").subscribe({
+      next: (res: any) => {
+        console.log("✅ Success:", res);
+        this.userDataList = res;
+      },
+      error: (err) => {
+        console.error("❌ API Error:", err);
+      },
+      complete: () => {
+        console.log("ℹ️ API call completed");
+      }
+    });
   }
   // label 
 
@@ -72,30 +87,29 @@ export class MapUserCategoriesComponent implements OnInit {
 
   getCategoriesForUser(id: number) {
     // ดึงข้อมูลทั้งหมดจาก backend (รวม mapped/unmapped)
-    this.api.get(`api/ConfigSupport/loadUser/${id}`).subscribe((res: UserMapCategoriesViewModel) => {
-      this.userMapCategories = res
+    this.api.get(`api/ConfigSupport/loadUser/${id}`).subscribe({
+      next: (res: UserMapCategoriesViewModel) => {
+        this.userMapCategories = res
 
-      // console.log(this.categoriesSelectedTags);
 
+      }, error: (err) => {
+        console.error('❌ API Error:', err);
+        this.userMapCategories = {
 
-      console.log(res);
-
+          userId: id,
+          categories: [],
+          categoriesText: '',
+          modifiedTime: null
+        };
+      }, complete: () => {
+        console.log('ℹ️ API call completed');
+      }
     });
 
 
+
     this.api.get(`api/DropDown/userMapCategoriesByUserId`).subscribe((res: DropDownList[]) => {
-      // products สำหรับ TagBox
-
       this.categoriesTagDataSource = res
-
-      // this.categoriesTagDataSource = res.showText.map((res: any) => ({
-      //   value : res.issueCategoriesId,
-      //   issueCategoriesName: res.issueCategoriesName,
-      //   isActive: res.isActive
-      // }));
-
-      // ค่าเริ่มต้น selected สำหรับ TagBox
-      // this.categoriesSelectedTags = res.selectedCategories.map((c: any) => c.issueCategoriesId);
     });
   }
 
@@ -113,16 +127,16 @@ export class MapUserCategoriesComponent implements OnInit {
 
 
 
-    this.api.post(`api/ConfigSupport/InsertMappingUserCategories`,this.userMapCategories).subscribe((res : any )=>{
+    this.api.post(`api/ConfigSupport/InsertMappingUserCategories`, this.userMapCategories).subscribe((res: any) => {
 
       // console.log(res);
-      this.productPopupHide() ;
+      this.productPopupHide();
 
     })
   }
 
   onChange(e: any) {
-this.userMapCategories.categories = e.value
+    this.userMapCategories.categories = e.value
     console.log(e);
 
   }

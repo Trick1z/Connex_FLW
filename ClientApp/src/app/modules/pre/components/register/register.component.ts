@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { ApiService } from 'src/app/services/api-service.service';
 import { RegisterData, Role } from '../../models/register.model';
+import { AuthRoute } from 'src/app/constants/routes.const';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -9,66 +11,68 @@ import { RegisterData, Role } from '../../models/register.model';
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
-ngOnInit(): void {
-  this.getRoleItem();
-}
-  constructor(private api :ApiService){}
-  customerRole : Role[] = [
+  ngOnInit(): void {
+    this.getRoleItem();
+  }
+  constructor(private api: ApiService,
+    private navigator: Router
+  ) { }
+  customerRole: Role[] = [
 
   ];
   registerData: RegisterData = {
 
     username: "",
     password: "",
-    confirmPassword: "", 
+    confirmPassword: "",
     role: 0
   }
 
-  error :string [] = [];
+  error: string[] = [];
 
-  onSubmit() {
-
-
-    
-
-    // 1 จำเป็นต้อง validate ตรงหน้าบ้านมั้ย 
-    if (!this.registerData.username?.trim() ||
-      !this.registerData.password?.trim() ||
-      !this.registerData.confirmPassword?.trim() ||
-      this.registerData.role == 0) {
-
-      return Swal.fire({
-        title: "กรุณาใส่ข้อมูลให้ครบถ้วน",
-        icon: "error",
-        draggable: true
-      });
+  onSubmit(event: Event) {
+    this.error = [];
 
 
-    }
+    event.preventDefault(); // กัน reload + กัน interceptor ยิง request แปลก ๆ
+    this.api.post("api/Authentication/register", this.registerData).subscribe({
+      next: (res: any) => {
 
-// register apth : /api/User/register
-    // this.api.post
+        Swal.fire({
+          title: 'สำเร็จ',      
+          text: 'ลงทะเบียนสำเร็จ',
+          icon: 'success',  
+          confirmButtonText: 'ตกลง'
+        })
+        
+        console.log("✅ success:", res);
+        this.navigator.navigate([AuthRoute.LoginFullPath]);
+      },
+      error: (err: any) => {
+        // if (err.error && err.error.messages) {
+        //   this.error.push(err.error.messages.username)
+        // }
+        if (err.error && err.error.messages) {
+          Object.keys(err.error.messages).forEach((key) => {
+            const val = err.error.messages[key];
+            if (Array.isArray(val)) {
+              this.error.push(...val); // push array ทั้งหมด
+            } else {
+              this.error.push(val);    // push string เดียว
+            }
+          });
+        }
+      }
+    });
 
-    // if (this.registerData.password !== this.registerData.confirmPassword) {
-    //   return Swal.fire({
-    //     title: "รหัสผ่านไม่ตรงกัน",
-    //     icon: "error",
-    //     draggable: true
-    //   });
-    // }
-
-
-    // true
-    return 
-    // return console.log(this.registerData);
   }
 
-  getRoleItem(){
-    this.api.get("api/DropDown/role").subscribe((res : any ) =>{
+  getRoleItem() {
+    this.api.get("api/DropDown/role").subscribe((res: any) => {
 
       this.customerRole = res
       // console.log(res);
-      
+
     })
   }
 }
