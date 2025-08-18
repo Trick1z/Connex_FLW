@@ -15,13 +15,15 @@ namespace MyAPI.Controllers
 
 
         private readonly IDropDownService _getDropdownService;
+        private readonly IGenNumberService _genNumberService;
 
 
 
-        public DropDownController(IDropDownService getDropdownService)
+        public DropDownController(IDropDownService getDropdownService, IGenNumberService genNumberService)
         {
 
             _getDropdownService = getDropdownService;
+            _genNumberService = genNumberService;
         }
 
 
@@ -42,6 +44,15 @@ namespace MyAPI.Controllers
         public async Task<IActionResult> GetRole()
         {
             return Ok(await _getDropdownService.GetRoleItem());
+        }
+
+
+
+        [AllowAnonymous]
+        [HttpGet("testGen/{prefix}/{delay}")]
+        public async Task<IActionResult> GenNo(string prefix , int delay)
+        {
+            return Ok(await _genNumberService.GenDocNo(prefix));
         }
 
     }

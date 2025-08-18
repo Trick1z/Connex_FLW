@@ -35,6 +35,8 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<Role> Role { get; set; }
 
+    public virtual DbSet<RunningNo> RunningNo { get; set; }
+
     public virtual DbSet<SystemConfig> SystemConfig { get; set; }
 
     public virtual DbSet<User> User { get; set; }
@@ -191,6 +193,14 @@ public partial class MYGAMEContext : DbContext
             entity.Property(e => e.RoleName)
                 .IsRequired()
                 .HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<RunningNo>(entity =>
+        {
+            entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
+            entity.Property(e => e.Prefix)
+                .HasMaxLength(50)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<SystemConfig>(entity =>

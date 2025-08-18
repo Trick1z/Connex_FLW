@@ -60,6 +60,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[RunningNo]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[SystemConfig]",
          "ObjectType": 0
       },

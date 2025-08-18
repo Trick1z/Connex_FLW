@@ -42,11 +42,7 @@ namespace Domain.ViewModels
             get
             {
                 return LoadOption.Sort?.FirstOrDefault()?.Desc == true ? "DESC" : "ASC";
-
-
-
             }
-
         }
     }
 
