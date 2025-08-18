@@ -3,6 +3,13 @@ import { ApiService } from 'src/app/services/api-service.service';
 import { DropDownList, ProductsDataModel, UserMapCategoriesViewModel } from '../../models/tag-option.model';
 import { MappingCategoriesModel, UnMappingCategoriesModel } from '../../models/mapping.model';
 import Swal from 'sweetalert2';
+import { ConfigSupportService } from '../../services/config-support.service';
+import { InsertCategoriesDataModel } from '../../models/insert-categories.model';
+import { catchError, of } from 'rxjs';
+import { DropDownService } from 'src/app/services/drop-down.service';
+import DataSource from 'devextreme/data/data_source';
+import { LoadOptions } from 'devextreme/data';
+import { DevExthemeParam, usernameSearch } from '../../models/search.Model';
 
 @Component({
   selector: 'app-map-user-categories',
@@ -12,15 +19,39 @@ import Swal from 'sweetalert2';
 export class MapUserCategoriesComponent implements OnInit {
   ngOnInit(): void {
     this.getUserByRoleSupport()
-    // this.getUnmappedCategoriesItem()
-    // this.getMappedCategoriesItem()
+
+    // this.userByRoleDataSource = new DataSource({
+    //   load: (loadOptions: LoadOptions) => {
+
+    //     var newLoad: usernameSearch = {
+    //      text : this.searchUsernameValue,
+    //       loadOption : loadOptions
+    //     }
+
+
+
+
+    //     return this.service.queryUserByText(newLoad).pipe(catchError(err => {
+
+    //       return err
+    //     })).toPromise()
+
+    //   }
+    // });
+
+    this.initUserByRoleDataSource();
   }
 
+
+
+
   constructor(
-    private api: ApiService
+    private service: ConfigSupportService,
+    private dropDownService: DropDownService
   ) { }
 
   userDataList: any;
+  userByRoleDataSource!: DataSource;
   labelUsername: string = 'unknown'
   labelRole: string = 'unknown'
   mapDetailVisible: boolean = false;
@@ -35,18 +66,15 @@ export class MapUserCategoriesComponent implements OnInit {
   viewUsername: string = '';
   viewRole: string = '';
 
+  searchUsernameValue: string = 'du';
+
   getUserByRoleSupport() {
-    this.api.get("api/ConfigSupport/userByRole").subscribe({
-      next: (res: any) => {
-        // console.log("✅ Success:", res);
-        this.userDataList = res;
-      },
-      error: (err) => {
-        // console.error("❌ API Error:", err);
-      },
-      complete: () => {
-        // console.log("ℹ️ API call completed");
-      }
+    this.service.getUserByRoleSupport().pipe(catchError(err => {
+
+      return err
+    })).subscribe((res: any) => {
+
+      this.userDataList = res;
     });
   }
 
@@ -72,50 +100,54 @@ export class MapUserCategoriesComponent implements OnInit {
     this.viewUsername = data.username;
     this.viewRole = data.roleName;
     this.viewPopupDetail = true;
-    this.api.get(`api/ConfigSupport/loadUser/${id}`).subscribe({
-      next: (res: UserMapCategoriesViewModel) => {
-        this.viewUserDetail = res.categoriesText.split(',').map((item: string) => item.trim());
-      }, error: (err) => {
+    this.service.getCategoriesForUser(id)
+      .pipe(catchError(err => {
         this.viewUserDetail = [];
-      }
-    });
+
+        return err
+
+      }))
+      .subscribe((res: any) => {
+        this.viewUserDetail = res.categoriesText.split(',').map((item: string) => item.trim());
+      })
+
+
+
+    this.dropDownService.getUserMapCategoriesDropDown().pipe(catchError(err => {
+      return err
+
+    })).subscribe((res: any) => {
+      this.categoriesTagDataSource = res
+
+    })
   }
+
   onViewPopupHide() {
     this.viewPopupDetail = false;
   }
 
   getCategoriesForUser(id: number) {
-    this.api.get(`api/ConfigSupport/loadUser/${id}`).subscribe({
-      next: (res: UserMapCategoriesViewModel) => {
-        this.userMapCategories = res
-      }, error: (err) => {
+    this.service.getCategoriesForUser(id)
+      .pipe(catchError(err => {
+
         this.userMapCategories = {
           userId: id,
           categories: [],
           categoriesText: '',
           modifiedTime: null
         };
-      }
-    });
+        return err
 
-    this.api.get(`api/DropDown/userMapCategoriesByUserId`).subscribe({
-      next: (res: DropDownList[]) => {
-        this.categoriesTagDataSource = res
-      },
-      error: (err) => {
-        this.categoriesTagDataSource = [];
-      }
-    })
+      }))
+      .subscribe((res: any) => {
+        this.userMapCategories = res
+      })
   }
 
   onSaveSubmit() {
-    this.api.post(`api/ConfigSupport/InsertMappingUserCategories`, this.userMapCategories).subscribe({
-      next: (res: any) => {
-        // console.log("✅ Success:", res);
-        this.mapDetailVisible = false;
-        this.getUserByRoleSupport();
-      },
-      error: (err) => {
+    this.service.insertMappingUserCategories(this.userMapCategories)
+      .pipe(catchError(err => {
+
         this.mapDetailVisible = false;
         Swal.fire({
           title: 'ไม่สามารถบันทึกข้อมูลได้',
@@ -123,8 +155,18 @@ export class MapUserCategoriesComponent implements OnInit {
           icon: 'error',
           confirmButtonText: 'ตกลง'
         });
-      }
-    })
+
+        return err
+
+      }))
+      .subscribe(
+        (res: any) => {
+          // console.log("✅ Success:", res);
+          this.mapDetailVisible = false;
+          this.getUserByRoleSupport();
+        });
+
+
   }
 
   onChange(e: any) {
@@ -132,4 +174,34 @@ export class MapUserCategoriesComponent implements OnInit {
     // console.log(e);
 
   }
+
+  initUserByRoleDataSource() {
+
+    this.userByRoleDataSource = new DataSource({
+      load: (loadOptions: LoadOptions) => {
+
+        var newLoad: DevExthemeParam<usernameSearch> = {
+
+          searchCriteria: { text: this.searchUsernameValue },
+
+          loadOption: loadOptions
+        }
+        return this.service.queryUserByText(newLoad).pipe(catchError(err => {
+
+          return err
+        })).toPromise()
+
+      }
+    });
+  }
+
+
+  onSearchValueChange(e: string) {
+
+    this.searchUsernameValue = e
+
+    this.initUserByRoleDataSource();
+
+  }
+
 }

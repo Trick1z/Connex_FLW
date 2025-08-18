@@ -3,6 +3,12 @@ import { ApiService } from 'src/app/services/api-service.service';
 import { categoriesDeleteFormData, CategoriesUpdateFormData, ProductDeleteFormData, ProductUpdateFormData } from 'src/app/modules/admin/models/categories.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../../models/insert-categories.model';
 import Swal from 'sweetalert2';
+import { DropDownService } from 'src/app/services/drop-down.service';
+import { catchError, of } from 'rxjs';
+import { IssueProductService } from '../../services/issue-product.service';
+import { LoadOptions } from 'devextreme/data';
+import DataSource from 'devextreme/data/data_source';
+import { categoriesSearch, usernameSearch, DevExthemeParam } from '../../models/search.Model';
 
 @Component({
   selector: 'app-add-categories-product-main',
@@ -12,10 +18,13 @@ import Swal from 'sweetalert2';
 export class AddCategoriesProductMainComponent implements OnInit {
   ngOnInit(): void {
     this.getCategoriesProductDataList();
+    this.getCheckBoxItem()
   }
 
   constructor(
-    private api: ApiService
+    // private api: ApiService,
+    private dropDownService: DropDownService,
+    private issueProductService: IssueProductService
   ) { }
   // popup
   categoryVisible: boolean = false;
@@ -27,6 +36,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
   categoryDataList: Array<any> = [];
   productDataList: Array<any> = [];
+
+  checkBoxItem: Array<any> = [];
 
   // editdata
 
@@ -75,19 +86,23 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
   getCategoriesProductDataList() {
 
-    this.api.get("api/IssueProduct/Categories/item").subscribe((res: any) => {
+    this.dropDownService.getCategoryDropDown()
+      .pipe(catchError(err => {
 
-      // console.log(res);
+        return err
+      })).subscribe((res: any) => {
 
-      this.categoryDataList = res
-    })
+        this.categoryDataList = res
+      })
 
-    this.api.get("api/IssueProduct/Products/item").subscribe((res: any) => {
+    this.dropDownService.getProductDropDown()
+      .pipe(catchError(err => {
+        return err
+      })).subscribe((res: any) => {
+        // console.log(res);
 
-      // console.log(res);
-
-      this.productDataList = res
-    })
+        this.productDataList = res
+      })
 
   }
 
@@ -101,8 +116,9 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     }
 
-    this.api.post('api/IssueProduct/SaveCategories', data).subscribe({
-      next: (res: any) => {
+    this.issueProductService.onSaveCategories(data)
+      .pipe(catchError(err => { return err }))
+      .subscribe((res: any) => {
         Swal.fire({
           title: 'สำเร็จ',
           text: 'บันทึกข้อมูลสำเร็จ',
@@ -114,12 +130,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
         return this.categoryPopupHide()
 
-      },
-      error: (err) => {
-        // console.error('❌ API Error:', err);
-      }
-
-    })
+      })
   }
 
   onProductSubmit() {
@@ -129,9 +140,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
     }
 
-    this.api.post('api/IssueProduct/SaveProduct', data).subscribe({
-
-      next: (res: any) => {
+    this.issueProductService.onSaveProduct(data)
+      .pipe(catchError(err => { return err })).subscribe((res: any) => {
         Swal.fire({
           title: 'สำเร็จ',
           text: 'บันทึกข้อมูลสำเร็จ',
@@ -143,11 +153,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
         return this.productPopupHide()
 
-      },
-      error: (err) => {
-        // console.error('❌ API Error:', err);
-      }
-    })
+      })
   }
 
 
@@ -159,8 +165,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
     }
 
 
-    this.api.post(`api/IssueProduct/DeleteCategories`, newData).subscribe({
-      next: (res: any) => {
+    this.issueProductService.onDeleteCategories(newData)
+      .pipe(catchError(err => { return err })).subscribe((res: any) => {
         // console.log(res);
         this.getCategoriesProductDataList();
         Swal.fire({
@@ -170,11 +176,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
           confirmButtonText: 'ตกลง',
           timer: 1000
         });
-      },
-      error: (err) => {
-        // console.error('❌ API Error:', err);
-      }
-    })
+      })
 
 
   }
@@ -188,9 +190,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
     }
 
 
-    this.api.post(`api/IssueProduct/DeleteProduct`, newData).subscribe({
-      next: (res: any) => {
-        // console.log(res);
+    this.issueProductService.onDeleteProduct(newData)
+      .pipe(catchError(err => { return err })).subscribe((res: any) => {
         this.getCategoriesProductDataList();
         Swal.fire({
           title: 'สำเร็จ',
@@ -199,11 +200,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
           confirmButtonText: 'ตกลง',
           timer: 1000
         });
-      },
-      error: (err) => {
-        // console.error('❌ API Error:', err);
-      }
-    })
+      })
 
 
   }
@@ -223,7 +220,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
     this.editProductFormData.productName = this.editProductText
     this.editProductFormData.modifiedTime = data.modifiedTime;
 
-      // console.log(this.editProductFormData);
+    // console.log(this.editProductFormData);
 
 
   }
@@ -247,51 +244,48 @@ export class AddCategoriesProductMainComponent implements OnInit {
     }
 
 
-    this.api.post("api/IssueProduct/UpdateProduct", newData).subscribe({
-      next: (res: any) => {
-        // console.log(res);
-        this.onEditProductPopupHide();
-        this.getCategoriesProductDataList();
-
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'บันทึกข้อมูลสำเร็จ',
-          icon: 'success',
-
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-      },
-      error: (err) => {
-
-        if (err.error && err.error.messages) {
-          this.editProductVisible = false;
-
-          return Swal.fire({
-            title: 'error',
-            text: `บันทึกข้อมูลไม่สำเร็จ: ${err.error.messages.modifiedTime}`,
-            icon: 'error',
-
-            confirmButtonText: 'ตกลง',
-            timer: 3000
-          });
-
-
-
-        }
-
+    this.issueProductService.onUpdateProduct(newData).pipe(catchError(err => {
+      if (err.error && err.error.messages) {
         this.editProductVisible = false;
 
         return Swal.fire({
           title: 'error',
-          text: 'บันทึกข้อมูลไม่สำเร็จ',
+          text: `บันทึกข้อมูลไม่สำเร็จ: ${err.error.messages.modifiedTime}`,
           icon: 'error',
 
           confirmButtonText: 'ตกลง',
-          timer: 1000
-
+          timer: 3000
         });
+
+
+
       }
+
+      this.editProductVisible = false;
+
+      return Swal.fire({
+        title: 'error',
+        text: 'บันทึกข้อมูลไม่สำเร็จ',
+        icon: 'error',
+
+        confirmButtonText: 'ตกลง',
+        timer: 1000
+
+      });
+
+      return err
+    })).subscribe((res: any) => {
+      this.onEditProductPopupHide();
+      this.getCategoriesProductDataList();
+
+      Swal.fire({
+        title: 'สำเร็จ',
+        text: 'บันทึกข้อมูลสำเร็จ',
+        icon: 'success',
+
+        confirmButtonText: 'ตกลง',
+        timer: 1000
+      });
     });
 
 
@@ -349,23 +343,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
 
 
-    this.api.post("api/IssueProduct/UpdateCategories", newData).subscribe({
-      next: (res: any) => {
-        // console.log(res);
-        this.onEditCategoriesPopupHide();
-        this.getCategoriesProductDataList();
-
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'บันทึกข้อมูลสำเร็จ',
-          icon: 'success',
-
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-      },
-      error: (err) => {
-
+    this.issueProductService.onUpdateCategories(newData).pipe
+      (catchError(err => {
         if (err.error && err.error.messages) {
           this.editCategoriesVisible = false;
 
@@ -390,9 +369,21 @@ export class AddCategoriesProductMainComponent implements OnInit {
           confirmButtonText: 'ตกลง',
           timer: 1000
 
+        }); return err
+      })).subscribe((res: any) => {
+        // console.log(res);
+        this.onEditCategoriesPopupHide();
+        this.getCategoriesProductDataList();
+
+        Swal.fire({
+          title: 'สำเร็จ',
+          text: 'บันทึกข้อมูลสำเร็จ',
+          icon: 'success',
+
+          confirmButtonText: 'ตกลง',
+          timer: 1000
         });
-      }
-    })
+      })
 
     // console.log(this.editFormData);
 
@@ -402,6 +393,88 @@ export class AddCategoriesProductMainComponent implements OnInit {
     // console.log('Button clicked in parent!');
     // ทำงานอื่น ๆ เช่น เปิด popup, call API
   }
+
+
+  getCheckBoxItem() {
+    // this.dropDownService.getCategoryDropDown().pipe(catchError(err => {
+    //  this.checkBoxItem = []
+    //   return err
+    // })).subscribe((res: any[] ) => {
+
+    //   // this.checkBoxItem = res
+
+    //   this.checkBoxItem = res.map(item => ({ ...item, selected: false }));
+
+
+    // })
+
+    this.dropDownService.getCategoryDropDown()
+      .pipe(
+        catchError(err => {
+          // console.error(err);
+          this.categoryDataList = [];
+          return of([]);
+        })
+      )
+      .subscribe((res: any) => {
+        const resArray = Array.isArray(res) ? res : [];
+        this.categoryDataList = resArray.map((item: any) => ({
+          ...item,
+          selected: false // ✅ กำหนดค่า default false
+        }));
+      });
+
+
+  }
+
+  onCategoriesValueCheck(e: any, item: any) {
+
+    const newStr = this.getSelectedCategories();
+
+    console.log(newStr);
+
+
+    this.initUserByRoleDataSource(newStr)
+    // return this.issueProductService.queryCategoriesByText()
+
+
+
+
+
+
+  }
+
+
+  ProductByCategoriesDataSource!: DataSource;
+
+
+  initUserByRoleDataSource(text: string) {
+
+    this.ProductByCategoriesDataSource = new DataSource({
+      load: (loadOptions: LoadOptions) => {
+
+        var newLoad: DevExthemeParam<categoriesSearch> = {
+          searchCriteria: { text: text },
+
+          loadOption: loadOptions
+        }
+        return this.issueProductService.QueryProductOnCategories(newLoad).pipe(catchError(err => {
+
+          return err
+        })).toPromise()
+
+      }
+    });
+  }
+
+
+  getSelectedCategories(): string {
+    return this.categoryDataList
+      .filter(c => c.selected)           // เลือกเฉพาะ selected = true
+      .map(c => c.issueCategoriesId)     // ดึง id
+      .join(',');                        // รวมเป็น string
+  }
+
 
 
 

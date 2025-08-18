@@ -2,9 +2,35 @@
 
 <div class="m-11">
   <app-head-underline [title]="'Map Categories Product'"></app-head-underline>
+  <div class="ml-10 groups">
 
-  <dx-data-grid class="m-10" [dataSource]="categoriesDataList" [showBorders]="true" [paging]="{ pageSize: 5 }"
+    <div class="max-w-sm search-box">
+      <app-text-box [value]="searchCategoriesValue" (onValueChanged)="onSearchValueChange($event)"
+        [placeHolder]="'Search By Username'"></app-text-box>
+    </div>
+
+    <div class="mt-1 app-btn">
+      <app-button (clicked)="initCategoriesDataSource()" [message]="'Search'"></app-button>
+    </div>
+
+
+  </div>
+  <dx-data-grid class="m-10" [dataSource]="CategoriesDataSource" [showBorders]="true" [paging]="{ pageSize: 5 }"
     [columnAutoWidth]="true">
+
+
+    <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
+    </dxo-paging>
+
+    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
+    </dxo-pager>
+
+
+    <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
+      [groupPaging]="false">
+    </dxo-remote-operations>
+
+
     <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
     <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
     <dxi-column dataField="isProgramIssue" caption="Program Issue" width="150" alignment="center"></dxi-column>
@@ -53,24 +79,18 @@
 <!-- viewDetail -->
 
 
-<dx-popup [height]="300" [(visible)]="viewPopupDetail" [width]="500" [showTitle]="true" [closeOnOutsideClick]="true"
+<dx-popup [height]="500" [(visible)]="viewPopupDetail" [width]="800" [showTitle]="true" [closeOnOutsideClick]="true"
   title="Categories Info" (onHiding)="onViewPopupHide()">
   <div class="popup-content">
     <div class="flex justify-start" id="">
       <div class="flex justify-start text-2xl user-box">
         <span class="label">Category : </span>
-        <span class=" ml-5 username"> {{ viewUserCategoriesName }}</span>
+        <span class="ml-5 username"> {{ viewUserCategoriesName }}</span>
       </div>
-
-      <!-- <div class="flex justify-start ml-10 text-2xl user-box">
-                <span class="label">Role : </span>
-                <span class=" ml-5 username"> {{ viewRole }}</span>
-            </div> -->
-
     </div>
     <app-head-underline [title]="'Products'"></app-head-underline>
 
-    <div class="categories-item grid grid-cols-5 gap-1 mt-5" *ngIf="viewCategoriesDetail.length > 0 ;else noViewData">
+    <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewCategoriesDetail.length > 0 ;else noViewData">
 
 
       <app-button *ngFor="let item of viewCategoriesDetail" [color]="'blue'" [message]="item"></app-button>

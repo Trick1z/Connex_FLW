@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace MyAPI.Controllers
 {
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     public class IssueProductController : Controller
     {
@@ -87,5 +87,22 @@ namespace MyAPI.Controllers
         {
             return Ok(await _issueProduct.LoadCategories(id));
         }
+
+
+        [HttpPost("QueryCategoriesByText")]
+        public async Task<IActionResult> QueryCategoriesByText(DevExtremeParam<SearchCategoriesParam> param)
+        {
+            return Ok(await _issueProduct.QueryCategoriesByText(param));
+        }
+
+
+        [HttpPost("QueryProductOnCategories")]
+        public async Task<IActionResult> QueryProductByCategories(DevExtremeParam<SearchProductParam> param)
+        {
+            return Ok(await _issueProduct.QueryProducts(param));
+        }
+
+
+
     }
 }

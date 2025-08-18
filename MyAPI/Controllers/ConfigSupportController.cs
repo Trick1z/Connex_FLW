@@ -2,6 +2,7 @@
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MyAPI.Controllers
 {
@@ -33,10 +34,10 @@ namespace MyAPI.Controllers
             return Ok(await _configSupportService.LoadUser(id));
         }
 
-        
-
-
+        [HttpPost("queryUserByText")]
+        public async Task<IActionResult> QueryUserByRole(DevExtremeParam<SearchUsernameParam> param)
+        {
+            return Ok(await _configSupportService.QueryUserByRole(param));
+        }
     }
-
-
 }

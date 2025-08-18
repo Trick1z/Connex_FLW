@@ -3,9 +3,39 @@
 <div class="mt-20 ml-20 mr-20 categroy-box ">
     <app-head-underline [title]="'Support User'"></app-head-underline>
 
-    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="userDataList" [showBorders]="true"
-        [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
-        <dxo-search-panel [visible]="true" [width]="240" placeholder="Search..."></dxo-search-panel>
+
+
+
+
+    <div class="ml-10 groups">
+
+        <div class="max-w-sm search-box">
+            <app-text-box  [value]="searchUsernameValue" (onValueChanged)="onSearchValueChange($event)" [placeHolder]="'Search By Username'"></app-text-box>
+        </div>
+
+        <div class="mt-1 app-btn">
+            <app-button (clicked)="initUserByRoleDataSource()" [message]="'Search'"></app-button>
+        </div>
+
+
+    </div>
+
+    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="userByRoleDataSource" [showBorders]="true"
+        [columnAutoWidth]="true">
+
+
+        <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
+        </dxo-paging>
+
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
+        </dxo-pager>
+
+
+        <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
+            [groupPaging]="false">
+        </dxo-remote-operations>
+
+        <!-- <dxo-search-panel [visible]="true" [width]="240" placeholder="Search..."></dxo-search-panel> -->
 
 
         <dxi-column dataField="userId" caption="ID" width="80" alignment="center"></dxi-column>
@@ -61,17 +91,17 @@
         <div class="flex justify-start" id="">
             <div class="flex justify-start text-2xl user-box">
                 <span class="label">User : </span>
-                <span class=" ml-5 username"> {{ viewUsername }}</span>
+                <span class="ml-5 username"> {{ viewUsername }}</span>
             </div>
 
             <div class="flex justify-start ml-10 text-2xl user-box">
                 <span class="label">Role : </span>
-                <span class=" ml-5 username"> {{ viewRole }}</span>
+                <span class="ml-5 username"> {{ viewRole }}</span>
             </div>
 
         </div>
         <app-head-underline [title]="'Categories'"></app-head-underline>
-        <div class="categories-item grid grid-cols-5 gap-1 mt-5" *ngIf="viewUserDetail.length > 0 ;else noViewData">
+        <div class="grid grid-cols-5 gap-1 mt-5 categories-item" *ngIf="viewUserDetail.length > 0 ;else noViewData">
             <app-button *ngFor="let item of viewUserDetail" [color]="'blue'" [message]="item"></app-button>
         </div>
         <ng-template #noViewData>

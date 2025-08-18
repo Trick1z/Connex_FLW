@@ -19,9 +19,9 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<IssueCategories> IssueCategories { get; set; }
 
-    public virtual DbSet<Log_Rel_User_Categories> Log_Rel_User_Categories { get; set; }
+    public virtual DbSet<Log_Categories> Log_Categories { get; set; }
 
-    public virtual DbSet<Log_categories> Log_categories { get; set; }
+    public virtual DbSet<Log_Rel_User_Categories> Log_Rel_User_Categories { get; set; }
 
     public virtual DbSet<Pages> Pages { get; set; }
 
@@ -93,15 +93,7 @@ public partial class MYGAMEContext : DbContext
             entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
         });
 
-        modelBuilder.Entity<Log_Rel_User_Categories>(entity =>
-        {
-            entity.HasKey(e => e.LogId);
-
-            entity.Property(e => e.ActionTime).HasColumnType("datetime");
-            entity.Property(e => e.ActionType).HasMaxLength(512);
-        });
-
-        modelBuilder.Entity<Log_categories>(entity =>
+        modelBuilder.Entity<Log_Categories>(entity =>
         {
             entity.HasKey(e => e.LogId);
 
@@ -110,6 +102,14 @@ public partial class MYGAMEContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50)
                 .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Log_Rel_User_Categories>(entity =>
+        {
+            entity.HasKey(e => e.LogId);
+
+            entity.Property(e => e.ActionTime).HasColumnType("datetime");
+            entity.Property(e => e.ActionType).HasMaxLength(512);
         });
 
         modelBuilder.Entity<Pages>(entity =>

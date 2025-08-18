@@ -5,13 +5,13 @@ using System.Collections.Generic;
 
 namespace Domain.Models;
 
-public partial class Log_categories
+public partial class Log_Categories
 {
     public int LogId { get; set; }
 
     public int ActionBy { get; set; }
 
-    public DateTime ActionTime { get; set; }
-
     public string ActionType { get; set; }
+
+    public DateTime ActionTime { get; set; }
 }

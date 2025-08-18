@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services.Implements
 {
@@ -93,6 +94,9 @@ namespace Services.Implements
             return usersWithRole;
         }
 
+
+
+
         public async Task<UserMapCategoriesViewModel> LoadUser(int id)
         {
             var selectedCategories = await _context.Rel_User_Categories
@@ -112,6 +116,27 @@ namespace Services.Implements
                 CategoriesText = string.Join(", ", selectedCategories.Select(x => x.IssueCategories.IssueCategoriesName))
             };
             return data;
+        }
+
+
+
+
+
+        public async Task<QueryViewModel<USP_Query_NameResult>> QueryUserByRole(DevExtremeParam<SearchUsernameParam> param )
+        {
+
+
+            var result = await _context.Procedures.USP_Query_NameAsync(param.SearchCriteria.Text, param.LoadOption.Skip, param.LoadOption.Take, param.SortField, param.SortBy);
+            //var result = await _context.Procedures.USP_Query_NameAsync(text, loadParam.Skip, loadParam.Take, loadParam.Sort[0].Selector, "DESC");
+            var data = new QueryViewModel<USP_Query_NameResult>();
+            data.Data = result;
+            data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
+
+
+
+            return data;
+
+
         }
     }
 }

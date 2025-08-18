@@ -4,6 +4,12 @@ import { ValueChangedEvent as TagValueChangedEvent } from 'devextreme/ui/tag_box
 import { CategoriesDataModel, categoriesMapProductViewModel, DropDownList, ProductsDataModel } from '../../models/tag-option.model';
 import { ApiService } from 'src/app/services/api-service.service';
 import Swal from 'sweetalert2';
+import { IssueProductService } from '../../services/issue-product.service';
+import { catchError, of } from 'rxjs';
+import { DropDownService } from 'src/app/services/drop-down.service';
+import DataSource from 'devextreme/data/data_source';
+import { LoadOptions } from 'devextreme/data';
+import { categoriesSearch, DevExthemeParam, usernameSearch } from '../../models/search.Model';
 // import { ApiService } from 'src/app/Services/api-service.service';
 
 @Component({
@@ -37,10 +43,13 @@ export class MasterComponent implements OnInit {
   ngOnInit(): void {
     // this.getCategoriesProductData();
     this.getCategoryProductItemDetail();
+    this.initCategoriesDataSource();
   }
 
   constructor(
-    private api: ApiService
+    // private api: ApiService,
+    private dropDownService: DropDownService,
+    private issueProductService: IssueProductService
   ) { }
 
 
@@ -78,13 +87,12 @@ export class MasterComponent implements OnInit {
   // get [products , category ] data
   getCategoryProductItemDetail() {
 
-    this.api.get("api/IssueProduct/Categories/item").subscribe((res: any) => {
-      this.categoriesDataList = res
-      // console.log(res);
+    this.dropDownService.getCategoryDropDown()
+      .pipe(catchError(err => { return err }))
+      .subscribe((res: any) => {
+        this.categoriesDataList = res
 
-    })
-
-
+      })
   }
 
   categoriesDataSource: DropDownList[] = [];
@@ -98,32 +106,33 @@ export class MasterComponent implements OnInit {
   }
 
   getProductsForCategory(id: number) {
-    this.api.get(`api/IssueProduct/LoadCategories/${id}`)
-      .subscribe({
-        next: (res: categoriesMapProductViewModel) => {
-          this.categoriesMapProduct = res;
-        },
-        error: (err) => {
-          // console.error('❌ API Error:', err);
-          // 
-          this.categoriesMapProduct = {
-            categoriesId: id,
-            product: [],
-            productText: '',
-            modifiedTime: null
-          };
-        }
+    this.issueProductService.getProductsForCategory(id)
+      .pipe(catchError(err => {
+
+        this.categoriesMapProduct = {
+          categoriesId: id,
+          product: [],
+          productText: '',
+          modifiedTime: null
+        };
+
+
+        return err
+      })).subscribe((res: any) => {
+        this.categoriesMapProduct = res;
+      })
+
+
+
+    this.dropDownService.getCategoriesMapProductDropDown().pipe(catchError(err => {
+      return err
+
+
+    }))
+      .subscribe((res: any) => {
+        this.categoriesDataSource = res
+
       });
-
-
-
-    this.api.get(`api/DropDown/CategoriesMapProductDropDown`).subscribe((res: DropDownList[]) => {
-
-
-      this.categoriesDataSource = res
-
-
-    });
   }
 
 
@@ -131,8 +140,19 @@ export class MasterComponent implements OnInit {
 
   onProductSaveData() {
 
-    this.api.post(`api/IssueProduct/SaveIssueMapProduct`, this.categoriesMapProduct).subscribe({
-      next: (res: categoriesMapProductViewModel) => {
+    this.issueProductService.onProductSaveData(this.categoriesMapProduct)
+      .pipe(catchError(err => {
+        Swal.fire({
+          title: 'error',
+          text: 'มีข้อมผิดพลาดในการบันทึกข้อมูล',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+          timer: 1000
+        });
+        return err
+
+      }))
+      .subscribe((res: any) => {
         // console.log('✅ Data Saved:', res);
         this.productVisible = false;
 
@@ -144,18 +164,7 @@ export class MasterComponent implements OnInit {
           timer: 1000
         });
 
-      },
-      error: (err) => {
-        Swal.fire({
-          title: 'error',
-          text: 'มีข้อมผิดพลาดในการบันทึกข้อมูล',
-          icon: 'error',
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-
-      }
-    });
+      })
   }
 
 
@@ -175,17 +184,59 @@ export class MasterComponent implements OnInit {
     this.viewUserCategoriesName = data.issueCategoriesName;
 
     var id = data.issueCategoriesId;
-    this.api.get(`api/IssueProduct/LoadCategories/${id}`)
-      .subscribe({
-        next: (res: categoriesMapProductViewModel) => {
-          this.viewCategoriesDetail = res.productText.split(',');
-        },
-        error: (err) => {
+    this.issueProductService.getViewProductDetail(id).pipe(catchError(err => {
+      this.viewCategoriesDetail = []
 
-          this.viewCategoriesDetail = []
-        }
-      });
+      return err
+    }))
+      .subscribe((res: any) => {
+        this.viewCategoriesDetail = res.productText.split(',');
+      },);
   }
+
+
+  searchCategoriesValue: string = "b";
+  CategoriesDataSource!: DataSource;
+
+  onSearchValueChange(e: any) {
+    console.log(e.value);
+
+    this.searchCategoriesValue = e
+
+    this.initCategoriesDataSource()
+
+  }
+
+  initCategoriesDataSource() {
+
+    this.CategoriesDataSource = new DataSource({
+      load: (loadOptions: LoadOptions) => {
+
+        var newLoad: DevExthemeParam<categoriesSearch> = {
+
+          searchCriteria: { text: this.searchCategoriesValue },
+
+          loadOption: loadOptions
+        }
+
+        // console.log(newLoad);
+        // return of()
+
+
+        return this.issueProductService.queryCategoriesByText(newLoad)
+          .pipe(catchError(err => {
+
+            return err
+          })).toPromise()
+
+      }
+    });
+
+    console.log(this.CategoriesDataSource);
+
+  }
+
+
 
 
 }

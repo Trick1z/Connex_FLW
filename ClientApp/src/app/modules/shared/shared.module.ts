@@ -56,7 +56,7 @@ import { FormsModule } from '@angular/forms';
     DxSelectBoxModule,
     DxRadioGroupModule,
     FormsModule,
-    DxFormModule,
+    DxFormModule,FormsModule
 
 
 
@@ -78,7 +78,7 @@ import { FormsModule } from '@angular/forms';
     SelectBoxComponent,
     TagBoxComponent,
     TextBoxComponent,
-    
+    FormsModule,
     DxButtonModule,
     DxCheckBoxModule,
     DxDataGridModule,

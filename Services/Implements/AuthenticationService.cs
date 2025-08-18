@@ -158,8 +158,9 @@ namespace Services.Implements.Auth
             var validate = new ValidateException();
             IsNullOrEmptyString(request, validate);
             await IsUsernameInTable(request, validate);
-            await IsPasswordLengthMinimum(request, validate);
-            await ArePasswordsMatching(request, validate);
+            IsUsernameMinimum(request, validate);
+            IsPasswordLengthMinimum(request, validate);
+            ArePasswordsMatching(request, validate);
 
 
             validate.Throw();
@@ -176,6 +177,14 @@ namespace Services.Implements.Auth
 
         }
 
+        private static void IsUsernameMinimum(UserRegisterViewModel request, ValidateException validate)
+        {
+            if (request.Username.Length < 6)
+            {
+                validate.Add("username", "Username Length Minimum is 6");
+            }
+        }
+
         private static User CreateRegisterData(UserRegisterViewModel request, string hashed)
         {
             var dateNow = DateTime.Now;
@@ -190,14 +199,11 @@ namespace Services.Implements.Auth
             return member;
         }
 
-        public async Task<bool> IsPasswordLengthMinimum(UserRegisterViewModel request, ValidateException validate)
+        public static void IsPasswordLengthMinimum(UserRegisterViewModel request, ValidateException validate)
         {
-            if (request.Password.Length < 4)
-
+            if (request.Password.Length < 6)
                 validate.Add("Password", "Password Length minimum Required 6");
 
-
-            return true;
         }
 
         public bool IsNullOrEmptyString(UserRegisterViewModel request, ValidateException validate)
@@ -237,13 +243,10 @@ namespace Services.Implements.Auth
             return false;
         }
 
-        public async Task<bool> ArePasswordsMatching(UserRegisterViewModel request, ValidateException validate)
+        public static void ArePasswordsMatching(UserRegisterViewModel request, ValidateException validate)
         {
             if (request.Password != request.ConfirmPassword)
                 validate.Add("Password", "Password and ConfirmPassword do not match");
-
-
-            return true;
         }
 
         public string HashPassword(UserRegisterViewModel request)

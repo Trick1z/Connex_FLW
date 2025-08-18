@@ -28,7 +28,7 @@
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[Log_categories]",
+         "Name": "[dbo].[Log_Categories]",
          "ObjectType": 0
       },
       {
@@ -66,6 +66,18 @@
       {
          "Name": "[dbo].[User]",
          "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[USP_Query_Categories]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[USP_Query_IssueProduct]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[USP_Query_Name]",
+         "ObjectType": 1
       }
    ],
    "UiHint": null,

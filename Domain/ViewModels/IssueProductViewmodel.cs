@@ -73,14 +73,6 @@ namespace Domain.ViewModels
         public string? Message { get; set; }
     }
 
-    public class SaveUserCategoriesParam
-    {
-        public int UserId { get; set; }
-        public List<int> Categories { get; set; }
-
-        public DateTime? ModifiedTime { get; set; }
-    }
-
     public class SaveCategoriesProductParam
     {
         public int CategoriesId { get; set; }
@@ -101,22 +93,7 @@ namespace Domain.ViewModels
         public List<int> ProductsId { get; set; }
     }
 
-    public class UserWithRoleViewModel
-    {
-        public int UserId { get; set; }
-        public string Username { get; set; }
-        public int RoleId { get; set; }
-        public string RoleName { get; set; }
-    }
-    public class UserMapCategoriesViewModel
-    {
-        public int UserId { get; set; }
-        //public string Username { get; set; }
-
-        public List<string> Categories { get; set; }
-        public string CategoriesText { get; set; }
-        public DateTime? ModifiedTime { get; set; }
-    }
+   
     public class CategoriesMapProductViewModel
     {
         public int CategoriesId { get; set; }
@@ -126,6 +103,23 @@ namespace Domain.ViewModels
         public string ProductText { get; set; }
         public DateTime? ModifiedTime { get; set; }
     }
+
+
+
+    public class SearchCategoriesParam
+    {
+
+        public string Text { get; set; }
+
+    }
+    public class SearchProductParam
+    {
+        public string ProductName { get; set; }
+        public string CategoriesText { get; set; }
+
+    }
+
+
 
 
 }

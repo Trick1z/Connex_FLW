@@ -1,2 +1,2 @@
-<dx-text-box [(ngModel)]="value" [placeholder]="placeHolder">
+<dx-text-box [value]="value" (onValueChanged)="onValueChangeFunc($event)" [placeholder]="placeHolder">
 </dx-text-box>

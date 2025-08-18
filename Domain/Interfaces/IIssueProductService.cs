@@ -14,7 +14,7 @@ namespace Domain.Interfaces
         public Task<IEnumerable<Product>> DeleteProductItems(DeleteProduct param);
         public Task<IEnumerable<IssueCategories>> InsertCategoriesItems(InsertCategories requried);
         //public Task<IEnumerable<RelCategoriesProduct>> InsertMapCategoriesProduct(MappingCategoriesProductItem req);
-        public Task<IEnumerable<Product>> InsertProductItem(InsertProduct param );
+        public Task<IEnumerable<Product>> InsertProductItem(InsertProduct param);
         public Task<IssueCategories> UpdateCategoriesItems(UpdateCategories req);
         public Task<Product> UpdateProductItems(UpdateProduct param);
 
@@ -24,6 +24,12 @@ namespace Domain.Interfaces
         public Task<CategoriesMapProductViewModel> LoadCategories(int id);
 
         public Task<bool> SaveCategoriesProduct(SaveCategoriesProductParam param);
+
+        //public Task<QueryCategories> QueryCategoriesByText(SearchCategoriesParam loadParam);
+
+        public Task<QueryViewModel<USP_Query_CategoriesResult>> QueryCategoriesByText(DevExtremeParam<SearchCategoriesParam> param);
+
+        public Task<QueryViewModel<USP_Query_IssueProductResult>> QueryProducts( DevExtremeParam<SearchProductParam> param);
 
     }
 }

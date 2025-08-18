@@ -14,5 +14,7 @@ namespace Domain.Interfaces
         public Task<Rel_User_Categories> SaveUserCategories(SaveUserCategoriesParam req);
         public Task<IEnumerable<UserWithRoleViewModel>> GetUserByRoleSupport();
         public Task<UserMapCategoriesViewModel> LoadUser(int id);
+
+        public Task<QueryViewModel<USP_Query_NameResult>> QueryUserByRole(DevExtremeParam<SearchUsernameParam> loadParam);
     }
 }

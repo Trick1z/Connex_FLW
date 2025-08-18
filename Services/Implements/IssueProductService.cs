@@ -28,7 +28,7 @@ namespace Services.Implements
 
         }
         //InsertCategories
-        public async Task<IEnumerable<IssueCategories>> InsertCategoriesItems(InsertCategories requried )
+        public async Task<IEnumerable<IssueCategories>> InsertCategoriesItems(InsertCategories requried)
         {
             var validate = new ValidateException();
             await IsNullOrEmptyString(requried, validate);
@@ -41,9 +41,9 @@ namespace Services.Implements
             _context.IssueCategories.Add(data);
             //log
 
-            Log_categories log = PrepairLogData(GetCurrentUserId());
+            Log_Categories log = PrepairLogData(GetCurrentUserId());
 
-            _context.Log_categories.Add(log);
+            _context.Log_Categories.Add(log);
 
             await _context.SaveChangesAsync();
 
@@ -52,9 +52,9 @@ namespace Services.Implements
 
         }
 
-        private static Log_categories PrepairLogData(int userId)
+        private static Log_Categories PrepairLogData(int userId)
         {
-            var log = new Log_categories();
+            var log = new Log_Categories();
             log.ActionBy = userId;
             log.ActionTime = DateTime.Now;
             log.ActionType = "Save Categories";
@@ -98,7 +98,7 @@ namespace Services.Implements
         }
 
         //InsertProduct
-        public async Task<IEnumerable<Product>> InsertProductItem(InsertProduct requried )
+        public async Task<IEnumerable<Product>> InsertProductItem(InsertProduct requried)
         {
             var validate = new ValidateException();
 
@@ -109,10 +109,10 @@ namespace Services.Implements
 
             Product data = PackedData(requried);
 
-            Log_categories log = AddLog(GetCurrentUserId());
+            Log_Categories log = AddLog(GetCurrentUserId());
 
             _context.Product.Add(data);
-            _context.Log_categories.Add(log);
+            _context.Log_Categories.Add(log);
             await _context.SaveChangesAsync();
 
 
@@ -120,9 +120,9 @@ namespace Services.Implements
 
         }
 
-        private static Log_categories AddLog(int userId)
+        private static Log_Categories AddLog(int userId)
         {
-            var log = new Log_categories();
+            var log = new Log_Categories();
             log.ActionBy = userId;
             log.ActionTime = DateTime.Now;
             log.ActionType = "Save Products";
@@ -195,12 +195,12 @@ namespace Services.Implements
             resp.IsProgramIssue = param.IsProgramIssue;
             resp.ModifiedTime = dateNow;
 
-            var log = new Log_categories();
+            var log = new Log_Categories();
 
             log.ActionTime = DateTime.Now;
             log.ActionBy = GetCurrentUserId();
             log.ActionType = "Update Categories";
-            _context.Log_categories.Add(log);
+            _context.Log_Categories.Add(log);
 
             await _context.SaveChangesAsync();
 
@@ -238,13 +238,13 @@ namespace Services.Implements
             resp.ProductName = param.ProductName;
             resp.ModifiedTime = dateNow;
 
-            var log = new Log_categories();
+            var log = new Log_Categories();
 
             log.ActionTime = DateTime.Now;
             log.ActionBy = GetCurrentUserId();
             log.ActionType = "Update Product";
 
-            _context.Log_categories.Add(log);
+            _context.Log_Categories.Add(log);
 
 
             await _context.SaveChangesAsync();
@@ -346,13 +346,13 @@ namespace Services.Implements
             res.IsActive = false;
             res.ModifiedTime = dateNow;
 
-            var log = new Log_categories();
+            var log = new Log_Categories();
 
             log.ActionTime = DateTime.Now;
             log.ActionBy = GetCurrentUserId();
             log.ActionType = "Delete Categories";
 
-            _context.Log_categories.Add(log);
+            _context.Log_Categories.Add(log);
 
             await _context.SaveChangesAsync();
 
@@ -374,13 +374,13 @@ namespace Services.Implements
             res.IsActive = false;
             res.ModifiedTime = dateNow;
 
-            var log = new Log_categories();
+            var log = new Log_Categories();
 
             log.ActionTime = DateTime.Now;
             log.ActionBy = GetCurrentUserId();
             log.ActionType = "Delete Categories";
 
-            _context.Log_categories.Add(log);
+            _context.Log_Categories.Add(log);
 
             await _context.SaveChangesAsync();
 
@@ -426,7 +426,7 @@ namespace Services.Implements
                 .FirstOrDefaultAsync(c => c.IssueCategoriesId == param.CategoriesId);
 
             if (categories == null)
-               validate.Add("Categories","Categories not found");
+                validate.Add("Categories", "Categories not found");
 
             var productList = await _context.RelCategoriesProduct
                 .Where(r => r.IssueCategoriesId == param.CategoriesId)
@@ -543,6 +543,50 @@ namespace Services.Implements
             return int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
         }
 
+
+
+
+
+        //Query
+        public async  Task<QueryViewModel<USP_Query_CategoriesResult>> QueryCategoriesByText(DevExtremeParam<SearchCategoriesParam> param)
+        
+        {
+
+           
+
+            var result = await _context.Procedures.USP_Query_CategoriesAsync(param.SearchCriteria.Text, param.LoadOption.Skip, param.LoadOption.Take, param.SortField, param.SortBy);
+            //var result = await _context.Procedures.USP_Query_NameAsync(text, loadParam.Skip, loadParam.Take, loadParam.Sort[0].Selector, "DESC");
+           
+            var data = new QueryViewModel<USP_Query_CategoriesResult>();
+            data.Data = result;
+            data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
+
+
+
+            return data;
+
+
+        }
+
+        //Product on categories
+        public async Task<QueryViewModel<USP_Query_IssueProductResult>> QueryProducts(DevExtremeParam<SearchProductParam> param)
+
+        {
+
+
+            var result = await _context.Procedures.USP_Query_IssueProductAsync(param.SearchCriteria.ProductName, param.SearchCriteria.CategoriesText, param.LoadOption.Skip, param.LoadOption.Take, param.SortField, param.SortBy);
+            //var result = await _context.Procedures.USP_Query_NameAsync(text, loadParam.Skip, loadParam.Take, loadParam.Sort[0].Selector, "DESC");
+
+            var data = new QueryViewModel<USP_Query_IssueProductResult>();
+            data.Data = result;
+            data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
+
+
+
+            return data;
+
+
+        }
 
     }
 }
