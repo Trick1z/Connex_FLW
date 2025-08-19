@@ -1,0 +1,86 @@
+<app-head-underline [title]="'Dashboard'"></app-head-underline>
+
+
+
+
+<div class="mx-10 mt-10">
+    <app-head-underline [title]="'Monitor'"></app-head-underline>
+
+
+    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="assignment" [showBorders]="true" [columnAutoWidth]="true">
+
+
+        <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
+        </dxo-paging>
+
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
+        </dxo-pager>
+
+
+        <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
+            [groupPaging]="false">
+        </dxo-remote-operations>
+
+        <!-- <dxo-search-panel [visible]="true" [width]="240" placeholder="Search..."></dxo-search-panel> -->
+
+
+        <dxi-column dataField="docNo" caption="docNo" width="80" alignment="center"></dxi-column>
+        <dxi-column dataField="issueCategoriesName" caption="issueCategoriesName" minWidth="150"
+            alignment="left"></dxi-column>
+        <dxi-column dataField="productName" caption="productName" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="qty" caption="qty" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="location" caption="location" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="timeToFound" caption="timeToFound" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="img" caption="img" minWidth="150" alignment="center"></dxi-column>
+
+        <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
+            alignment="center">
+        </dxi-column>
+
+    </dx-data-grid>
+
+
+</div>
+
+
+
+<div class="mx-10 mt-10">
+    <app-head-underline [title]="'Work Load'"></app-head-underline>
+    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="assignment" [showBorders]="true" [columnAutoWidth]="true">
+
+
+        <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
+        </dxo-paging>
+
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
+        </dxo-pager>
+
+
+        <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
+            [groupPaging]="false">
+        </dxo-remote-operations>
+
+        <!-- <dxo-search-panel [visible]="true" [width]="240" placeholder="Search..."></dxo-search-panel> -->
+
+
+        <dxi-column dataField="docNo" caption="docNo" width="80" alignment="center"></dxi-column>
+        <dxi-column dataField="issueCategoriesName" caption="issueCategoriesName" minWidth="150"
+            alignment="left"></dxi-column>
+        <dxi-column dataField="productName" caption="productName" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="qty" caption="qty" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="location" caption="location" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="timeToFound" caption="timeToFound" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="img" caption="img" minWidth="150" alignment="center"></dxi-column>
+
+        <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
+            alignment="center">
+        </dxi-column>
+
+    </dx-data-grid>
+</div>
+
+
+<div class="mx-10 mt-10">
+
+    <h1>some graph</h1>
+</div>

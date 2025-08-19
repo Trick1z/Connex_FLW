@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdminRoute, AuthRoute, CustomerRoute, GamesRoute, UserRoute, ViewsRoute } from './constants/routes.const';
+import { AdminRoute, AuthRoute, CustomerRoute, GamesRoute, SupportRoute, UserRoute, ViewsRoute } from './constants/routes.const';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
@@ -29,6 +29,11 @@ const routes: Routes = [
         canActivate: [AuthGuard],
         path: AdminRoute.prefix,
         loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)
+      } ,
+       {
+        canActivate: [AuthGuard],
+        path: SupportRoute.prefix,
+        loadChildren: () => import('./modules/support/support.module').then(m => m.SupportModule)
       } ,
 
       // เอาออก แม่

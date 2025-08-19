@@ -48,6 +48,10 @@ export class UserRoute {
   static UserFormFullPath: string = `${UserRoute.prefix}/${UserRoute.UserForm}`;
   static UserFormName: string = `user-form`;
 
+  static UserAddForm: string = `add-form-task`;
+  static UserAddFormFullPath: string = `${UserRoute.prefix}/${UserRoute.UserAddForm}`;
+  static UserAddFormName: string = `user-add-form`;
+
 }
 
 export class AdminRoute {
@@ -66,7 +70,25 @@ export class AdminRoute {
   static AdminUserCategoriesName: string = `map-user-categories`;
 
 
+  static AdminDashboard: string = `dashboard`;
+  static AdminDashboardFullPath: string = `${AdminRoute.prefix}/${AdminRoute.AdminDashboard}`;
+  static AdminDashboardName: string = `dashboard`;
+
+
 }
+
+
+export class SupportRoute {
+  static prefix: string = `support`;
+
+  static SupportWork: string = `work`;
+  static SupportWorkFullPath: string = `${SupportRoute.prefix}/${SupportRoute.SupportWork}`;
+  static SupportWorkName: string = `work`;
+
+
+
+}
+
 
 // export class LandingRoute {
 //   static prefix: string = `error`;
