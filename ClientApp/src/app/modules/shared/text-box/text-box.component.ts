@@ -8,8 +8,8 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 export class TextBoxComponent {
 
   formData: any;
-  @Input('value') public value: string = '';
-  @Input('placeHolder') public placeHolder: string = '';
+  @Input('value') public value: string  ="";
+  @Input('placeHolder') public placeHolder: string = '...';
 
   @Output('onValueChanged') public onValueChanged = new EventEmitter<string>();
 
