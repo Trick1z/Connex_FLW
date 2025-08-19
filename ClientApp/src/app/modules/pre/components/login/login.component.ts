@@ -14,7 +14,6 @@ import Swal from 'sweetalert2';
 export class LoginComponent {
   constructor(
     private router: Router,
-    private api: ApiService,
     private authService: AuthServiceService
 
   ) { }
@@ -59,10 +58,9 @@ export class LoginComponent {
           timer: 1500,
         });
 
-        // console.log('next work');
-
 
         this.router.navigate([ViewsRoute.HomeFullPath]);
+
 
       },
       error: (err) => {
