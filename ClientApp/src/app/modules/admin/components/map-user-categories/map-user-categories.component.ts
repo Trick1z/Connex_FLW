@@ -19,26 +19,6 @@ import { DevExthemeParam, usernameSearch } from '../../models/search.Model';
 export class MapUserCategoriesComponent implements OnInit {
   ngOnInit(): void {
     this.getUserByRoleSupport()
-
-    // this.userByRoleDataSource = new DataSource({
-    //   load: (loadOptions: LoadOptions) => {
-
-    //     var newLoad: usernameSearch = {
-    //      text : this.searchUsernameValue,
-    //       loadOption : loadOptions
-    //     }
-
-
-
-
-    //     return this.service.queryUserByText(newLoad).pipe(catchError(err => {
-
-    //       return err
-    //     })).toPromise()
-
-    //   }
-    // });
-
     this.initUserByRoleDataSource();
   }
 
