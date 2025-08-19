@@ -1,0 +1,117 @@
+<app-head-underline [title]="'Create New Task'"></app-head-underline>
+
+
+<div class="flex m-20 space-x-10 text-end label-box">
+    <label for="docNo ml " class="font-bold ">Document No</label>
+    <div class="" id="docNo">
+        <h4> waiting Gen..</h4>
+    </div>
+</div>
+
+<div class="flex justify-end">
+    <app-button class="mr-20" [message]="'Create Inform'"></app-button>
+
+</div>
+
+<div class="mt-10 ml-20 mr-20" id="">
+
+
+    <dx-data-grid [dataSource]="task" keyExpr="docNo" [showBorders]="true"
+        [masterDetail]="{ enabled: true, template: 'detailTemplate' }" [paging]="{ enabled: true, pageSize: 5 }">
+
+        <dxo-paging [pageSize]="5"></dxo-paging>
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
+
+        <dxi-column dataField="docNo" caption="DocNo" width="80" alignment="center"></dxi-column>
+        <dxi-column dataField="status" caption="Status" minWidth="80"></dxi-column>
+        <dxi-column dataField="progressing" caption="Progressing" minWidth="120" alignment="center"></dxi-column>
+        <dxi-column dataField="modifiedBy" caption="Modified By" minWidth="130" alignment="center"></dxi-column>
+        <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="200" alignment="center"></dxi-column>
+
+        <!-- Action Column in Master Grid -->
+        <dxi-column type="buttons">
+            <dxi-button text="Edit" icon="edit"></dxi-button>
+            <dxi-button text="Delete" icon="trash"></dxi-button>
+        </dxi-column>
+
+
+
+
+    </dx-data-grid>
+</div>
+
+
+
+<div class="flex justify-start mt-20 ml-20 space-x-2" >
+    <app-button  [message]="'Save Draft'"></app-button>
+    <app-button   [message]="'Submit'"></app-button>
+    <app-button [color]="'red'" [message]="'Cancel'"></app-button>
+
+</div>
+
+
+
+
+<!-- DevExtreme Popup -->
+<dx-popup
+  [(visible)]="dddInformPopupState"
+  [width]="600"
+  [height]="500"
+  [showTitle]="true"
+  title="Create New Issue"
+  [dragEnabled]="true"
+  (onHiding)="onInformViewPopupHide()"
+>
+  <div class="p-4 space-y-4">
+    <!-- Cascade Dropdown -->
+    <dx-select-box
+      placeholder="Select Issue *"
+      [dataSource]="issueOptions"
+      [(value)]="selectedIssue"
+      displayExpr="text"
+      valueExpr="id"
+      (onValueChanged)="onIssueChanged($event.value)"
+    ></dx-select-box>
+
+    <dx-select-box
+      placeholder="Select Product *"
+      [dataSource]="productOptions"
+      [(value)]="selectedProduct"
+      displayExpr="text"
+      valueExpr="id"
+      [disabled]="!selectedIssue"
+    ></dx-select-box>
+
+    <!-- Conditional Fields -->
+    <dx-number-box
+      *ngIf="selectedIssueType === 'Borrow'"
+      placeholder="Borrow Qty *"
+      [(value)]="borrowQty"
+    ></dx-number-box>
+
+    <dx-text-box
+      *ngIf="selectedIssueType === 'Repair'"
+      placeholder="Location *"
+      [(value)]="location"
+    ></dx-text-box>
+
+    <dx-date-box
+      *ngIf="selectedIssueType === 'Repair' || selectedIssueType === 'Program'"
+      placeholder="Time To Found"
+      [value]="timeToFound"
+
+      (onValueChanged)="timeToFound = $event.value"
+    ></dx-date-box>
+
+    <!-- File Upload -->
+    <dx-file-uploader
+      placeholder="Upload File (Optional)"
+      [(value)]="uploadedFile"
+    ></dx-file-uploader>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-end gap-2 mt-4">
+      <dx-button text="Create" type="success" (onClick)="createIssue()"></dx-button>
+    </div>
+  </div>
+</dx-popup>
