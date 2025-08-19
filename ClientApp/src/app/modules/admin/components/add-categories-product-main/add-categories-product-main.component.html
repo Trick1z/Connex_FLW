@@ -55,12 +55,25 @@
 
     <app-button (clicked)="productPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
 
-    <div class="grid grid-cols-6 ml-10 check-box">
 
-        <div *ngFor="let item of categoryDataList">
-            <dx-check-box [(ngModel)]="item.selected" (onValueChanged)="onCategoriesValueCheck($event, item)"
-                [name]="item.issueCategoriesName" [text]="item.issueCategoriesName">
-            </dx-check-box>
+    <div class="mt-5 ml-10 serch-box">
+
+        <div class="max-w-sm search-box">
+            <app-text-box (onValueChanged)="onChangeTest($event)" [value]="productSearch"
+                [placeHolder]="'Search...'"></app-text-box>
+        </div>
+
+        <div class="grid grid-cols-6 mt-5 check-box">
+
+            <div *ngFor="let item of categoryDataList">
+                <dx-check-box [(ngModel)]="item.selected" (onValueChanged)="onCategoriesValueCheck($event)"
+                    [name]="item.issueCategoriesName" [text]="item.issueCategoriesName">
+                </dx-check-box>
+            </div>
+        </div>
+
+        <div class="mt-5 button">
+            <app-button [message]="'Search'" (clicked)="onSearch()"></app-button>
         </div>
     </div>
 

@@ -7,7 +7,7 @@ import { catchError, of } from 'rxjs';
 import { IssueProductService } from '../../services/issue-product.service';
 import { LoadOptions } from 'devextreme/data';
 import DataSource from 'devextreme/data/data_source';
-import { categoriesSearch, DevExthemeParam } from '../../models/search.Model';
+import { categoriesSearch, DevExthemeParam, productSearch } from '../../models/search.Model';
 
 @Component({
   selector: 'app-add-categories-product-main',
@@ -18,6 +18,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
   ngOnInit(): void {
     this.getCategoriesProductDataList();
     this.getCheckBoxItem()
+    this.initProductByNameCategoriesDataSource(null, null)
   }
 
   constructor(
@@ -426,34 +427,35 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
   }
 
-  onCategoriesValueCheck(e: any, item: any) {
+  onCategoriesValueCheck(e: any) {
 
-    const newStr = this.getSelectedCategories();
-
-    console.log(newStr);
-
-
-    this.initUserByRoleDataSource(newStr)
+    this.categoriesIdSearch = this.getSelectedCategories();
     // return this.issueProductService.queryCategoriesByText()
-
-
-
-
-
-
   }
 
+  onSearch(){
 
+        this.initProductByNameCategoriesDataSource(this.productSearch, this.categoriesIdSearch)
+
+  }
+  categoriesIdSearch: string = "";
+  productSearch: string = "";
   ProductByCategoriesDataSource!: DataSource;
 
+  onChangeTest(e: string) {
+    this.productSearch = e;
+  }
 
-  initUserByRoleDataSource(text: string) {
+  initProductByNameCategoriesDataSource(productName: string | null = null, categoriesId: string | null = null) {
 
     this.ProductByCategoriesDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
 
-        var newLoad: DevExthemeParam<categoriesSearch> = {
-          searchCriteria: { text: text },
+        var newLoad: DevExthemeParam<productSearch> = {
+          searchCriteria: {
+            productName: productName,
+            categoriesText: categoriesId
+          },
 
           loadOption: loadOptions
         }
