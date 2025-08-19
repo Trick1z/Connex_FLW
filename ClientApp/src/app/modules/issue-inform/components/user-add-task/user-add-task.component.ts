@@ -1,20 +1,26 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { DropDownService } from '../../../../services/drop-down.service';
+import { catchError, pipe } from 'rxjs';
+import { InformTask } from '../../models/inform.model';
 
 @Component({
   selector: 'app-user-add-task',
   templateUrl: './user-add-task.component.html',
   styleUrls: ['./user-add-task.component.scss']
 })
-export class UserAddTaskComponent {
-
+export class UserAddTaskComponent implements OnInit {
+  ngOnInit(): void {
+    this.getCategoriesDropDownItems();
+  }
+  constructor(
+    private dropDownService: DropDownService
+  ) { }
   task: any;
 
   dddInformPopupState: boolean = true;
 
 
-  onInformViewPopupHide() {
-    this.dddInformPopupState = false;
-  }
+
 
   issueOptions = [
     { id: 1, text: 'Borrow', type: 'Borrow' },
@@ -49,14 +55,79 @@ export class UserAddTaskComponent {
   }
 
   createIssue() {
-    console.log({
-      selectedIssue: this.selectedIssue,
-      selectedProduct: this.selectedProduct,
+    console.log("asd", this.informTaskData);
+
+    this.dddInformPopupState = false;
+
+    this.informTaskData = {
+      issueCategoriesId: this.selectedIssue,
+      productId: this.selectedProduct,
       borrowQty: this.borrowQty,
       location: this.location,
-      timeToFound: this.timeToFound,
-      uploadedFile: this.uploadedFile
-    });
+      detectedTime: this.timeToFound
+    };
+  }
+
+
+  informTaskData: InformTask = {
+    issueCategoriesId: null,
+    productId: null,
+    borrowQty: null,
+    location: null,
+    detectedTime: null
+  }
+
+  clearInform() {
+
+    this.informTaskData = {
+      issueCategoriesId: null,
+      productId: null,
+      borrowQty: null,
+      location: null,
+      detectedTime: null
+    }
+
+    console.log(this.informTaskData);
+  }
+  onAddInformPopupClose() {
+    // this.clearInform();
+
     this.dddInformPopupState = false;
+  }
+
+
+  categoryOptions: any = [];
+  getCategoriesDropDownItems() {
+    this.dropDownService.getCategoryDropDown().pipe(catchError(err => {
+      this.categoryOptions = [];
+      return err;
+    })).subscribe(res => {
+      console.log(res);
+
+      this.categoryOptions = res;
+    });
+  }
+
+  onCategoriesValueChange(e: number) {
+    const selectedCategory = this.categoryOptions.find(
+      (c: any) => c.issueCategoriesId === e
+    );
+    this.selectedIssueType = selectedCategory.issueCategoriesName;
+
+    this.informTaskData.issueCategoriesId = e
+    this.getProductMapByCategories(e);
+  }
+
+
+
+
+  getProductMapByCategories(id: number) {
+    this.dropDownService.getProductMapByCategories(id).pipe(catchError(err => {
+      this.productOptions = [];
+      return err;
+    })).subscribe(res => {
+      console.log(res);
+      this.productOptions = res;
+    });
   }
 }

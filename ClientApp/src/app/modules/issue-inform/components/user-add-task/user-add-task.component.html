@@ -9,7 +9,7 @@
 </div>
 
 <div class="flex justify-end">
-    <app-button class="mr-20" [message]="'Create Inform'"></app-button>
+    <app-button (clicked)=" this.dddInformPopupState = true;" class="mr-20" [message]="'Create Inform'"></app-button>
 
 </div>
 
@@ -60,54 +60,56 @@
   [showTitle]="true"
   title="Create New Issue"
   [dragEnabled]="true"
-  (onHiding)="onInformViewPopupHide()"
+  (onHiding)="onAddInformPopupClose()"
 >
   <div class="p-4 space-y-4">
     <!-- Cascade Dropdown -->
     <dx-select-box
       placeholder="Select Issue *"
-      [dataSource]="issueOptions"
+      [dataSource]="categoryOptions"
       [(value)]="selectedIssue"
-      displayExpr="text"
-      valueExpr="id"
-      (onValueChanged)="onIssueChanged($event.value)"
+      displayExpr="issueCategoriesName"
+      valueExpr="issueCategoriesId"
+      (onValueChanged)=" onCategoriesValueChange($event.value)"
     ></dx-select-box>
 
     <dx-select-box
       placeholder="Select Product *"
       [dataSource]="productOptions"
       [(value)]="selectedProduct"
-      displayExpr="text"
-      valueExpr="id"
+      displayExpr="productName"
+      valueExpr="productId"
       [disabled]="!selectedIssue"
+      (onValueChanged)="informTaskData.productId = $event.value"
     ></dx-select-box>
 
     <!-- Conditional Fields -->
     <dx-number-box
-      *ngIf="selectedIssueType === 'Borrow'"
+      *ngIf="selectedIssueType === 'borrow'"
       placeholder="Borrow Qty *"
       [(value)]="borrowQty"
+      (onValueChanged)="informTaskData.borrowQty = $event.value"
     ></dx-number-box>
 
     <dx-text-box
-      *ngIf="selectedIssueType === 'Repair'"
+      *ngIf="selectedIssueType === 'repair'"
       placeholder="Location *"
       [(value)]="location"
+      (onValueChanged)="informTaskData.location = $event.value"
     ></dx-text-box>
 
     <dx-date-box
-      *ngIf="selectedIssueType === 'Repair' || selectedIssueType === 'Program'"
+      *ngIf="selectedIssueType === 'repair' || selectedIssueType === 'program'"
       placeholder="Time To Found"
       [value]="timeToFound"
-
-      (onValueChanged)="timeToFound = $event.value"
+      (onValueChanged)="informTaskData.detectedTime = $event.value"
     ></dx-date-box>
 
     <!-- File Upload -->
-    <dx-file-uploader
+    <!-- <dx-file-uploader
       placeholder="Upload File (Optional)"
       [(value)]="uploadedFile"
-    ></dx-file-uploader>
+    ></dx-file-uploader> -->
 
     <!-- Action Buttons -->
     <div class="flex justify-end gap-2 mt-4">
