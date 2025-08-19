@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 
 import { AdminRoute, AuthRoute, UserRoute, ViewsRoute } from 'src/app/constants/routes.const';
 import { ApiService } from 'src/app/services/api-service.service';
+import { CheckAccessService } from '../../../services/check-access.service';
+import { catchError } from 'rxjs';
 
 
 
@@ -47,7 +49,7 @@ export class NavbarTopComponent {
     this.setUser();
   }
   constructor(private route: Router,
-    private api: ApiService
+    private checkAccessService: CheckAccessService
   ) { }
 
   setUser() {
@@ -77,13 +79,7 @@ export class NavbarTopComponent {
   }
 
 
-
-  // navigateTo(path: string) {
-  //   console.log(path);
-  //   this.route.navigate([path]);
-  // }
   navigateTo(path: string) {
-    // console.log('Trying to navigate to:', path);
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -92,25 +88,19 @@ export class NavbarTopComponent {
     }
 
     // เรียก backend ตรวจสอบสิทธิ์
-    this.api.post('api/Authentication/check-access', { pageUrl:`/${ path }`}).subscribe({
-      next: (res: any) => {
-        if (res.allowed) {
-          this.route.navigate([path]);
+    this.checkAccessService.onCheckAccess(path).pipe(catchError(err => {
+      this.route.navigate([ViewsRoute.LandingFullPath]);
 
-          // ถ้า allowed → navigate
-        } else {
-          this.route.navigate([ViewsRoute.LandingFullPath]); // ถ้าไม่ allowed → redirect
-        }
-      },
-      error: () => {
-        this.route.navigate([ViewsRoute.LandingFullPath]);
-      }
-    });
+      return err
+    })).subscribe((res: any) => {
+      if (res.allowed) {
+        this.route.navigate([path]);
+
+      } else {
+        this.route.navigate([ViewsRoute.LandingFullPath]);    }
+    },)
   }
 
-
-
-  // AdminRoute = AuthRoute.AdminFormFullPath;
 
   onLogout() {
     sessionStorage.clear();
