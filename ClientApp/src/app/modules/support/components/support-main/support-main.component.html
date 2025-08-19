@@ -1,0 +1,187 @@
+<div class="">
+
+    <app-head-underline [title]="'Support Assignments'"></app-head-underline>
+
+</div>
+
+
+
+
+<div class="mx-10 mt-10 waitingTask">
+
+    <app-head-underline [title]="'Waiting Task'"></app-head-underline>
+
+    <!-- <div class="flex justify-between pl-10 pr-10" id="">
+
+        <div class="max-w-sm gap-4 text-box">
+            <app-text-box [value]="FieldDocNo" [placeHolder]="'DocNo'"></app-text-box>
+        </div>
+
+        <div class="space-x-3 btn-group">
+            <app-button [message]="'Create Form'"></app-button>
+            <app-button [message]="'Create To'"></app-button>
+        </div>
+    </div>
+
+
+    <div class="m-10 check-box">
+        <app-check-box [text]="'Categories'" [options]="categoriesCheckBoxItem"
+            (optionsChange)="onOptionsChanged($event)">
+        </app-check-box>
+    </div> -->
+
+    <div class="flex items-center justify-between max-w-full my-5 ml-10 mr-10 search-box">
+        <!-- Textbox ชิดซ้าย -->
+        <div class="gap-4 space-y-4 text-end text-box">
+
+            <div class="flex items-center">
+                <label class="w-40 mr-2 font-bold">Document Number </label>
+                <div class="flex-1">
+                    <app-text-box class="w-full" [value]="FieldDocNo" [placeHolder]="'Document Number'">
+                    </app-text-box>
+                </div>
+            </div>
+
+        </div>
+
+         <div class="flex flex-col items-start">
+        <div class="flex items-center text-end check-box">
+
+            <label for="check-box" class="w-40 font-bold">Categories</label>
+            <app-check-box [options]="categoriesCheckBoxItem" (optionsChange)="onOptionsChanged($event)">
+            </app-check-box>
+        </div>
+    </div>
+
+    
+
+
+        <!-- Buttons ชิดขวา -->
+        <div class="flex gap-3 btns">
+            <div class="flex items-center gap-3">
+                <dx-date-box displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date" width="200">
+                </dx-date-box>
+
+                <dx-date-box displayFormat="dd/MM/yyyy" type="date" placeholder="End Date" width="200">
+                </dx-date-box>
+            </div>
+
+        </div>
+    </div>
+
+
+   
+
+
+    <div class="pl-10 pr-10 datagrid-assignment">
+
+        <dx-data-grid [dataSource]="assignment" keyExpr="docNo" [showBorders]="true"
+            [paging]="{ enabled: true, pageSize: 5 }">
+
+            <dxo-paging [pageSize]="5"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
+
+            <dxi-column dataField="docNo" caption="Document No" width="120" alignment="center"></dxi-column>
+            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="80"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
+            <dxi-column dataField="qty" caption="Quantity" minWidth="130" alignment="center"></dxi-column>
+            <dxi-column dataField="location" caption="Location" minWidth="200" alignment="center"></dxi-column>
+            <dxi-column dataField="timeToFound" caption="Time To Found" minWidth="200" alignment="center"></dxi-column>
+            <dxi-column dataField="img" caption="Image" minWidth="200" alignment="center"></dxi-column>
+
+            <!-- Action Column in Master Grid -->
+            <dxi-column type="buttons">
+                <dxi-button text="Approve" icon="check" hint="Approve"></dxi-button>
+                <dxi-button text="Cancel" icon="close" hint="Cancel"></dxi-button>
+                <dxi-button text="View Log" icon="info" hint="Show log"></dxi-button>
+            </dxi-column>
+
+            <!-- Detail Grid Template -->
+
+
+
+        </dx-data-grid>
+
+
+    </div>
+
+</div>
+
+
+
+
+
+
+<div class="m-10 my-36">
+
+    <app-head-underline [title]="'Process Task'"></app-head-underline>
+
+    <div class="m-10">
+        <dx-data-grid [dataSource]="assignment" keyExpr="docNo" [showBorders]="true"
+            [paging]="{ enabled: true, pageSize: 5 }">
+
+            <dxo-paging [pageSize]="5"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
+
+            <dxi-column dataField="docNo" caption="Document No" width="120" alignment="center"></dxi-column>
+            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="80"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
+            <dxi-column dataField="qty" caption="Quantity" minWidth="130" alignment="center"></dxi-column>
+            <dxi-column dataField="location" caption="Location" minWidth="200" alignment="center"></dxi-column>
+            <dxi-column dataField="timeToFound" caption="Time To Found" minWidth="200" alignment="center"></dxi-column>
+            <dxi-column dataField="img" caption="Image" minWidth="200" alignment="center"></dxi-column>
+
+            <!-- Action Column in Master Grid -->
+            <dxi-column type="buttons">
+                <dxi-button text="Approve" icon="check" hint="Approve"></dxi-button>
+                <dxi-button text="Cancel" icon="close" hint="Cancel"></dxi-button>
+                <dxi-button text="View Log" icon="info" hint="Show log"></dxi-button>
+            </dxi-column>
+
+            <!-- Detail Grid Template -->
+
+
+
+        </dx-data-grid>
+
+    </div>
+</div>
+
+
+
+<div class="mx-10 my-36">
+
+    <app-head-underline [title]="'Done Task'"></app-head-underline>
+
+    <div class="m-10">
+        <dx-data-grid [dataSource]="assignment" keyExpr="docNo" [showBorders]="true"
+            [paging]="{ enabled: true, pageSize: 5 }">
+
+            <dxo-paging [pageSize]="5"></dxo-paging>
+            <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
+
+            <dxi-column dataField="docNo" caption="Document No" width="120" alignment="center"></dxi-column>
+            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="80"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
+            <dxi-column dataField="qty" caption="Quantity" minWidth="130" alignment="center"></dxi-column>
+            <dxi-column dataField="location" caption="Location" minWidth="200" alignment="center"></dxi-column>
+            <dxi-column dataField="timeToFound" caption="Time To Found" minWidth="200" alignment="center"></dxi-column>
+            <dxi-column dataField="img" caption="Image" minWidth="200" alignment="center"></dxi-column>
+
+            <!-- Action Column in Master Grid -->
+            <dxi-column type="buttons">
+                <dxi-button text="Approve" icon="check" hint="Approve"></dxi-button>
+                <dxi-button text="Cancel" icon="close" hint="Cancel"></dxi-button>
+                <dxi-button text="View Log" icon="info" hint="Show log"></dxi-button>
+            </dxi-column>
+            <!-- Detail Grid Template -->
+
+
+
+        </dx-data-grid>
+
+    </div>
+</div>

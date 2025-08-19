@@ -56,7 +56,7 @@ import { FormsModule } from '@angular/forms';
     DxSelectBoxModule,
     DxRadioGroupModule,
     FormsModule,
-    DxFormModule,FormsModule
+    DxFormModule
 
 
 
