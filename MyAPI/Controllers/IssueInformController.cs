@@ -11,17 +11,23 @@ namespace MyAPI.Controllers
     public class IssueInformController : Controller
     {
 
-        private readonly IInsertFormService _insertFormService;
+        private readonly IIssueInformService _issueInformService;
 
-        public IssueInformController(IInsertFormService insertFormService)
+        public IssueInformController(IIssueInformService issueInformService)
         {
-            _insertFormService = insertFormService;
+            _issueInformService = issueInformService;
         }
 
-        [HttpPost("createForm-task")]
-        public async Task<IActionResult> CreateFormAsync([FromBody] InsertFormViewModel request)
-        {
-            return Ok(await _insertFormService.CreateFormAsync(request));
-        }
+        //[HttpPost("createForm-task")]
+        //public async Task<IActionResult> CreateFormAsync([FromBody] InsertFormViewModel request)
+        //{
+        //    return Ok(await _insertFormService.CreateFormAsync(request));
+        //}
+
+        //[HttpPost("Cre")]
+        //public async Task<IEnumerable<AllProducts>> GetProductItemsMapByCategories(int id)
+        //{
+        //    return Ok(await _issueInformService.GetProductItemsMapByCategories(id));
+        //}
     }
 }

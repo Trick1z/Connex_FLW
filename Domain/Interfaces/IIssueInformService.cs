@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
-    public interface IInsertFormService
-
+    public interface IIssueInformService
     {
-        public Task<int> CreateFormAsync(InsertFormViewModel model);
 
-
+        public Task<IEnumerable<AllProducts>> GetProductItemsMapByCategories(int id);
     }
 }
