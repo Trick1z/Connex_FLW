@@ -33,6 +33,12 @@ export class DropDownService {
     return this.http.get(`${environment.apiUrl}IssueProduct/Products/item`)
   }
 
+  getRoleDropDownItem(){
+
+
+    return this.http.get(`${environment.apiUrl}/DropDown/role`)
+  }
+
 
 }
 
