@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 // import { AdminRoute, AuthRoute } from 'src/app/Constants/routes.const';
 
-import { AdminRoute, AuthRoute, UserRoute, ViewsRoute } from 'src/app/constants/routes.const';
+import { AdminRoute, AuthRoute, SupportRoute, UserRoute, ViewsRoute } from 'src/app/constants/routes.const';
 import { ApiService } from 'src/app/services/api-service.service';
 import { CheckAccessService } from '../../../services/check-access.service';
 import { catchError } from 'rxjs';
@@ -32,18 +32,35 @@ export class NavbarTopComponent {
       name: AdminRoute.AdminUserCategoriesName,
       path: AdminRoute.AdminUserCategoriesFullPath
     },
+    {
+      name: AdminRoute.AdminDashboardName,
+      path: AdminRoute.AdminDashboardFullPath
+    }
   ]
   userRoutes: any = [
     {
       name: UserRoute.UserFormName,
       path: UserRoute.UserFormFullPath
-    }
+    },
+    {
+      name: UserRoute.UserAddForm,
+      path: UserRoute.UserAddFormFullPath
+    },
+  ]
+
+
+  supportRoutes: any = [
+    {
+      name: SupportRoute.SupportWork,
+      path: SupportRoute.SupportWorkFullPath
+    },
+    
   ]
 
   // dropdown state
   adminDropdownOpen = false;
   userDropdownOpen = false;
-
+  supportDropdownOpen = false;
 
   ngOnInit(): void {
     this.setUser();
@@ -73,6 +90,10 @@ export class NavbarTopComponent {
     this.userDropdownOpen = !this.userDropdownOpen;
   }
 
+  SupportToggleDropdown() {
+    this.supportDropdownOpen = !this.supportDropdownOpen;
+  }
+
   CloseDropdown() {
     this.adminDropdownOpen = false;
     this.userDropdownOpen = false;
@@ -80,6 +101,9 @@ export class NavbarTopComponent {
 
 
   navigateTo(path: string) {
+
+    console.log(path);
+    
 
     const token = localStorage.getItem('token');
     if (!token) {
@@ -94,6 +118,9 @@ export class NavbarTopComponent {
       return err
     })).subscribe((res: any) => {
       if (res.allowed) {
+
+        console.log("true");
+        
         this.route.navigate([path]);
 
       } else {

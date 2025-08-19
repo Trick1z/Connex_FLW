@@ -6,6 +6,7 @@ import { AdminRoute } from 'src/app/constants/routes.const';
 import { AddCategoriesProductMainComponent } from './components/add-categories-product-main/add-categories-product-main.component';
 import { MapUserCategoriesComponent } from './components/map-user-categories/map-user-categories.component';
 import { MasterComponent } from './components/master/master.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const routes: Routes = [
 
@@ -20,6 +21,10 @@ const routes: Routes = [
     {
         path: AdminRoute.AdminUserCategories,
         component: MapUserCategoriesComponent,
+    },
+    {
+        path: AdminRoute.AdminDashboard,
+        component: DashboardComponent,
     },
 
 ];
