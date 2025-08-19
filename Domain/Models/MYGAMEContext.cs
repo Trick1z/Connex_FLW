@@ -13,11 +13,15 @@ public partial class MYGAMEContext : DbContext
     {
     }
 
-    public virtual DbSet<Form> Form { get; set; }
-
-    public virtual DbSet<FormTask> FormTask { get; set; }
+    public virtual DbSet<FileAttach> FileAttach { get; set; }
 
     public virtual DbSet<IssueCategories> IssueCategories { get; set; }
+
+    public virtual DbSet<IssueForm> IssueForm { get; set; }
+
+    public virtual DbSet<IssueFormTask> IssueFormTask { get; set; }
+
+    public virtual DbSet<IssueFormTaskAudit> IssueFormTaskAudit { get; set; }
 
     public virtual DbSet<Log_Categories> Log_Categories { get; set; }
 
@@ -27,7 +31,11 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<Product> Product { get; set; }
 
-    public virtual DbSet<RelCategoriesProduct> RelCategoriesProduct { get; set; }
+    public virtual DbSet<Ref_FormStatus> Ref_FormStatus { get; set; }
+
+    public virtual DbSet<Ref_TaskStatus> Ref_TaskStatus { get; set; }
+
+    public virtual DbSet<Rel_Categories_Product> Rel_Categories_Product { get; set; }
 
     public virtual DbSet<Rel_Page_Role> Rel_Page_Role { get; set; }
 
@@ -39,48 +47,25 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<SystemConfig> SystemConfig { get; set; }
 
+    public virtual DbSet<SystemError> SystemError { get; set; }
+
     public virtual DbSet<User> User { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Form>(entity =>
+        modelBuilder.Entity<FileAttach>(entity =>
         {
-            entity.Property(e => e.ClosedTime).HasColumnType("datetime");
+            entity.HasKey(e => e.FileId).HasName("PK_FileAttach_1");
+
+            entity.Property(e => e.CreatedBy).HasColumnType("datetime");
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
-            entity.Property(e => e.Description).HasMaxLength(512);
-            entity.Property(e => e.ModifiredTime).HasColumnType("datetime");
-            entity.Property(e => e.Status)
+            entity.Property(e => e.FileName)
                 .IsRequired()
-                .HasMaxLength(50)
+                .HasMaxLength(512)
                 .IsUnicode(false);
-        });
-
-        modelBuilder.Entity<FormTask>(entity =>
-        {
-            entity.HasKey(e => e.TaskId);
-
-            entity.Property(e => e.ApproveTime).HasColumnType("datetime");
-            entity.Property(e => e.Category)
+            entity.Property(e => e.SystemPath)
                 .IsRequired()
-                .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Status)
-                .IsRequired()
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.TaskName)
-                .IsRequired()
-                .HasMaxLength(512);
-
-            entity.HasOne(d => d.Assignment).WithMany(p => p.FormTask)
-                .HasForeignKey(d => d.AssignmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_FormTask_User");
-
-            entity.HasOne(d => d.Form).WithMany(p => p.FormTask)
-                .HasForeignKey(d => d.FormId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_FormTask_Form");
         });
 
         modelBuilder.Entity<IssueCategories>(entity =>
@@ -93,6 +78,76 @@ public partial class MYGAMEContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<IssueForm>(entity =>
+        {
+            entity.HasKey(e => e.FormId).HasName("PK_Form");
+
+            entity.Property(e => e.CreatedTime).HasColumnType("datetime");
+            entity.Property(e => e.DocNo)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.DoneTime).HasColumnType("datetime");
+            entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
+            entity.Property(e => e.SubmitedTime).HasColumnType("datetime");
+            entity.Property(e => e.SystemStatusCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.SystemStatusCodeNavigation).WithMany(p => p.IssueForm)
+                .HasForeignKey(d => d.SystemStatusCode)
+                .HasConstraintName("FK_Form_Status");
+        });
+
+        modelBuilder.Entity<IssueFormTask>(entity =>
+        {
+            entity.HasKey(e => new { e.FromId, e.TaskSeq }).HasName("PK_IssueFormTask_1");
+
+            entity.Property(e => e.AssignedTime).HasColumnType("datetime");
+            entity.Property(e => e.CreatedTime).HasColumnType("datetime");
+            entity.Property(e => e.DoneTime).HasColumnType("datetime");
+            entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
+            entity.Property(e => e.RejectReason)
+                .HasMaxLength(512)
+                .IsUnicode(false);
+            entity.Property(e => e.Rp_Location)
+                .HasMaxLength(512)
+                .IsUnicode(false);
+            entity.Property(e => e.SubmitTime).HasColumnType("datetime");
+            entity.Property(e => e.SystemStatusCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.File).WithMany(p => p.IssueFormTask)
+                .HasForeignKey(d => d.FileId)
+                .HasConstraintName("FK_IssueFormTask_FileAttach");
+
+            entity.HasOne(d => d.From).WithMany(p => p.IssueFormTask)
+                .HasForeignKey(d => d.FromId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_IssueFormTask_IssueForm");
+
+            entity.HasOne(d => d.SystemStatusCodeNavigation).WithMany(p => p.IssueFormTask)
+                .HasForeignKey(d => d.SystemStatusCode)
+                .HasConstraintName("FK_IssueFormTask_Ref_TaskStatus");
+
+            entity.HasOne(d => d.Rel_Categories_Product).WithMany(p => p.IssueFormTask)
+                .HasForeignKey(d => new { d.IssueCategoriesId, d.ProductId })
+                .HasConstraintName("FK_IssueFormTask_Rel_Categories_Product");
+        });
+
+        modelBuilder.Entity<IssueFormTaskAudit>(entity =>
+        {
+            entity.HasKey(e => e.LogId);
+
+            entity.Property(e => e.Action)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ActionTime).HasColumnType("datetime");
+            entity.Property(e => e.TaskSeq)
+                .HasMaxLength(50)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Log_Categories>(entity =>
@@ -134,18 +189,48 @@ public partial class MYGAMEContext : DbContext
                 .HasMaxLength(512);
         });
 
-        modelBuilder.Entity<RelCategoriesProduct>(entity =>
+        modelBuilder.Entity<Ref_FormStatus>(entity =>
+        {
+            entity.HasKey(e => e.SystemStatusCode);
+
+            entity.Property(e => e.SystemStatusCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Descriptions)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.UserStatusCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Ref_TaskStatus>(entity =>
+        {
+            entity.HasKey(e => e.SystemStatusCode);
+
+            entity.Property(e => e.SystemStatusCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.Description)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.UserStatusCode)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<Rel_Categories_Product>(entity =>
         {
             entity.HasKey(e => new { e.IssueCategoriesId, e.ProductId }).HasName("PK_rel_Categories_Product");
 
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
 
-            entity.HasOne(d => d.IssueCategories).WithMany(p => p.RelCategoriesProduct)
+            entity.HasOne(d => d.IssueCategories).WithMany(p => p.Rel_Categories_Product)
                 .HasForeignKey(d => d.IssueCategoriesId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_RelCategoriesProduct_IssueCategoriies");
 
-            entity.HasOne(d => d.Product).WithMany(p => p.RelCategoriesProduct)
+            entity.HasOne(d => d.Product).WithMany(p => p.Rel_Categories_Product)
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_RelCategoriesProduct_Products");
@@ -215,6 +300,18 @@ public partial class MYGAMEContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.ConfigValue)
                 .HasMaxLength(100)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<SystemError>(entity =>
+        {
+            entity.HasKey(e => e.ErrorId);
+
+            entity.Property(e => e.ErrorMessage)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ErrorType)
+                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 

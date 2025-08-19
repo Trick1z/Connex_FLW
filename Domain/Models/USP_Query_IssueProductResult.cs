@@ -11,6 +11,8 @@ namespace Domain.Models
         public int ProductId { get; set; }
         [StringLength(512)]
         public string ProductName { get; set; }
+        public DateTime CreatedTime { get; set; }
+        public DateTime ModifiedTime { get; set; }
         [StringLength(50)]
         public string CategoryName { get; set; }
         public int? TotalCount { get; set; }

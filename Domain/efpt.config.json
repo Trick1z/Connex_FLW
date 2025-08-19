@@ -16,15 +16,23 @@
    "T4TemplatePath": null,
    "Tables": [
       {
-         "Name": "[dbo].[Form]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[FormTask]",
+         "Name": "[dbo].[FileAttach]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[IssueCategories]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IssueForm]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IssueFormTask]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[IssueFormTaskAudit]",
          "ObjectType": 0
       },
       {
@@ -44,15 +52,23 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Ref_FormStatus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Ref_TaskStatus]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Rel_Categories_Product]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Rel_Page_Role]",
          "ObjectType": 0
       },
       {
          "Name": "[dbo].[Rel_User_Categories]",
-         "ObjectType": 0
-      },
-      {
-         "Name": "[dbo].[RelCategoriesProduct]",
          "ObjectType": 0
       },
       {
@@ -65,6 +81,10 @@
       },
       {
          "Name": "[dbo].[SystemConfig]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[SystemError]",
          "ObjectType": 0
       },
       {

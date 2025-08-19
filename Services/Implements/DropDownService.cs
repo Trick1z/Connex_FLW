@@ -54,36 +54,6 @@ namespace Services.Implements
             return allPProducrs;
         }
 
-        //public async Task<ProductWithSelectionDto> GetProductsWithSelection(int categoryId)
-        //{
-        //    // ดึงสินค้าทั้งหมดที่ Active
-        //    var allProducts = await _context.Product
-        //        .Where(p => p.IsActive)
-        //        .Select(p => new AllProducts
-        //        {
-        //            ProductId = p.ProductId,
-        //            ProductName = p.ProductName
-        //        })
-        //        .ToListAsync();
-
-        //    // ดึงสินค้าที่ถูกเลือก (mapped กับ categoryId)
-        //    var selectedProductIds = await _context.RelCategoriesProduct
-        //        .Where(rc => rc.IssueCategoriesId == categoryId)
-        //        .Select(rc => rc.ProductId)
-        //        .ToListAsync();
-
-        //    // ส่งข้อมูลออก (AllProducts = ตัวเลือกทั้งหมด, SelectedProduct = id ที่เลือกไว้)
-        //    var productWithSelection = new ProductWithSelectionDto
-        //    {
-        //        AllProducts = allProducts,
-        //        SelectedProduct = allProducts
-        //            .Where(p => selectedProductIds.Contains(p.ProductId))
-        //            .ToList()
-        //    };
-
-        //    return productWithSelection;
-        //}
-
 
 
         public async Task<IEnumerable<Role>> GetRoleItem()

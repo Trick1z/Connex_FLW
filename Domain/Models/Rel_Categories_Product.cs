@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Models;
 
-public partial class RelCategoriesProduct
+public partial class Rel_Categories_Product
 {
     public int IssueCategoriesId { get; set; }
 
@@ -14,6 +14,8 @@ public partial class RelCategoriesProduct
     public DateTime CreatedTime { get; set; }
 
     public virtual IssueCategories IssueCategories { get; set; }
+
+    public virtual ICollection<IssueFormTask> IssueFormTask { get; set; } = new List<IssueFormTask>();
 
     public virtual Product Product { get; set; }
 }

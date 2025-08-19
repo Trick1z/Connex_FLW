@@ -19,7 +19,7 @@ public partial class IssueCategories
 
     public DateTime ModifiedTime { get; set; }
 
-    public virtual ICollection<RelCategoriesProduct> RelCategoriesProduct { get; set; } = new List<RelCategoriesProduct>();
+    public virtual ICollection<Rel_Categories_Product> Rel_Categories_Product { get; set; } = new List<Rel_Categories_Product>();
 
     public virtual ICollection<Rel_User_Categories> Rel_User_Categories { get; set; } = new List<Rel_User_Categories>();
 }
