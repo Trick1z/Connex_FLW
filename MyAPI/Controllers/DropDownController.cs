@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services.Implements.Auth;
@@ -16,14 +17,16 @@ namespace MyAPI.Controllers
 
         private readonly IDropDownService _getDropdownService;
         private readonly IGenNumberService _genNumberService;
+        private readonly IIssueInformService _issueInformService;
 
 
 
-        public DropDownController(IDropDownService getDropdownService, IGenNumberService genNumberService)
+        public DropDownController(IDropDownService getDropdownService, IGenNumberService genNumberService, IIssueInformService issueInformService)
         {
 
             _getDropdownService = getDropdownService;
             _genNumberService = genNumberService;
+            _issueInformService = issueInformService;
         }
 
 
@@ -53,6 +56,13 @@ namespace MyAPI.Controllers
         public async Task<IActionResult> GenNo(string prefix , int delay)
         {
             return Ok(await _genNumberService.GenDocNo(prefix));
+        }
+
+        [AllowAnonymous]
+        [HttpGet("ProductMapByCategories/{id}")]
+        public async Task<IActionResult> GetProductItemsMapByCategories(int id)
+        {
+            return Ok(await _issueInformService.GetProductItemsMapByCategories(id));
         }
 
     }

@@ -42,6 +42,9 @@ namespace Domain.ViewModels
 
     }
 
+    //product map by categories
+
+
 
 
 

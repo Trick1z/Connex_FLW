@@ -39,6 +39,11 @@ export class DropDownService {
     return this.http.get(`${environment.apiUrl}/DropDown/role`)
   }
 
+  getProductMapByCategories(id: number){
+
+    return this.http.get(`${environment.apiUrl}DropDown/ProductMapByCategories/${id}`)
+  }
+
 
 }
 
