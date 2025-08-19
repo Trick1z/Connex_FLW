@@ -191,26 +191,26 @@ export class MasterComponent implements OnInit {
   }
 
 
-  searchCategoriesValue: string = "b";
+  searchCategoriesValue: string = "";
   CategoriesDataSource!: DataSource;
 
   onSearchValueChange(e: any) {
-    console.log(e.value);
+    console.log(e);
 
-    this.searchCategoriesValue = e
+    this.searchCategoriesValue = e;
 
-    this.initCategoriesDataSource()
+   this.initCategoriesDataSource(this.searchCategoriesValue);
 
   }
 
-  initCategoriesDataSource() {
+  initCategoriesDataSource(textParam:string | null = null) {
 
     this.CategoriesDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
 
         var newLoad: DevExthemeParam<categoriesSearch> = {
 
-          searchCriteria: { text: this.searchCategoriesValue },
+          searchCriteria: { text: textParam },
 
           loadOption: loadOptions
         }

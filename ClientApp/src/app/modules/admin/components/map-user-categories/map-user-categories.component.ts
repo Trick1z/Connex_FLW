@@ -17,7 +17,7 @@ import { DevExthemeParam, usernameSearch } from '../../models/search.Model';
 export class MapUserCategoriesComponent implements OnInit {
   ngOnInit(): void {
     this.getUserByRoleSupport()
-    this.initUserByRoleDataSource();
+    this.initUserByRoleDataSource(null);
   }
 
 
@@ -44,7 +44,7 @@ export class MapUserCategoriesComponent implements OnInit {
   viewUsername: string = '';
   viewRole: string = '';
 
-  searchUsernameValue: string = 'du';
+  searchUsernameValue: string = '';
 
   getUserByRoleSupport() {
     this.service.getUserByRoleSupport().pipe(catchError(err => {
@@ -153,14 +153,14 @@ export class MapUserCategoriesComponent implements OnInit {
 
   }
 
-  initUserByRoleDataSource() {
+  initUserByRoleDataSource(text:string | null = null) {
 
     this.userByRoleDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
 
         var newLoad: DevExthemeParam<usernameSearch> = {
 
-          searchCriteria: { text: this.searchUsernameValue },
+          searchCriteria: { text: text },
 
           loadOption: loadOptions
         }
@@ -178,8 +178,7 @@ export class MapUserCategoriesComponent implements OnInit {
 
     this.searchUsernameValue = e
 
-    this.initUserByRoleDataSource();
-
+    this.initUserByRoleDataSource(this.searchUsernameValue);
   }
 
 }
