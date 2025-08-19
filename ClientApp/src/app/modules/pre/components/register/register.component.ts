@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
-import { ApiService } from 'src/app/services/api-service.service';
 import { RegisterData, Role } from '../../models/register.model';
 import { AuthRoute } from 'src/app/constants/routes.const';
 import { Router } from '@angular/router';

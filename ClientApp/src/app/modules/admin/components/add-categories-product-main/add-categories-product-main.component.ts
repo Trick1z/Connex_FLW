@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from 'src/app/services/api-service.service';
 import { categoriesDeleteFormData, CategoriesUpdateFormData, ProductDeleteFormData, ProductUpdateFormData } from 'src/app/modules/admin/models/categories.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../../models/insert-categories.model';
 import Swal from 'sweetalert2';
@@ -8,7 +7,7 @@ import { catchError, of } from 'rxjs';
 import { IssueProductService } from '../../services/issue-product.service';
 import { LoadOptions } from 'devextreme/data';
 import DataSource from 'devextreme/data/data_source';
-import { categoriesSearch, usernameSearch, DevExthemeParam } from '../../models/search.Model';
+import { categoriesSearch, DevExthemeParam } from '../../models/search.Model';
 
 @Component({
   selector: 'app-add-categories-product-main',

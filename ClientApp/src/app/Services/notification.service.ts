@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { DxToastModule, DxToastComponent } from 'devextreme-angular';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {

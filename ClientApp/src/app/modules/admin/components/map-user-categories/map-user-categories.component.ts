@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiService } from 'src/app/services/api-service.service';
-import { DropDownList, ProductsDataModel, UserMapCategoriesViewModel } from '../../models/tag-option.model';
+import { DropDownList, UserMapCategoriesViewModel } from '../../models/tag-option.model';
 import { MappingCategoriesModel, UnMappingCategoriesModel } from '../../models/mapping.model';
 import Swal from 'sweetalert2';
 import { ConfigSupportService } from '../../services/config-support.service';
-import { InsertCategoriesDataModel } from '../../models/insert-categories.model';
 import { catchError, of } from 'rxjs';
 import { DropDownService } from 'src/app/services/drop-down.service';
 import DataSource from 'devextreme/data/data_source';

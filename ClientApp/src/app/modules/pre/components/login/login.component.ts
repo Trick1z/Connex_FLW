@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthRoute, ViewsRoute } from 'src/app/constants/routes.const';
-import { ApiService } from 'src/app/services/api-service.service';
 import { AuthServiceService } from 'src/app/services/auth-service.service';
 import { UserData } from '../../models/login.model';
 import Swal from 'sweetalert2';

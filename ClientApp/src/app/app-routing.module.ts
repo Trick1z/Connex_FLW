@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminRoute, AuthRoute, CustomerRoute, GamesRoute, UserRoute, ViewsRoute } from './constants/routes.const';
-import { RedirectGuard } from './guards/redirect.guard';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [

@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ValueChangedEvent } from 'devextreme/ui/filter_builder';
 import { ValueChangedEvent as TagValueChangedEvent } from 'devextreme/ui/tag_box';
-import { CategoriesDataModel, categoriesMapProductViewModel, DropDownList, ProductsDataModel } from '../../models/tag-option.model';
-import { ApiService } from 'src/app/services/api-service.service';
+import {  categoriesMapProductViewModel, DropDownList, ProductsDataModel } from '../../models/tag-option.model';
 import Swal from 'sweetalert2';
 import { IssueProductService } from '../../services/issue-product.service';
-import { catchError, of } from 'rxjs';
+import { catchError } from 'rxjs';
 import { DropDownService } from 'src/app/services/drop-down.service';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';

@@ -10,42 +10,6 @@ import { AuthRoute } from '../constants/routes.const';
 })
 export class AuthServiceService {
 
-  //   constructor(private api: ApiService) { }
-
-
-  //  login(credentials: { username: string, password: string }): Observable<any> {
-  //     return this.api.post('api/User/login', credentials).pipe(
-  //       tap((res: any) => {
-  //         if (res && res.token) {
-  //           localStorage.setItem('token', res.token);
-  //           localStorage.setItem('roleId', res.roleId);
-  //           localStorage.setItem('accessPages', JSON.stringify(res.accessPages));
-  //         }
-  //       })
-  //     );
-  //   }
-
-
-
-  // getToken(): string | null {
-  //     return localStorage.getItem('token');
-  //   }
-
-  //   getRole(): number | null {
-  //     const role = localStorage.getItem('roleId');
-  //     return role ? +role : null;
-  //   }
-
-  //   getAccessPages(): string[] {
-  //     const pages = localStorage.getItem('accessPages');
-  //     return pages ? JSON.parse(pages) : [];
-  //   }
-
-  //   logout() {
-  //     localStorage.removeItem('token');
-  //     localStorage.removeItem('roleId');
-  //     localStorage.removeItem('accessPages');
-  //   }
 
   private readonly TOKEN_KEY = 'token';
   private readonly ROLE_KEY = 'roleId';
@@ -53,14 +17,11 @@ export class AuthServiceService {
 
   constructor(private api: ApiService, private router: Router) { }
 
-  // Login: เก็บ token, roleId, accessPages ลง localStorage
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.api.post('api/Authentication/login', credentials).pipe(
       tap((res: any) => {
         if (res?.token) {
           this.setToken(res.token);
-          // this.setRole(res.roleId);
-          // this.setAccessPages(res.accessPages);
         }
       })
     );
