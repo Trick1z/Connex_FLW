@@ -378,7 +378,7 @@ namespace Services.Implements
 
             log.ActionTime = DateTime.Now;
             log.ActionBy = GetCurrentUserId();
-            log.ActionType = "Delete Categories";
+            log.ActionType = "Delete Product";
 
             _context.Log_Categories.Add(log);
 
