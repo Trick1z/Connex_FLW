@@ -41,13 +41,11 @@ export class MasterComponent implements OnInit {
   ProductTagOptions: ProductsDataModel[] = [];
 
   ngOnInit(): void {
-    // this.getCategoriesProductData();
     this.getCategoryProductItemDetail();
     this.initCategoriesDataSource();
   }
 
   constructor(
-    // private api: ApiService,
     private dropDownService: DropDownService,
     private issueProductService: IssueProductService
   ) { }
