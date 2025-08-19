@@ -422,13 +422,13 @@ namespace Services.Implements
             var validate = new ValidateException();
 
             var categories = await _context.IssueCategories
-                .Include(c => c.RelCategoriesProduct)
+                .Include(c => c.Rel_Categories_Product)
                 .FirstOrDefaultAsync(c => c.IssueCategoriesId == param.CategoriesId);
 
             if (categories == null)
                 validate.Add("Categories", "Categories not found");
 
-            var productList = await _context.RelCategoriesProduct
+            var productList = await _context.Rel_Categories_Product
                 .Where(r => r.IssueCategoriesId == param.CategoriesId)
                 .ToListAsync();
 
@@ -452,7 +452,7 @@ namespace Services.Implements
                 .ToListAsync();
 
             // สร้าง relation ใหม่
-            var newRelations = products.Select(p => new RelCategoriesProduct
+            var newRelations = products.Select(p => new Rel_Categories_Product
             {
                 IssueCategories = categories,
                 Product = p,
@@ -460,7 +460,7 @@ namespace Services.Implements
             }).ToList();
 
             // แทนที่ relation เดิม
-            categories.RelCategoriesProduct = newRelations;
+            categories.Rel_Categories_Product = newRelations;
 
             await _context.SaveChangesAsync();
 
@@ -512,7 +512,7 @@ namespace Services.Implements
         {
             var validate = new ValidateException();
 
-            var selectedProducts = await _context.RelCategoriesProduct
+            var selectedProducts = await _context.Rel_Categories_Product
                 .Include(x => x.Product)
                      .Where(rc => rc.IssueCategoriesId == id)
 
@@ -586,6 +586,22 @@ namespace Services.Implements
             return data;
 
 
+        }
+
+
+        public async Task<IEnumerable<CheckBoxViewModel>> GetCheckBoxCategoriesItems()
+        {
+            var categories = await _context.IssueCategories
+                .Where(c => c.IsActive == true)
+                        .Select(c => new CheckBoxViewModel
+                        {
+                            Id = c.IssueCategoriesId,
+                            Text = c.IssueCategoriesName,
+                            Selected = false
+                        })
+                        .ToListAsync();
+
+            return categories;
         }
 
     }

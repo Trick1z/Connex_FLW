@@ -103,6 +103,12 @@ namespace MyAPI.Controllers
         }
 
 
+        [HttpGet("CheckBoxCategoriesItem")]
+        public async Task<IActionResult> GetCheckCategoryItem()
+        {
+            return Ok(await _issueProduct.GetCheckBoxCategoriesItems());
+        }
+
 
     }
 }

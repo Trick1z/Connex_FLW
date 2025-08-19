@@ -31,5 +31,10 @@ namespace Domain.Interfaces
 
         public Task<QueryViewModel<USP_Query_IssueProductResult>> QueryProducts( DevExtremeParam<SearchProductParam> param);
 
+
+        //get checkbox
+
+        public  Task<IEnumerable<CheckBoxViewModel>> GetCheckBoxCategoriesItems();
+
     }
 }
