@@ -5,6 +5,7 @@ import { AdminRoutingModule } from './admin-routing.module';
 import { MasterComponent } from './components/master/master.component';
 import { MapUserCategoriesComponent } from './components/map-user-categories/map-user-categories.component';
 import { AddCategoriesProductMainComponent } from './components/add-categories-product-main/add-categories-product-main.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 
@@ -13,6 +14,7 @@ import { AddCategoriesProductMainComponent } from './components/add-categories-p
     MasterComponent,
     MapUserCategoriesComponent,
     AddCategoriesProductMainComponent,
+    DashboardComponent,
   ],
   imports: [
     CommonModule,

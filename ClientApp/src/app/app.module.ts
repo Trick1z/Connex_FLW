@@ -9,6 +9,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { LandingComponent } from './components/views/landing/landing.component';
 import { SharedModule } from './modules/shared/shared.module';
+import { SupportMainComponent } from './modules/support/components/support-main/support-main.component';
 
 
 @NgModule({
@@ -16,7 +17,7 @@ import { SharedModule } from './modules/shared/shared.module';
     AppComponent,
     HomeComponent,
     NavbarTopComponent,
-    LandingComponent
+    LandingComponent,
   
    
 
