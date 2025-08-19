@@ -5,15 +5,17 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class CheckAccessService {
+export class CheckboxService {
 
   constructor(
-    private http : HttpClient
+    private http: HttpClient
   ) { }
 
 
-  onCheckAccess(path :string) {
-    return this.http.post(`${environment.apiUrl}Authentication/check-access`, { pageUrl:`/${ path }`})
-  }
 
+  getCategoriesCheckBoxItem(){
+
+
+    return this.http.get(`${environment.apiUrl}IssueProduct/CheckBoxCategoriesItem`)
+  }
 }
