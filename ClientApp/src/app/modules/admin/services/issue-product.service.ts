@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { categoriesMapProductViewModel } from '../models/tag-option.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../models/insert-categories.model';
-import { categoriesDeleteFormData, ProductDeleteFormData } from '../models/categories.model';
+import { CategoriesDeleteFormData, ProductDeleteFormData } from '../models/categories.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +40,7 @@ export class IssueProductService {
     return this.http.post(`${environment.apiUrl}IssueProduct/SaveProduct`, param)
   }
 
-  onDeleteCategories(param: categoriesDeleteFormData) {
+  onDeleteCategories(param: CategoriesDeleteFormData) {
 
     return this.http.post(`${environment.apiUrl}IssueProduct/DeleteCategories`, param)
   }

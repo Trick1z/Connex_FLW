@@ -21,8 +21,10 @@ export class RegisterComponent implements OnInit {
     private registerService: RegisterService,
     private dropDownService: DropDownService
   ) { }
-  customerRole: Role[] = [
 
+
+
+  customerRole: Role[] = [
   ];
   registerData: RegisterData = {
 
@@ -31,13 +33,12 @@ export class RegisterComponent implements OnInit {
     confirmPassword: "",
     role: 0
   }
-
   error: string[] = [];
+
+
 
   onSubmit(event: Event) {
     this.error = [];
-
-
     event.preventDefault(); // กัน reload + กัน interceptor ยิง request แปลก ๆ
     this.registerService.onRegisterSubmit(this.registerData).pipe(catchError(err => {
       this.error = [];
@@ -52,21 +53,17 @@ export class RegisterComponent implements OnInit {
         });
       }
       return err
-
     })).subscribe((res: any) => {
-
       Swal.fire({
         title: 'สำเร็จ',
         text: 'ลงทะเบียนสำเร็จ',
         icon: 'success',
         confirmButtonText: 'ตกลง'
       })
-
       this.navigator.navigate([AuthRoute.LoginFullPath]);
     })
 
   }
-
   getRoleItem() {
     this.dropDownService.getRoleDropDownItem().pipe(catchError(err => { return err })).subscribe((res: any) => {
 
@@ -74,7 +71,6 @@ export class RegisterComponent implements OnInit {
 
     })
   }
-
   NavigateToLoginPage() {
     this.navigator.navigate([AuthRoute.LoginFullPath]);
   }

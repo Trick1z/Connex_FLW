@@ -21,7 +21,5 @@ export class InformTaskService {
     return this.http.post(`${environment.apiUrl}IssueInform/SaveIssueForm/${status}`, data)
   }
 
-  // finalValidateInformTask(data: InformTask[] , status :string) {
-  //   return this.http.post(`${environment.apiUrl}IssueInform/FinalValidateTaskItem/${status}`, data)
-  // }
+
 }

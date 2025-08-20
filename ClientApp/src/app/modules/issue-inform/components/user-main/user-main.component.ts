@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { catchError } from 'rxjs';
-import { CheckboxService } from 'src/app/services/checkbox.service';
 import { DropDownService } from 'src/app/services/drop-down.service';
-import { CheckAccessService } from '../../../../services/check-access.service';
 import { Router } from '@angular/router';
 import { ViewsRoute } from 'src/app/constants/routes.const';
 import { Action } from 'rxjs/internal/scheduler/Action';
+import { CheckboxService } from 'src/app/services/checkbox.service';
+import { CheckAccessService } from 'src/app/services/check-access.service';
 
 @Component({
   selector: 'app-user-main',
@@ -19,11 +19,11 @@ export class UserMainComponent implements OnInit {
   ngOnInit(): void {
     this.getCategoriesCheckBox();
   }
-  constructor(private categoriesDropDownService: DropDownService,
+  constructor(
+    private categoriesDropDownService: DropDownService,
     private checkAccessService: CheckAccessService,
-    private route: Router
-
-    , private CheckBoxService: CheckboxService
+    private route: Router,
+    private CheckBoxService: CheckboxService
   ) { }
   orders = [
     {
@@ -48,24 +48,29 @@ export class UserMainComponent implements OnInit {
     { docNo: 3, taskId: 3, issuecategoriesName: "IT", productName: "Mouse", status: "create", ActionBy: 3, ActionTime: new Date('2023-10-03T12:00:00') }
   ];
 
+  
+
+  options: any = [
+
+  ]; rejectPopupState: boolean = false;
+  historyPopupState: boolean = false;
+  statusOptions = [
+    { id: 1, text: 'New', selected: false },
+    { id: 2, text: 'Process', selected: false }
+  ];
+  historyItem: any = [{ docNo: 1, action: "Reject", issueCategoriesName: "borrow", productName: "Laptop", status: "create", actionBy: 1, actionTime: new Date('2023-10-01T10:00:00') }] ;
+
   getOrderItems(docNo: number) {
     return this.orderItems.filter(item => item.docNo === docNo);
   }
 
 
-  statusOptions = [
-    { id: 1, text: 'New', selected: false },
-    { id: 2, text: 'Process', selected: false }
-  ];
+
   onRowClick(e: any) {
     // console.log('Row clicked:', e.data);
   }
 
 
-
-  options: any = [
-
-  ];
 
 
 
@@ -114,15 +119,6 @@ export class UserMainComponent implements OnInit {
   }
 
 
-  rejectPopupState: boolean = false;
-
-  historyPopupState: boolean = false;
-
-
-
-  historyItem: any = [{ docNo: 1, action: "Reject", issueCategoriesName: "borrow", productName: "Laptop", status: "create", actionBy: 1, actionTime: new Date('2023-10-01T10:00:00') }]
-
-    ;
   onRejectViewPopupHide() {
 
     this.rejectPopupState = false;

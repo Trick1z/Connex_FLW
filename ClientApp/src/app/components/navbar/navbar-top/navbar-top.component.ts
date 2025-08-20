@@ -101,10 +101,6 @@ export class NavbarTopComponent {
 
 
   navigateTo(path: string) {
-
-    console.log(path);
-    
-
     const token = localStorage.getItem('token');
     if (!token) {
       this.route.navigate([AuthRoute.Login]);

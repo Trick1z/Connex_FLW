@@ -6,30 +6,19 @@ import { Component } from '@angular/core';
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
-  // radio
   options = [
     { id: 1, name: 'Option A' },
     { id: 2, name: 'Option B' },
     { id: 3, name: 'Option C' }
   ];
-  // datebox
   myDate: Date = new Date();           // ✅ ใช้ Date object
-  // text
   username: string = '';
-  // number
   number: number = 0;
-  // check
 Checkoptions = [
     { id: 1, text: 'Option A', selected: false },
     { id: 2, text: 'Option B', selected: true },
     { id: 3, text: 'Option C', selected: false },
-  ];
-  onOptionsChanged(updatedOptions: any[]) {
-    console.log('Selected options:', updatedOptions.filter(o => o.selected));
-  }
-  
-  // select
-  categoryId: number = 3;
+  ];categoryId: number = 3;
 
   categories = [
     { id: 1, name: 'Technology' },
@@ -37,7 +26,6 @@ Checkoptions = [
     { id: 3, name: 'Sports' }
   ];
 
-  // tag
   selectedTags: number[] = [1, 3];
 
   tagOptions = [
@@ -46,39 +34,10 @@ Checkoptions = [
     { id: 3, name: 'Vue' },
     { id: 4, name: 'Svelte' }
   ];
-
-  // // fileupload 
-  // handleFiles(e : File[]) {
-  //   console.log('Selected files:', files);
-
-  //   // ตัวอย่าง: อ่านไฟล์แบบ local
-  //   files.forEach(file => {
-  //     const reader = new FileReader();
-  //     reader.onload = () => console.log('File content:', reader.result);
-  //     reader.readAsText(file);
-  //   });
-
-
-
-
-
-
-
-  // }
-  // grid
-
-  users = [
+users = [
     { id: 1, username: 'Sorrajin', email: 'sorra@example.com' },
     { id: 2, username: 'Sarotchin', email: 'sarot@example.com' },
-  ];
-
-  handleUserClick(user: any) {
-    // console.log('Selected User:', user);
-  }
-
-
-  // grid group
-  dataSource = [
+  ];dataSource = [
     { username: 'Sorrajin', age: 26, birthDate: '1999-01-01', isActive: true },
     { username: 'Sarotchin', age: 27, birthDate: '1998-05-05', isActive: false },
   ];
@@ -94,20 +53,18 @@ Checkoptions = [
     { caption: 'Personal Info', columns: ['username', 'age', 'birthDate'] },
     { caption: 'Status', columns: ['isActive'] }
   ];
-
-  // Method handle event จาก DataGrid
-  onRowUpdated(e: any) {
-    // console.log('Row Updated:', e);
-    // ใส่ logic update backend หรือ state
-  }
-
-
-  // popup
-  showPopup = false;
+showPopup = false;
   popupData = { username: '', age: 0 };
 
+  showError = false;
+  errorMessages: string[] = [];
+  onOptionsChanged(updatedOptions: any[]) {
+    console.log('Selected options:', updatedOptions.filter(o => o.selected));
+  }
+  
+
   openPopup() {
-    this.popupData = { username: 'Sorrajin', age: 26 }; // ตัวอย่างข้อมูล
+    this.popupData = { username: 'Sorrajin', age: 26 }; 
     this.showPopup = true;
   }
 
@@ -116,13 +73,9 @@ Checkoptions = [
   }
 
   handleSave(data: any) {
-    // console.log('Saved Data:', data);
     this.showPopup = false;
   }
 
-  // error
-  showError = false;
-  errorMessages: string[] = [];
 
   triggerError() {
     this.errorMessages = [

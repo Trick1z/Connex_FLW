@@ -3,7 +3,6 @@ import { DropDownService } from '../../../../services/drop-down.service';
 import { catchError, firstValueFrom, pipe } from 'rxjs';
 import { InformTask, ValidatedDate } from '../../models/inform.model';
 import { InformTaskService } from '../../services/inform-task.service';
-import { DropDownList } from 'src/app/modules/admin/models/tag-option.model';
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import Swal from 'sweetalert2';
@@ -19,14 +18,14 @@ export class UserAddTaskComponent implements OnInit {
     this.activeRouter.snapshot.params['id'];
     console.log(this.activeRouter.snapshot.params['id']);
 
-
-
   }
   constructor(
     private dropDownService: DropDownService,
     private validateService: InformTaskService,
     private activeRouter: ActivatedRoute
   ) { }
+
+
   titlePopup: string = "";
   InformPopupState: boolean = false;
   issueOptions = [
@@ -35,16 +34,12 @@ export class UserAddTaskComponent implements OnInit {
     { id: 3, text: 'Program', type: 'Program' }
   ];
   productOptions: any = []; // จะดึงจาก API ตาม Issue
-
   informTaskData!: InformTask;
   productDataSource: DataSource = new DataSource({
-    store: [],    // เริ่มด้วย array ว่าง
+    store: [],    
     key: 'productId'
   });
   editPopupVisible: boolean = false;
-
-
-
   categoryDataSource: DataSource = new DataSource({
     load: () => firstValueFrom(this.dropDownService.getCategoryDropDown()),
     key: 'issueCategoriesId'
@@ -52,6 +47,10 @@ export class UserAddTaskComponent implements OnInit {
   dataValidatedArray: any = [];
   originalData: InformTask | null = null;
   selectedEditIssueType: string | null = null;
+
+
+
+
 
   onIssueChanged(issueId: number) {
 
@@ -129,11 +128,7 @@ export class UserAddTaskComponent implements OnInit {
 
 
   onValidateData() {
-
-
-
     const allItems = this.dataValidatedDataSource.items(); // คืนค่า array ของทุก row
-
     var NewItem: ValidatedDate = {
       dataSource: allItems,
       data: this.informTaskData
@@ -174,26 +169,16 @@ export class UserAddTaskComponent implements OnInit {
 
 
   onEditCategoriesValueChange(e: any) {
-
-
     this.getEditProductDropDown(e.value);
-
     if (e.previousValue == null) {
       return
     }
-
-
     const selectedCategory = this.categoryDataSource.items().find(
       (c: any) => c.issueCategoriesId === e.value
-
     );
-
     this.selectedEditIssueType = selectedCategory ? selectedCategory.issueCategoriesName : '-';
-
   }
-
   async getEditProductDropDown(categoryId: number) {
-
     if (!categoryId) {
       this.productDataSource = new DataSource({
         store: [],
@@ -202,17 +187,13 @@ export class UserAddTaskComponent implements OnInit {
       return;
     }
     const products = await firstValueFrom(this.dropDownService.getProductMapByCategories(categoryId)) as any[];
-
     this.productDataSource = new DataSource({
       store: new ArrayStore({
         key: 'productId',
         data: products
       })
     });
-
-
   }
-
   deleteItem(data: any) {
 
     Swal.fire({
@@ -224,19 +205,13 @@ export class UserAddTaskComponent implements OnInit {
       cancelButtonText: 'No'
     }).then((result) => {
       if (result.isConfirmed) {
-
-
         const store = this.dataValidatedDataSource.store() as ArrayStore;
-
         store.remove(data.id).then(() => {
           this.dataValidatedDataSource.reload();
         });
-
       }
     });
   }
-
-
   onSaveForm(status: string) {
     this.validateService.saveInformTask({
       docNo: '',

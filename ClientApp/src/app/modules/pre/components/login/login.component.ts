@@ -22,9 +22,10 @@ export class LoginComponent {
     username: "",
     password: ""
   }
-
   usernameError: string[] = [];
   showError: boolean = false
+
+
   handleCloseError() {
     this.showError = false;
   }
@@ -39,12 +40,6 @@ export class LoginComponent {
     return this.router.navigate([AuthRoute.RegisterFullPath])
   }
 
-  //   onSubmit() {
-  //    this.api.post('api/User/login',this.userData ).subscribe((res :any) =>{
-  //     console.log(res); 
-  //    })
-  //   }
-
   onSubmit() {
     this.authService.login(this.userData).subscribe({
       next: () => {
@@ -56,11 +51,7 @@ export class LoginComponent {
           confirmButtonText: 'ตกลง',
           timer: 1500,
         });
-
-
         this.router.navigate([ViewsRoute.HomeFullPath]);
-
-
       },
       error: (err) => {
         // console.log(err);
@@ -77,10 +68,6 @@ export class LoginComponent {
         }
       }
     });
-
-
-
-
   }
 }
 

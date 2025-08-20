@@ -1,7 +1,3 @@
-export interface DropDownList {
-    showText: string
-    value: string
-}
 
 export interface ProductsDataModel {
     productId: number
@@ -23,8 +19,6 @@ export interface ViewUserModel {
     categories: number[];
     categoriesText: string;
 }
-
-
 
 export interface categoriesMapProductViewModel {
     categoriesId: number;

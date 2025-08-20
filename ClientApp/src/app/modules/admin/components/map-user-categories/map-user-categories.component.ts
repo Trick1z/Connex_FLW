@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DropDownList, UserMapCategoriesViewModel } from '../../models/tag-option.model';
+import {  UserMapCategoriesViewModel } from '../../models/tag-option.model';
 import { MappingCategoriesModel, UnMappingCategoriesModel } from '../../models/mapping.model';
 import Swal from 'sweetalert2';
 import { ConfigSupportService } from '../../services/config-support.service';
@@ -7,7 +7,8 @@ import { catchError, of } from 'rxjs';
 import { DropDownService } from 'src/app/services/drop-down.service';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
-import { DevExthemeParam, usernameSearch } from '../../models/search.Model';
+import { DevExthemeParam, Search } from '../../models/search.Model';
+import { DropDownList } from 'src/app/models/dropDown.model';
 
 @Component({
   selector: 'app-map-user-categories',
@@ -19,9 +20,6 @@ export class MapUserCategoriesComponent implements OnInit {
     this.getUserByRoleSupport()
     this.initUserByRoleDataSource(null);
   }
-
-
-
 
   constructor(
     private service: ConfigSupportService,
@@ -43,8 +41,8 @@ export class MapUserCategoriesComponent implements OnInit {
   viewUserDetail: Array<string> = [];
   viewUsername: string = '';
   viewRole: string = '';
-
   searchUsernameValue: string = '';
+
 
   getUserByRoleSupport() {
     this.service.getUserByRoleSupport().pipe(catchError(err => {
@@ -99,11 +97,9 @@ export class MapUserCategoriesComponent implements OnInit {
 
     })
   }
-
   onViewPopupHide() {
     this.viewPopupDetail = false;
   }
-
   getCategoriesForUser(id: number) {
     this.service.getCategoriesForUser(id)
       .pipe(catchError(err => {
@@ -121,7 +117,6 @@ export class MapUserCategoriesComponent implements OnInit {
         this.userMapCategories = res
       })
   }
-
   onSaveSubmit() {
     this.service.insertMappingUserCategories(this.userMapCategories)
       .pipe(catchError(err => {
@@ -133,9 +128,7 @@ export class MapUserCategoriesComponent implements OnInit {
           icon: 'error',
           confirmButtonText: 'ตกลง'
         });
-
         return err
-
       }))
       .subscribe(
         (res: any) => {
@@ -143,25 +136,16 @@ export class MapUserCategoriesComponent implements OnInit {
           this.mapDetailVisible = false;
           this.getUserByRoleSupport();
         });
-
-
   }
 
   onChange(e: any) {
     this.userMapCategories.categories = e.value
-    // console.log(e);
-
   }
-
   initUserByRoleDataSource(text:string | null = null) {
-
     this.userByRoleDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
-
-        var newLoad: DevExthemeParam<usernameSearch> = {
-
+        var newLoad: DevExthemeParam<Search> = {
           searchCriteria: { text: text },
-
           loadOption: loadOptions
         }
         return this.service.queryUserByText(newLoad).pipe(catchError(err => {
@@ -173,11 +157,8 @@ export class MapUserCategoriesComponent implements OnInit {
     });
   }
 
-
   onSearchValueChange(e: string) {
-
     this.searchUsernameValue = e
-
     this.initUserByRoleDataSource(this.searchUsernameValue);
   }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {  Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ViewsRoute } from 'src/app/constants/routes.const';
 
 @Component({
@@ -9,9 +9,9 @@ import { ViewsRoute } from 'src/app/constants/routes.const';
 })
 export class LandingComponent {
   constructor(
-    private route : Router
-  ){}
-NavToHome(){
-  this.route.navigate([ViewsRoute.HomeFullPath])
-}
+    private route: Router
+  ) { }
+  NavToHome() {
+    this.route.navigate([ViewsRoute.HomeFullPath])
+  }
 }

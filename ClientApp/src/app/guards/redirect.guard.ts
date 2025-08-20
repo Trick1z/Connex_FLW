@@ -1,9 +1,3 @@
-// import { CanActivateFn } from '@angular/router';
-
-// export const redirectGuard: CanActivateFn = (route, state) => {
-//   return true;
-// };
-
 
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
@@ -16,7 +10,6 @@ export class RedirectGuard implements CanActivate {
 
   canActivate(): Promise<boolean> {
   const token = sessionStorage.getItem('token');
-  // console.log('RedirectGuard: token=', token);
 
   return new Promise(resolve => {
     setTimeout(() => {

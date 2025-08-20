@@ -1,4 +1,4 @@
-export interface categoriesDeleteFormData {
+export interface CategoriesDeleteFormData {
   issueCategoriesId: number;
   issueCategoriesName: string ;
 

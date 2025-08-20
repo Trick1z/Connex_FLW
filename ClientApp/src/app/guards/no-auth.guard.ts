@@ -1,9 +1,3 @@
-// import { CanActivateFn } from '@angular/router';
-
-// export const noAuthGuard: CanActivateFn = (route, state) => {
-//   return true;
-// };
-
 
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
