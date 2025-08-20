@@ -44,6 +44,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Log_User_Form]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Pages]",
          "ObjectType": 0
       },

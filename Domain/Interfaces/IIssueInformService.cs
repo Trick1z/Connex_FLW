@@ -11,5 +11,13 @@ namespace Domain.Interfaces
     {
 
         public Task<IEnumerable<AllProducts>> GetProductItemsMapByCategories(int id);
+
+
+        public Task<List<TaskParamViewModel>> SaveTask(ValidateTaskParam param);
+
+        //public Task<ValidatedTaskViewModel> EditValidateTaskItem(EditValidatedTaskViewModel param);
+
+        public Task<IssueFormParam> SaveIssueForm(IssueFormParam param , string status);
+
     }
 }

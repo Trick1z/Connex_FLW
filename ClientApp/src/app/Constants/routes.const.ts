@@ -51,6 +51,11 @@ export class UserRoute {
   static UserAddForm: string = `add-form-task`;
   static UserAddFormFullPath: string = `${UserRoute.prefix}/${UserRoute.UserAddForm}`;
   static UserAddFormName: string = `user-add-form`;
+  
+  
+  static UserEditForm: string = `edit-form-task`;
+  static UserEditFormFullPath: string = `${UserRoute.prefix}/${UserRoute.UserEditForm}`;
+  static UserEditFormName: string = `user-edit-form`;
 
 }
 

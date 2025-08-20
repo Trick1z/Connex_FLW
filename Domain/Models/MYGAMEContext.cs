@@ -27,6 +27,8 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<Log_Rel_User_Categories> Log_Rel_User_Categories { get; set; }
 
+    public virtual DbSet<Log_User_Form> Log_User_Form { get; set; }
+
     public virtual DbSet<Pages> Pages { get; set; }
 
     public virtual DbSet<Product> Product { get; set; }
@@ -106,6 +108,7 @@ public partial class MYGAMEContext : DbContext
 
             entity.Property(e => e.AssignedTime).HasColumnType("datetime");
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
+            entity.Property(e => e.DetectedTime).HasColumnType("datetime");
             entity.Property(e => e.DoneTime).HasColumnType("datetime");
             entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
             entity.Property(e => e.RejectReason)
@@ -167,6 +170,17 @@ public partial class MYGAMEContext : DbContext
 
             entity.Property(e => e.ActionTime).HasColumnType("datetime");
             entity.Property(e => e.ActionType).HasMaxLength(512);
+        });
+
+        modelBuilder.Entity<Log_User_Form>(entity =>
+        {
+            entity.HasKey(e => e.LogId);
+
+            entity.Property(e => e.ActionTime).HasColumnType("datetime");
+            entity.Property(e => e.ActionType)
+                .IsRequired()
+                .HasMaxLength(512)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Pages>(entity =>

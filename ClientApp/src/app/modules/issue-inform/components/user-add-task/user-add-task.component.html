@@ -2,50 +2,48 @@
 
 
 <div class="flex m-20 space-x-10 text-end label-box">
-    <label for="docNo ml " class="font-bold ">Document No</label>
-    <div class="" id="docNo">
-        <h4> waiting Gen..</h4>
-    </div>
+  <label for="docNo ml " class="font-bold ">Document No</label>
+  <div class="" id="docNo">
+    <h4> waiting Gen..</h4>
+  </div>
 </div>
 
 <div class="flex justify-end">
-    <app-button (clicked)=" this.dddInformPopupState = true;" class="mr-20" [message]="'Create Inform'"></app-button>
+  <app-button (clicked)=" onClickCreateIssueTask()" class="mr-20" [message]="'Create Inform'"></app-button>
 
 </div>
 
 <div class="mt-10 ml-20 mr-20" id="">
+  <dx-data-grid [dataSource]="dataValidatedDataSource" keyExpr="id" [showBorders]="true"
+    [paging]="{ enabled: true, pageSize: 5 }">
 
 
-    <dx-data-grid [dataSource]="task" keyExpr="docNo" [showBorders]="true"
-        [masterDetail]="{ enabled: true, template: 'detailTemplate' }" [paging]="{ enabled: true, pageSize: 5 }">
+    <dxo-paging [pageSize]="5"></dxo-paging>
+    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
 
-        <dxo-paging [pageSize]="5"></dxo-paging>
-        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
-
-        <dxi-column dataField="docNo" caption="DocNo" width="80" alignment="center"></dxi-column>
-        <dxi-column dataField="status" caption="Status" minWidth="80"></dxi-column>
-        <dxi-column dataField="progressing" caption="Progressing" minWidth="120" alignment="center"></dxi-column>
-        <dxi-column dataField="modifiedBy" caption="Modified By" minWidth="130" alignment="center"></dxi-column>
-        <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="200" alignment="center"></dxi-column>
-
-        <!-- Action Column in Master Grid -->
-        <dxi-column type="buttons">
-            <dxi-button text="Edit" icon="edit"></dxi-button>
-            <dxi-button text="Delete" icon="trash"></dxi-button>
-        </dxi-column>
+    <dxi-column dataField="issueCategoriesName" caption="Categories"></dxi-column>
+    <dxi-column dataField="productName" caption="Product"></dxi-column>
 
 
 
+    <dxi-column caption="Actions" width="150" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
 
-    </dx-data-grid>
+    <!-- Template สำหรับ cell -->
+    <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
+      <app-button [color]="'blue'" [message]="'Edit'" (clicked)="onClickEditItem(cell.data)"></app-button>
+      <app-button [color]="'red'" [message]="'Delete'" (clicked)="deleteItem(cell.data)"></app-button>
+    </div>
+
+  </dx-data-grid>
+
 </div>
 
 
 
-<div class="flex justify-start mt-20 ml-20 space-x-2" >
-    <app-button  [message]="'Save Draft'"></app-button>
-    <app-button   [message]="'Submit'"></app-button>
-    <app-button [color]="'red'" [message]="'Cancel'"></app-button>
+<div class="flex justify-start mt-20 ml-20 space-x-2">
+  <app-button (clicked)="onSaveForm('Draft')" [message]="'Save Draft'"></app-button>
+  <app-button (clicked)="onSaveForm('Submit')" [message]="'Submit'"></app-button>
+  <app-button  [color]="'red'" [message]="'Cancel'"></app-button>
 
 </div>
 
@@ -53,57 +51,27 @@
 
 
 <!-- DevExtreme Popup -->
-<dx-popup
-  [(visible)]="dddInformPopupState"
-  [width]="600"
-  [height]="500"
-  [showTitle]="true"
-  title="Create New Issue"
-  [dragEnabled]="true"
-  (onHiding)="onAddInformPopupClose()"
->
-  <div class="p-4 space-y-4">
+<dx-popup  [width]="600" [height]="500" [(visible)]="InformPopupState" [showTitle]="true" [dragEnabled]="true"
+  [closeOnOutsideClick]="true" [title]="titlePopup" (onHiding)="onAddInformPopupClose()">
+  <div class="p-4 space-y-4" *ngIf="informTaskData != null">
     <!-- Cascade Dropdown -->
-    <dx-select-box
-      placeholder="Select Issue *"
-      [dataSource]="categoryOptions"
-      [(value)]="selectedIssue"
-      displayExpr="issueCategoriesName"
-      valueExpr="issueCategoriesId"
-      (onValueChanged)=" onCategoriesValueChange($event.value)"
-    ></dx-select-box>
+    <dx-select-box placeholder="Select Issue *" [dataSource]="categoryDataSource" [(value)]="informTaskData.issueCategoriesId"
+      displayExpr="issueCategoriesName" valueExpr="issueCategoriesId"
+      (onValueChanged)=" onCategoriesValueChange($event)"></dx-select-box>
 
-    <dx-select-box
-      placeholder="Select Product *"
-      [dataSource]="productOptions"
-      [(value)]="selectedProduct"
-      displayExpr="productName"
-      valueExpr="productId"
-      [disabled]="!selectedIssue"
-      (onValueChanged)="informTaskData.productId = $event.value"
-    ></dx-select-box>
+    <dx-select-box placeholder="Select Product *" [dataSource]="productDataSource" [(value)]="informTaskData.productId"
+      displayExpr="productName" valueExpr="productId"
+      (onValueChanged)="informTaskData.productId = $event.value"></dx-select-box>
 
     <!-- Conditional Fields -->
-    <dx-number-box
-      *ngIf="selectedIssueType === 'borrow'"
-      placeholder="Borrow Qty *"
-      [(value)]="borrowQty"
-      (onValueChanged)="informTaskData.borrowQty = $event.value"
-    ></dx-number-box>
+    <dx-number-box *ngIf="informTaskData.issueCategoriesId === 1" placeholder="Quantity *" [(value)]="informTaskData.quantity!"
+      (onValueChanged)="informTaskData.quantity = $event.value"></dx-number-box>
 
-    <dx-text-box
-      *ngIf="selectedIssueType === 'repair'"
-      placeholder="Location *"
-      [(value)]="location"
-      (onValueChanged)="informTaskData.location = $event.value"
-    ></dx-text-box>
+    <dx-text-box *ngIf="informTaskData.issueCategoriesId  === 2" placeholder="Location *" [(value)]="informTaskData.location!"
+      (onValueChanged)="informTaskData.location = $event.value"></dx-text-box>
 
-    <dx-date-box
-      *ngIf="selectedIssueType === 'repair' || selectedIssueType === 'program'"
-      placeholder="Time To Found"
-      [value]="timeToFound"
-      (onValueChanged)="informTaskData.detectedTime = $event.value"
-    ></dx-date-box>
+    <dx-date-box *ngIf="informTaskData.issueCategoriesId  === 2 ||informTaskData.issueCategoriesId  === 3" placeholder="Time To Found"
+      [value]="informTaskData.detectedTime!" (onValueChanged)="informTaskData.detectedTime = $event.value"></dx-date-box>
 
     <!-- File Upload -->
     <!-- <dx-file-uploader
@@ -113,7 +81,9 @@
 
     <!-- Action Buttons -->
     <div class="flex justify-end gap-2 mt-4">
-      <dx-button text="Create" type="success" (onClick)="createIssue()"></dx-button>
+      <dx-button text="Create" type="success" (onClick)="onValidateData()"></dx-button>
+      <!-- <dx-button text="Cancel" type="success" (onClick)="createInformData()"></dx-button> -->
     </div>
   </div>
 </dx-popup>
+

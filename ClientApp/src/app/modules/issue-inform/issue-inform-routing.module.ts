@@ -14,6 +14,10 @@ const routes: Routes = [
     path: UserRoute.UserAddForm,
     component: UserAddTaskComponent
   },
+  {
+    path: UserRoute.UserEditForm+"/:id",
+    component: UserAddTaskComponent
+  },
 
 
 ];

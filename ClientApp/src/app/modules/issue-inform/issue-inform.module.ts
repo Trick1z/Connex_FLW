@@ -5,6 +5,7 @@ import { IssueInformRoutingModule } from './issue-inform-routing.module';
 import { UserMainComponent } from './components/user-main/user-main.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserAddTaskComponent } from './components/user-add-task/user-add-task.component';
+import { DxDataGridModule } from 'devextreme-angular';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { UserAddTaskComponent } from './components/user-add-task/user-add-task.c
   imports: [
     CommonModule,
     IssueInformRoutingModule,
-    SharedModule
+    SharedModule,
+    DxDataGridModule
   ]
 })
 export class IssueInformModule { }

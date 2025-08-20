@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { DropDownService } from '../../../../services/drop-down.service';
-import { catchError, pipe } from 'rxjs';
-import { InformTask } from '../../models/inform.model';
+import { catchError, firstValueFrom, pipe } from 'rxjs';
+import { InformTask, ValidatedDate } from '../../models/inform.model';
+import { InformTaskService } from '../../services/inform-task.service';
+import { DropDownList } from 'src/app/modules/admin/models/tag-option.model';
+import DataSource from 'devextreme/data/data_source';
+import ArrayStore from 'devextreme/data/array_store';
+import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-user-add-task',
@@ -10,124 +16,242 @@ import { InformTask } from '../../models/inform.model';
 })
 export class UserAddTaskComponent implements OnInit {
   ngOnInit(): void {
-    this.getCategoriesDropDownItems();
+    this.activeRouter.snapshot.params['id'];
+    console.log(this.activeRouter.snapshot.params['id']);
+
+
+
   }
   constructor(
-    private dropDownService: DropDownService
+    private dropDownService: DropDownService,
+    private validateService: InformTaskService,
+    private activeRouter: ActivatedRoute
   ) { }
-  task: any;
-
-  dddInformPopupState: boolean = true;
-
-
-
-
+  titlePopup: string = "";
+  InformPopupState: boolean = false;
   issueOptions = [
     { id: 1, text: 'Borrow', type: 'Borrow' },
     { id: 2, text: 'Repair', type: 'Repair' },
     { id: 3, text: 'Program', type: 'Program' }
   ];
-
   productOptions: any = []; // จะดึงจาก API ตาม Issue
-  selectedIssue: any;
-  selectedProduct: any;
-  selectedIssueType: string | undefined = '';
 
-  borrowQty: number = 0;
-  location: string = '';
-  timeToFound: Date = new Date();
-  uploadedFile: any;
+  informTaskData!: InformTask;
+  productDataSource: DataSource = new DataSource({
+    store: [],    // เริ่มด้วย array ว่าง
+    key: 'productId'
+  });
+  editPopupVisible: boolean = false;
+
+
+
+  categoryDataSource: DataSource = new DataSource({
+    load: () => firstValueFrom(this.dropDownService.getCategoryDropDown()),
+    key: 'issueCategoriesId'
+  });
+  dataValidatedArray: any = [];
+  originalData: InformTask | null = null;
+  selectedEditIssueType: string | null = null;
 
   onIssueChanged(issueId: number) {
-    const issue = this.issueOptions.find(x => x.id === issueId);
-    this.selectedIssueType = issue?.type;
 
-    // load products for this issue (cascade)
     this.loadProducts(issueId);
   }
 
   loadProducts(issueId: number) {
-    // call API /api/Dropdown/{issueId} => assign to productOptions
     this.productOptions = [
       { id: 1, text: 'Product 1' },
       { id: 2, text: 'Product 2' }
     ];
   }
 
-  createIssue() {
-    console.log("asd", this.informTaskData);
+  onAddInformPopupClose() {
 
-    this.dddInformPopupState = false;
-
-    this.informTaskData = {
-      issueCategoriesId: this.selectedIssue,
-      productId: this.selectedProduct,
-      borrowQty: this.borrowQty,
-      location: this.location,
-      detectedTime: this.timeToFound
-    };
+    this.InformPopupState = false;
   }
 
 
-  informTaskData: InformTask = {
-    issueCategoriesId: null,
-    productId: null,
-    borrowQty: null,
-    location: null,
-    detectedTime: null
-  }
+  onClickCreateIssueTask() {
 
-  clearInform() {
-
-    this.informTaskData = {
+    this.onClickEditItem({
       issueCategoriesId: null,
       productId: null,
-      borrowQty: null,
+      quantity: null,
       location: null,
-      detectedTime: null
+      detectedTime: new Date()
+    });
+
+  }
+
+  async onClickEditItem(item: any) {
+
+
+    console.log(item);
+    // this.InformPopupState = true;
+    if (item.id == null) {
+      this.titlePopup = 'Create New Task';
+    } else {
+      this.titlePopup = "Edit Task"
+
     }
 
-    console.log(this.informTaskData);
-  }
-  onAddInformPopupClose() {
-    // this.clearInform();
-
-    this.dddInformPopupState = false;
-  }
+    await this.getEditProductDropDown(item.issueCategoriesId);
 
 
-  categoryOptions: any = [];
-  getCategoriesDropDownItems() {
-    this.dropDownService.getCategoryDropDown().pipe(catchError(err => {
-      this.categoryOptions = [];
-      return err;
-    })).subscribe(res => {
-      console.log(res);
+    this.originalData = { ...item };       // เก็บค่าเดิมไว้
+    this.informTaskData = { ...item };           // clone สำหรับแก้ไข
 
-      this.categoryOptions = res;
-    });
+    this.selectedEditIssueType = item.issueCategoriesName;
+    // this.editPopupVisible = true;
+    this.InformPopupState = true;
+    await this.productDataSource.load();
+
+
   }
 
-  onCategoriesValueChange(e: number) {
-    const selectedCategory = this.categoryOptions.find(
-      (c: any) => c.issueCategoriesId === e
+
+
+  onCategoriesValueChange(e: any) {
+
+
+
+    this.informTaskData.issueCategoriesId = e.value
+    this.getEditProductDropDown(e.value);
+  }
+
+  dataValidatedDataSource = new DataSource({
+    store: new ArrayStore({
+      data: [],   // เริ่มต้นเป็น array ว่าง
+      key: "id"   // unique key
+    })
+  });
+
+
+
+  onValidateData() {
+
+
+
+    const allItems = this.dataValidatedDataSource.items(); // คืนค่า array ของทุก row
+
+    var NewItem: ValidatedDate = {
+      dataSource: allItems,
+      data: this.informTaskData
+    }
+    this.validateService.validateInformTask(NewItem)
+      .pipe(catchError(err => {
+        console.error(err);
+        return [];
+      }))
+      .subscribe((res: any[]) => {
+
+
+        this.dataValidatedDataSource = new DataSource({
+          store: new ArrayStore({
+            data: res,   // เริ่มต้นเป็น array ว่าง
+            key: "id"   // unique key
+          })
+        });
+
+        this.InformPopupState = false;
+
+      });
+  }
+
+
+
+
+  onEditPopupHide() {
+
+
+    this.informTaskData = { ... this.originalData! }
+
+    this.editPopupVisible = false;
+    this.productDataSource = new DataSource({ store: [], key: 'productId' });
+
+
+  }
+
+
+  onEditCategoriesValueChange(e: any) {
+
+
+    this.getEditProductDropDown(e.value);
+
+    if (e.previousValue == null) {
+      return
+    }
+
+
+    const selectedCategory = this.categoryDataSource.items().find(
+      (c: any) => c.issueCategoriesId === e.value
+
     );
-    this.selectedIssueType = selectedCategory.issueCategoriesName;
 
-    this.informTaskData.issueCategoriesId = e
-    this.getProductMapByCategories(e);
+    this.selectedEditIssueType = selectedCategory ? selectedCategory.issueCategoriesName : '-';
+
   }
 
+  async getEditProductDropDown(categoryId: number) {
+
+    if (!categoryId) {
+      this.productDataSource = new DataSource({
+        store: [],
+        key: 'productId'
+      });
+      return;
+    }
+    const products = await firstValueFrom(this.dropDownService.getProductMapByCategories(categoryId)) as any[];
+
+    this.productDataSource = new DataSource({
+      store: new ArrayStore({
+        key: 'productId',
+        data: products
+      })
+    });
 
 
+  }
 
-  getProductMapByCategories(id: number) {
-    this.dropDownService.getProductMapByCategories(id).pipe(catchError(err => {
-      this.productOptions = [];
-      return err;
-    })).subscribe(res => {
-      console.log(res);
-      this.productOptions = res;
+  deleteItem(data: any) {
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `ต้องการลบรายการ ${data.issueCategoriesName} , ${data.productName} หรือไม่?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      cancelButtonText: 'No'
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+
+        const store = this.dataValidatedDataSource.store() as ArrayStore;
+
+        store.remove(data.id).then(() => {
+          this.dataValidatedDataSource.reload();
+        });
+
+      }
     });
   }
+
+
+  onSaveForm(status: string) {
+    this.validateService.saveInformTask({
+      docNo: '',
+      formId: 0,
+      statusCode: status,
+      taskItems: this.dataValidatedDataSource.items()
+    }, status).pipe(
+      catchError(err => {
+        console.error(err);
+        return [];
+      })
+    ).subscribe((res: any) => {
+      console.log(res);
+    });
+  }
+
+
 }
