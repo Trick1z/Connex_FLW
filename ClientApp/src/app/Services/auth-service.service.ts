@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
-import { ApiService } from './api-service.service';
 import { Router } from '@angular/router';
 import { AuthRoute } from '../constants/routes.const';
 
@@ -15,10 +14,10 @@ export class AuthServiceService {
   private readonly ROLE_KEY = 'roleId';
   private readonly ACCESS_PAGES_KEY = 'accessPages';
 
-  constructor(private api: ApiService, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(credentials: { username: string; password: string }): Observable<any> {
-    return this.api.post('api/Authentication/login', credentials).pipe(
+    return this.http.post('api/Authentication/login', credentials).pipe(
       tap((res: any) => {
         if (res?.token) {
           this.setToken(res.token);

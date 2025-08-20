@@ -102,7 +102,7 @@ export class UserMainComponent implements OnInit {
   navTo(path: string) {
 
 
-    this.checkAccessService.onCheckAccess(path).pipe(catchError(err => {
+    this.checkAccessService.CheckAccess(path).pipe(catchError(err => {
 
       return err;
     })).subscribe((res: any) => {

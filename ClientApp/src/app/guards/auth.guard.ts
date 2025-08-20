@@ -4,8 +4,8 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { AuthRoute ,ViewsRoute} from '../constants/routes.const';
-import { ApiService } from '../services/api-service.service';
 import { catchError, map, Observable, of } from 'rxjs';
+import { CheckAccessService } from '../services/check-access.service';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +15,7 @@ export class AuthGuard implements CanActivate {
 
   constructor(
     private router: Router,
-    private api: ApiService
+    private accessService : CheckAccessService
   ) {}
 
 
@@ -28,7 +28,7 @@ canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observab
 
     const pageUrl = state.url;
 
-    return this.api.post('api/Authentication/check-access', { pageUrl }).pipe(
+    return this.accessService.CheckAccess(pageUrl).pipe(
       map((res: any) => {
         if (!res.allowed) {
           this.router.navigate([ViewsRoute.LandingFullPath]);

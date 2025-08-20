@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { DropDownList } from '../modules/admin/models/tag-option.model';
 import { environment } from 'src/environments/environment';
+import { DropDownList } from '../models/dropDown.model';
 
 @Injectable({
   providedIn: 'root'

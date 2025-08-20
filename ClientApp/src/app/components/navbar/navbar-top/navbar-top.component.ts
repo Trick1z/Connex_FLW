@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 // import { AdminRoute, AuthRoute } from 'src/app/Constants/routes.const';
 
 import { AdminRoute, AuthRoute, SupportRoute, UserRoute, ViewsRoute } from 'src/app/constants/routes.const';
-import { ApiService } from 'src/app/services/api-service.service';
 import { CheckAccessService } from '../../../services/check-access.service';
 import { catchError } from 'rxjs';
 
@@ -108,7 +107,7 @@ export class NavbarTopComponent {
     }
 
     // เรียก backend ตรวจสอบสิทธิ์
-    this.checkAccessService.onCheckAccess(path).pipe(catchError(err => {
+    this.checkAccessService.CheckAccess(path).pipe(catchError(err => {
       this.route.navigate([ViewsRoute.LandingFullPath]);
 
       return err

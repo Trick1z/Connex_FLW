@@ -9,7 +9,6 @@ import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
 import {  DevExthemeParam, Search } from '../../models/search.Model';
 import { DropDownList } from 'src/app/models/dropDown.model';
-// import { ApiService } from 'src/app/Services/api-service.service';
 
 @Component({
   selector: 'app-master',
@@ -32,11 +31,6 @@ export class MasterComponent implements OnInit {
   categoryVisible = false;
   productVisible = false;
   dataList: any;
-  columns = [
-    { dataField: 'word', caption: 'คำ', width: 200 },
-    { dataField: 'score', caption: 'คะแนน', width: 80 },
-    { dataField: 'date', caption: 'วันที่', width: 150 }
-  ];
   categoryTextValue: string = '';
   categorySelectedTags: number[] = [];
   productTextValue: string = '';
@@ -55,7 +49,6 @@ export class MasterComponent implements OnInit {
 
   onSelectedTagsChanged(e: any) {
     const event = e as TagValueChangedEvent;
-
     this.categorySelectedTags = e.value;
   }
   onProductSelectedTagsChanged(e: any) {
