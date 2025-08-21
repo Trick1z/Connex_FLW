@@ -13,7 +13,7 @@ export class CheckAccessService {
 
 
   CheckAccess(path :string) {
-    return this.http.post(`${environment.apiUrl}Authentication/check-access`, { pageUrl:`/${ path }`})
+    return this.http.post(`${environment.apiUrl}Authentication/check-access`, { pageUrl:`${ path }`})
   }
 
 }

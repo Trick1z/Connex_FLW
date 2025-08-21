@@ -9,7 +9,7 @@ export interface InformTask {
 }
 
 
-export interface ValidatedDate {
+export interface ValidatedItem {
   dataSource : InformTask[]
 
   data: InformTask

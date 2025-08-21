@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthRoute } from '../constants/routes.const';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class AuthServiceService {
   constructor(private http: HttpClient, private router: Router) { }
 
   login(credentials: { username: string; password: string }): Observable<any> {
-    return this.http.post('api/Authentication/login', credentials).pipe(
+    return this.http.post(`${environment.apiUrl}Authentication/login`, credentials).pipe(
       tap((res: any) => {
         if (res?.token) {
           this.setToken(res.token);
