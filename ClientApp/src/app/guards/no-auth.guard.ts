@@ -8,7 +8,7 @@ export class NoAuthGuard implements CanActivate {
   constructor(private router: Router) {}
 
   canActivate(): boolean {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (!token) {
       return true; // ยังไม่ login เข้าได้
     }

@@ -9,7 +9,7 @@ export class RedirectGuard implements CanActivate {
   constructor(private router: Router) {}
 
   canActivate(): Promise<boolean> {
-  const token = sessionStorage.getItem('token');
+  const token = localStorage.getItem('token');
 
   return new Promise(resolve => {
     setTimeout(() => {
