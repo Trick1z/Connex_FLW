@@ -5,6 +5,7 @@ using Domain.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,8 +32,9 @@ namespace Services.Implements
         public async Task<IEnumerable<IssueCategories>> InsertCategoriesItems(InsertCategories requried)
         {
             var validate = new ValidateException();
-            await IsNullOrEmptyString(requried, validate);
-            await IsCategoryInTable(requried, validate);
+            var itemIndex = 1;
+            await IsNullOrEmptyString(requried, validate, itemIndex);
+            await IsCategoryInTable(requried, validate, itemIndex);
 
             validate.Throw();
 
@@ -76,22 +78,22 @@ namespace Services.Implements
             return data;
         }
 
-        public async Task<bool> IsCategoryInTable(InsertCategories request, ValidateException validate)
+        public async Task<bool> IsCategoryInTable(InsertCategories request, ValidateException validate, int itemIndex)
         {
             var isExists = await _context.IssueCategories
      .FirstOrDefaultAsync(u => u.IssueCategoriesName == request.IssueCategoriesName);
 
             if (isExists != null)
-                validate.Add("CategoryName", "This CategoryName are already added!");
+                validate.Add("CategoryName", $"Item {itemIndex} : This CategoryName are already added!");
 
             return false;
         }
 
 
-        public async Task<bool> IsNullOrEmptyString(InsertCategories requried, ValidateException validate)
+        public async Task<bool> IsNullOrEmptyString(InsertCategories requried, ValidateException validate, int itemIndex)
         {
             if (string.IsNullOrWhiteSpace(requried.IssueCategoriesName))
-                validate.Add("CategoryName", "Field CategoryName Much Not Empty");
+                validate.Add("CategoryName", $"Item {itemIndex} : Field CategoryName Much Not Empty");
 
 
             return false;
@@ -101,9 +103,11 @@ namespace Services.Implements
         public async Task<IEnumerable<Product>> InsertProductItem(InsertProduct requried)
         {
             var validate = new ValidateException();
+            var itemIndex = 1;
 
-            IsNullOrEmpty(requried, validate);
-            await IsProductInTable(requried, validate);
+
+            IsNullOrEmpty(requried, validate,itemIndex);
+            await IsProductInTable(requried, validate , itemIndex);
 
             validate.Throw();
 
@@ -142,25 +146,25 @@ namespace Services.Implements
             return data;
         }
 
-        public bool IsNullOrEmpty(InsertProduct requried, ValidateException validate)
+        public bool IsNullOrEmpty(InsertProduct requried, ValidateException validate, int itemIndex)
         {
 
 
             if (string.IsNullOrEmpty(requried.ProductName))
-                validate.Add("ProductName", "ProductName Much Not Empty!!");
+                validate.Add("ProductName", $"Item {itemIndex} : ProductName Much Not Empty!!");
 
             return false;
 
 
 
         }
-        public async Task<bool> IsProductInTable(InsertProduct request, ValidateException validate)
+        public async Task<bool> IsProductInTable(InsertProduct request, ValidateException validate, int itemIndex)
         {
             var isExists = await _context.Product
      .FirstOrDefaultAsync(u => u.ProductName == request.ProductName);
 
             if (isExists != null)
-                validate.Add("ProductName", "This ProductName are already added!");
+                validate.Add("ProductName", $"Item {itemIndex} : This ProductName are already added!");
 
             return false;
         }
@@ -170,11 +174,11 @@ namespace Services.Implements
         public async Task<IssueCategories> UpdateCategoriesItems(UpdateCategories param)
         {
             var validate = new ValidateException();
+            var itemIndex = 1;
+            IsCategoriesIdValidate(param, validate, itemIndex);
+            IsCategoriesFieldNullOrEmptyString(param, validate, itemIndex);
 
-            IsCategoriesIdValidate(param, validate);
-            IsCategoriesFieldNullOrEmptyString(param, validate);
-
-            IssueCategories resp = await GetExistCategoriesInDatabase(param, validate);
+            IssueCategories resp = await GetExistCategoriesInDatabase(param, validate, itemIndex);
 
             var categoriesItem = await _context.IssueCategories.Where(r => r.IssueCategoriesId == param.IssueCategoriesId).ToListAsync();
 
@@ -214,10 +218,10 @@ namespace Services.Implements
         public async Task<Product> UpdateProductItems(UpdateProduct param)
         {
             var validate = new ValidateException();
-
-            IsProductIdValidate(param, validate);
-            IsProductFieldNullOrEmptyString(param, validate);
-            Product resp = await GetExistProductInDatabase(param, validate);
+            var itemIndex = 1;
+            IsProductIdValidate(param, validate, itemIndex);
+            IsProductFieldNullOrEmptyString(param, validate, itemIndex);
+            Product resp = await GetExistProductInDatabase(param, validate, itemIndex);
 
             var productItem = await _context.Product
                 .Where(r => r.ProductId == param.ProductId).ToListAsync();
@@ -258,22 +262,22 @@ namespace Services.Implements
 
 
 
-        private async Task<IssueCategories> GetExistCategoriesInDatabase(UpdateCategories req, ValidateException validate)
+        private async Task<IssueCategories> GetExistCategoriesInDatabase(UpdateCategories req, ValidateException validate,int itemIndex)
         {
             var DataInDb = await _context.IssueCategories.FirstOrDefaultAsync(u => u.IssueCategoriesId == req.IssueCategoriesId);
 
             if (DataInDb == null)
-                validate.Add("Categories", "Not Found Categories");
+                validate.Add("Categories", $"Item {itemIndex} : Not Found Categories");
 
             return DataInDb;
         }
 
 
-        private bool IsCategoriesFieldNullOrEmptyString(UpdateCategories req, ValidateException validate)
+        private bool IsCategoriesFieldNullOrEmptyString(UpdateCategories req, ValidateException validate, int itemIndex)
         {
             if (string.IsNullOrWhiteSpace(req.IssueCategoriesName))
             {
-                validate.Add("Categories", "IssueCategoriesName is required for update");
+                validate.Add("Categories", $"Item {itemIndex} : IssueCategoriesName is required for update");
                 return true;
             }
 
@@ -281,11 +285,11 @@ namespace Services.Implements
         }
 
 
-        private bool IsCategoriesIdValidate(UpdateCategories req, ValidateException validate)
+        private bool IsCategoriesIdValidate(UpdateCategories req, ValidateException validate, int itemIndex)
         {
             if (req.IssueCategoriesId < 0)
             {
-                validate.Add("Categories", "IssueCategoriesId is required for update");
+                validate.Add("Categories", $"Item {itemIndex} : IssueCategoriesId is required for update");
 
                 return false;
             }
@@ -294,34 +298,34 @@ namespace Services.Implements
         }
 
         //product
-        private bool IsProductIdValidate(UpdateProduct req, ValidateException validate)
+        private bool IsProductIdValidate(UpdateProduct req, ValidateException validate, int itemIndex)
         {
             if (req.ProductId < 0)
             {
-                validate.Add("Product", "ProductId is required for update");
+                validate.Add("Product", $"Item {itemIndex} : ProductId is required for update");
 
                 return false;
             }
 
             return true;
         }
-        private bool IsProductFieldNullOrEmptyString(UpdateProduct req, ValidateException validate)
+        private bool IsProductFieldNullOrEmptyString(UpdateProduct req, ValidateException validate, int itemIndex)
         {
             if (string.IsNullOrWhiteSpace(req.ProductName))
             {
-                validate.Add("Product", "ProductName is required for update");
+                validate.Add("Product", $"Item {itemIndex} : ProductName is required for update");
                 return true;
             }
 
             return false;
         }
 
-        private async Task<Product> GetExistProductInDatabase(UpdateProduct req, ValidateException validate)
+        private async Task<Product> GetExistProductInDatabase(UpdateProduct req, ValidateException validate, int itemIndex)
         {
             var IsInDb = await _context.Product.FirstOrDefaultAsync(u => u.ProductId == req.ProductId);
 
             if (IsInDb == null)
-                validate.Add("Product", "Not Found Product");
+                validate.Add("Product", $"Item {itemIndex} : Not Found Product");
 
             return IsInDb;
 
@@ -335,8 +339,8 @@ namespace Services.Implements
 
 
             var validate = new ValidateException();
-
-            IssueCategories res = await GetIssueCategoriesExists(req, validate);
+            var itemIndex = 1;
+            IssueCategories res = await GetIssueCategoriesExists(req, validate ,itemIndex );
 
             validate.Throw();
 
@@ -363,8 +367,8 @@ namespace Services.Implements
         public async Task<IEnumerable<Product>> DeleteProductItems(DeleteProduct req)
         {
             var validate = new ValidateException();
-
-            Product res = await IsProductExists(req, validate);
+            var itemIndex = 1;
+            Product res = await IsProductExists(req, validate,itemIndex);
 
             validate.Throw();
 
@@ -389,27 +393,27 @@ namespace Services.Implements
         }
 
         //futures
-        private async Task<IssueCategories> GetIssueCategoriesExists(DeleteCategories req, ValidateException validate)
+        private async Task<IssueCategories> GetIssueCategoriesExists(DeleteCategories req, ValidateException validate, int itemIndex)
         {
             var DataExists = await _context.IssueCategories
                             .FirstOrDefaultAsync(u => u.IssueCategoriesName == req.IssueCategoriesName &&
                                         u.IssueCategoriesId == req.IssueCategoriesId);
 
             if (DataExists == null)
-                validate.Add("Categories", "Not Found This Categories");
+                validate.Add("Categories", $"Item {itemIndex} : Not Found This Categories");
 
 
             return DataExists;
         }
 
-        private async Task<Product> IsProductExists(DeleteProduct req, ValidateException validate)
+        private async Task<Product> IsProductExists(DeleteProduct req, ValidateException validate , int itemIndex)
         {
             var dataExists = await _context.Product
                             .FirstOrDefaultAsync(u => u.ProductName == req.ProductName &&
                                         u.ProductId == req.ProductId);
 
             if (dataExists == null)
-                validate.Add("Product", "Not Found This Product");
+                validate.Add("Product", $"Item {itemIndex} : Not Found This Product");
 
 
             return dataExists;
@@ -420,13 +424,14 @@ namespace Services.Implements
         public async Task<bool> SaveCategoriesProduct(SaveCategoriesProductParam param)
         {
             var validate = new ValidateException();
+            var itemIndex = 1;
 
             var categories = await _context.IssueCategories
                 .Include(c => c.Rel_Categories_Product)
                 .FirstOrDefaultAsync(c => c.IssueCategoriesId == param.CategoriesId);
 
             if (categories == null)
-                validate.Add("Categories", "Categories not found");
+                validate.Add("Categories", $"Item {itemIndex} : Categories not found");
 
             var productList = await _context.Rel_Categories_Product
                 .Where(r => r.IssueCategoriesId == param.CategoriesId)
@@ -440,7 +445,7 @@ namespace Services.Implements
                 if (param.ModifiedTime != dbModifiedTime)
                 {
                     // validate
-                    validate.Add("ModifiedTime", "Time Not Match!");
+                    validate.Add("ModifiedTime", $"Item {itemIndex} : Time Not Match!");
                 }
             }
 
@@ -496,12 +501,8 @@ namespace Services.Implements
                             ProductId = p.ProductId,
                             ProductName = p.ProductName,
                             IsActive = p.IsActive,
-
-                            CreatedTime = p.CreatedTime
-                            ,
+                            CreatedTime = p.CreatedTime  ,
                             ModifiedTime = p.ModifiedTime
-
-
                         })
                         .ToListAsync();
 

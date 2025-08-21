@@ -32,14 +32,14 @@ namespace Domain.Exceptions
 
 
 
-        public void Add(string elementId, string message)
+        public void Add(string field, string message)
         {
-            if (!Messages.ContainsKey(elementId))
+            if (!Messages.ContainsKey(field))
             {
-                Messages[elementId] = new List<string>();
+                Messages[field] = new List<string>();
             }
 
-            Messages[elementId].Add(message);
+            Messages[field].Add(message);
         }
 
 

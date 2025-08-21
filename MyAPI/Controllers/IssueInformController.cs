@@ -18,27 +18,23 @@ namespace MyAPI.Controllers
             _issueInformService = issueInformService;
         }
 
-        //[HttpPost("createForm-task")]
-        //public async Task<IActionResult> CreateFormAsync([FromBody] InsertFormViewModel request)
-        //{
-        //    return Ok(await _insertFormService.CreateFormAsync(request));
-        //}
-
         [HttpPost("ValidateTask")]
         public async Task<IActionResult> ValidateTaskItem(ValidateTaskParam param)
         {
             return Ok(await _issueInformService.SaveTask(param));
         }
-
-        //[HttpPost("EditValidateTaskItem")]
-        //public async Task<IActionResult> EditValidateTaskItem(EditValidatedTaskViewModel param)
-        //{
-        //    return Ok(await _issueInformService.EditValidateTaskItem(param));
-        //}
+   
         [HttpPost("SaveIssueForm/{status}")]
         public async Task<IActionResult> FinalValidateTaskItem(IssueFormParam param, string status)
         {
             return Ok(await _issueInformService.SaveIssueForm(param, status));
+        }
+
+
+        [HttpGet("GetIssueForm/{formId}")]
+        public async Task<IActionResult> GetIssueFormById(int formId)
+        {
+            return Ok(await _issueInformService.GetIssueFormById(formId));
         }
     }
 }

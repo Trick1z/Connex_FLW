@@ -31,15 +31,34 @@ namespace Domain.ViewModels
         public TaskParamViewModel Data { get; set; }
     }
 
+    //public class IssueFormParam
+    //{
+    //    public string DocNo { get; set; }
+    //    public int FormId { get; set; }
+    //    public string StatusCode { get; set; }
+    //    public List<TaskParamViewModel> TaskItems { get; set; }
+
+
+    //}
+
     public class IssueFormParam
     {
         public string DocNo { get; set; }
         public int FormId { get; set; }
         public string StatusCode { get; set; }
-        public List<TaskParamViewModel> TaskItems { get; set; }
-        
-        
+        public int? CreatedBy { get; set; }
+        public DateTime ?CreatedTime { get; set; }
+        public int? ModifiedBy { get; set; }
+        public DateTime? ModifiedTime { get; set; }
+        public List<TaskParamViewModel> TaskItems { get; set; } = new();
     }
+
+    //public class IssueInformWaitTask { 
+    //    public IssueForm IssueForm { get; set; }
+    //    public List<IssueFormTask> TaskItems { get; set; }
+
+
+    //}
 
 
 }

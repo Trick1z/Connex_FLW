@@ -16,4 +16,6 @@ public partial class Log_User_Form
     public string ActionType { get; set; }
 
     public int FormId { get; set; }
+
+    public string DocNo { get; set; }
 }

@@ -18,6 +18,6 @@ namespace Domain.Interfaces
         //public Task<ValidatedTaskViewModel> EditValidateTaskItem(EditValidatedTaskViewModel param);
 
         public Task<IssueFormParam> SaveIssueForm(IssueFormParam param , string status);
-
+        public Task<IssueFormParam> GetIssueFormById(int formId);
     }
 }

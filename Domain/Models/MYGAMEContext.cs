@@ -181,6 +181,9 @@ public partial class MYGAMEContext : DbContext
                 .IsRequired()
                 .HasMaxLength(512)
                 .IsUnicode(false);
+            entity.Property(e => e.DocNo)
+                .HasMaxLength(512)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Pages>(entity =>
