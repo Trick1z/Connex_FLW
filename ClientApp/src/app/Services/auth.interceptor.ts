@@ -1,4 +1,3 @@
-
 import { Injectable } from '@angular/core';
 import {
   HttpInterceptor,
@@ -21,7 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
   ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // 1️⃣ Clone request และเพิ่ม JWT Header ถ้ามี
+    // =================== 1️⃣ Clone request และเพิ่ม JWT Header ถ้ามี ===================
     const token = this.authService.getToken();
     let authReq = req;
     if (token) {
@@ -30,14 +29,14 @@ export class AuthInterceptor implements HttpInterceptor {
       });
     }
 
-    // 2️⃣ ส่ง request ต่อไป และจับ response / error
+    // =================== 2️⃣ ส่ง request ต่อไป และจับ response / error ===================
     return next.handle(authReq).pipe(
       tap(event => {
-        // 3️⃣ สามารถเพิ่ม logging ถ้าต้องการ
+        // =================== 3️⃣ Optional Logging ===================
         // console.log('HTTP Event:', event);
       }),
       catchError((error: HttpErrorResponse) => {
-        // 4️⃣ Handle Error
+        // =================== 4️⃣ Handle Error ===================
         let errorMsg = '';
         if (error.error instanceof ErrorEvent) {
           // Client side error
@@ -47,10 +46,10 @@ export class AuthInterceptor implements HttpInterceptor {
           errorMsg = `Server Error: ${error.status} - ${error.message}`;
         }
 
-        // 5️⃣ แสดง notification popup
+        // =================== 5️⃣ แสดง notification popup ===================
         this.notify.showError(errorMsg);
 
-        // 6️⃣ ถ้า 401 ให้ logout
+        // =================== 6️⃣ ถ้า 401 ให้ logout ===================
         if (error.status === 401) {
           this.authService.logout();
         }

@@ -30,6 +30,8 @@ namespace Domain.ViewModels
     public class TaskParamViewModel
     {
         public Guid? Id { get; set; }
+        public int FormId { get; set; }
+        public int? TaskSeq { get; set; }
         public int? IssueCategoriesId { get; set; }
         public string IssueCategoriesName { get; set; }
         public int? ProductId { get; set; }
@@ -65,6 +67,7 @@ namespace Domain.ViewModels
     public class TaskItemDto
     {
         public Guid Id { get; set; }
+
         public int? IssueCategoriesId { get; set; }
         public string IssueCategoriesName { get; set; }
         public int? ProductId { get; set; }

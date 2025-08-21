@@ -1,13 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { CategoriesDeleteFormData, CategoriesUpdateFormData, ProductDeleteFormData, ProductUpdateFormData } from 'src/app/modules/admin/models/categories.model';
-import { InsertCategoriesDataModel, InsertProductDataModel } from '../../models/insert-categories.model';
-import Swal from 'sweetalert2';
-import { DropDownService } from 'src/app/services/drop-down.service';
-import { catchError, of } from 'rxjs';
-import { IssueProductService } from '../../services/issue-product.service';
+// import { Swal } from 'sweetalert2';
+// import { DataSource } from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
+import { catchError, of } from 'rxjs';
+
+import { DropDownService } from 'src/app/services/drop-down.service';
+import { IssueProductService } from '../../services/issue-product.service';
+import { 
+  CategoriesDeleteFormData, CategoriesUpdateFormData, 
+  ProductDeleteFormData, ProductUpdateFormData 
+} from '../../models/categories.model';
+import { InsertCategoriesDataModel, InsertProductDataModel } from '../../models/insert-categories.model';
+import { DevExthemeParam, productSearch } from '../../models/search.Model';
 import DataSource from 'devextreme/data/data_source';
-import {  DevExthemeParam, productSearch } from '../../models/search.Model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-add-categories-product-main',
@@ -15,347 +21,190 @@ import {  DevExthemeParam, productSearch } from '../../models/search.Model';
   styleUrls: ['./add-categories-product-main.component.scss']
 })
 export class AddCategoriesProductMainComponent implements OnInit {
-  ngOnInit(): void {
-    this.getCategoriesProductDataList();
-    this.getCheckBoxItem()
-    this.initProductByNameCategoriesDataSource(null, null)
-  }
 
-  constructor(
-    private dropDownService: DropDownService,
-    private issueProductService: IssueProductService
-  ) { }
-
-
+  // ================= Variables =================
   categoryVisible: boolean = false;
   productVisible: boolean = false;
+  editProductVisible: boolean = false;
+  editCategoriesVisible: boolean = false;
+
   categoryTextValue: string = "";
   productTextValue: string = "";
   isProgram: boolean = false;
-  categoryDataList: Array<any> = [];
-  productDataList: Array<any> = [];
-  checkBoxItem: Array<any> = [];
-  editProductVisible: boolean = false;
+
   editProductText: string = "";
+  editCategoriesText: string = "";
+
+  categoryDataList: any[] = [];
+  productDataList: any[] = [];
+  checkBoxItem: any[] = [];
+
   categoriesIdSearch: string = "";
   productSearch: string = "";
+
   ProductByCategoriesDataSource!: DataSource;
-  editCategoriesVisible: boolean = false;
-  editCategoriesText: string = "";
+
   editCategoriesFormData: CategoriesUpdateFormData = {
     issueCategoriesId: 0,
     issueCategoriesName: "",
     isProgramIssue: false
-  }
+  };
+
   editProductFormData: ProductUpdateFormData = {
     productId: 0,
-    productName: "",
+    productName: ""
+  };
+
+  // ================= Constructor =================
+  constructor(
+    private dropDownService: DropDownService,
+    private issueProductService: IssueProductService
+  ) {}
+
+  // ================= Lifecycle =================
+  ngOnInit(): void {
+    this.getCategoriesProductDataList();
+    this.getCheckBoxItem();
+    this.initProductByNameCategoriesDataSource();
   }
 
-  categoryPopupShow() {
-    this.categoryVisible = true;
-  }
-  productPopupShow() {
-    this.productVisible = true;
-  }
+  // ================= Popup Show/Hide =================
+  categoryPopupShow() { this.categoryVisible = true; }
   categoryPopupHide() {
     this.categoryVisible = false;
-    this.categoryTextValue = ''
+    this.categoryTextValue = '';
     this.isProgram = false;
-
   }
+
+  productPopupShow() { this.productVisible = true; }
   productPopupHide() {
     this.productVisible = false;
-    this.productTextValue = ''
-
-  }
-  onTextValueChanged(e: any) {
-    this.categoryTextValue = e.value;
-  }
-  onProductTextValueChanged(e: any) {
-    this.productTextValue = e.value;
-  }
-  getCategoriesProductDataList() {
-
-    this.dropDownService.getCategoryDropDown()
-      .pipe(catchError(err => {
-
-        return err
-      })).subscribe((res: any) => {
-
-        this.categoryDataList = res
-      })
-
-    this.dropDownService.getProductDropDown()
-      .pipe(catchError(err => {
-        return err
-      })).subscribe((res: any) => {
-
-        this.productDataList = res
-      })
-
-  }
-  onCategoriesSubmit() {
-
-    var data: InsertCategoriesDataModel = {
-      IssueCategoriesName: this.categoryTextValue,
-      isProgramIssue: this.isProgram
-
-
-    }
-
-    this.issueProductService.onSaveCategories(data)
-      .pipe(catchError(err => { return err }))
-      .subscribe((res: any) => {
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'บันทึกข้อมูลสำเร็จ',
-          icon: 'success',
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-        this.getCategoriesProductDataList();
-
-        return this.categoryPopupHide()
-
-      })
-  }
-  onProductSubmit() {
-
-    var data: InsertProductDataModel = {
-      productName: this.productTextValue,
-    }
-    this.issueProductService.onSaveProduct(data)
-      .pipe(catchError(err => { return err })).subscribe((res: any) => {
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'บันทึกข้อมูลสำเร็จ',
-          icon: 'success',
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-        this.getCategoriesProductDataList();
-
-        return this.productPopupHide()
-
-      })
-  }
-  onDeleteCategory(data: CategoriesDeleteFormData) {
-    var newData: CategoriesDeleteFormData = {
-      issueCategoriesId: data.issueCategoriesId,
-      issueCategoriesName: data.issueCategoriesName,
-    }
-    this.issueProductService.onDeleteCategories(newData)
-      .pipe(catchError(err => { return err })).subscribe((res: any) => {
-        this.getCategoriesProductDataList();
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'ลบข้อมูลสำเร็จ',
-          icon: 'success',
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-      })
-
-
+    this.productTextValue = '';
   }
 
-  onDeleteProduct(data: ProductDeleteFormData) {
-    var newData: ProductDeleteFormData = {
-      productId: data.productId,
-      productName: data.productName,
-
-    }
-    this.issueProductService.onDeleteProduct(newData)
-      .pipe(catchError(err => { return err })).subscribe((res: any) => {
-        this.getCategoriesProductDataList();
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'ลบข้อมูลสำเร็จ',
-          icon: 'success',
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-      })
-  }
   onEditProductPopupShow(data: ProductUpdateFormData) {
     this.editProductVisible = true;
     this.editProductText = data.productName;
-    this.editProductFormData.productId = data.productId
-    this.editProductFormData.productName = this.editProductText
-    this.editProductFormData.modifiedTime = data.modifiedTime;
+    this.editProductFormData = { ...data };
   }
+
   onEditProductPopupHide() {
     this.editProductVisible = false;
-    this.editProductFormData = {
-      productId: 0,
-      productName: "",
-      modifiedTime: undefined // Reset modifiedTime
-    }
+    this.editProductFormData = { productId: 0, productName: "", modifiedTime: undefined };
   }
-  onEditPopupSubmit() {
 
-    var newData = {
-      productId: this.editProductFormData.productId,
-      productName: this.editProductText,
-      modifiedTime: this.editProductFormData.modifiedTime
-    }
-    this.issueProductService.onUpdateProduct(newData).pipe(catchError(err => {
-      if (err.error && err.error.messages) {
-        this.editProductVisible = false;
-        return Swal.fire({
-          title: 'error',
-          text: `บันทึกข้อมูลไม่สำเร็จ: ${err.error.messages.modifiedTime}`,
-          icon: 'error',
-
-          confirmButtonText: 'ตกลง',
-          timer: 3000
-        });
-      }
-      this.editProductVisible = false;
-      return Swal.fire({
-        title: 'error',
-        text: 'บันทึกข้อมูลไม่สำเร็จ',
-        icon: 'error',
-        confirmButtonText: 'ตกลง',
-        timer: 1000
-      });
-      return err
-    })).subscribe((res: any) => {
-      this.onEditProductPopupHide();
-      this.getCategoriesProductDataList();
-      Swal.fire({
-        title: 'สำเร็จ',
-        text: 'บันทึกข้อมูลสำเร็จ',
-        icon: 'success',
-
-        confirmButtonText: 'ตกลง',
-        timer: 1000
-      });
-    });
-  }
   onEditCategoriesPopupShow(data: CategoriesUpdateFormData) {
     this.editCategoriesVisible = true;
     this.editCategoriesText = data.issueCategoriesName;
-    this.editCategoriesFormData.issueCategoriesId = data.issueCategoriesId
-    this.editCategoriesFormData.issueCategoriesName = this.editCategoriesText
-    this.editCategoriesFormData.isProgramIssue = data.isProgramIssue
-    this.editCategoriesFormData.modifiedTime = data.modifiedTime;
+    this.editCategoriesFormData = { ...data };
   }
 
   onEditCategoriesPopupHide() {
     this.editCategoriesVisible = false;
-    this.editCategoriesFormData = {
-      issueCategoriesId: 0,
-      issueCategoriesName: "",
-      isProgramIssue: false,
-      modifiedTime: undefined 
-    }
+    this.editCategoriesFormData = { issueCategoriesId: 0, issueCategoriesName: "", isProgramIssue: false, modifiedTime: undefined };
+  }
+
+  // ================= Text Change Handlers =================
+  onTextValueChanged(e: any) { this.categoryTextValue = e.value; }
+  onProductTextValueChanged(e: any) { this.productTextValue = e.value; }
+  onChangeTest(e: string) { this.productSearch = e; }
+  onCategoriesValueCheck(e: any) { this.categoriesIdSearch = this.getSelectedCategories(); }
+
+  // ================= CRUD / API Calls =================
+  getCategoriesProductDataList() {
+    this.dropDownService.getCategoryDropDown().pipe(catchError(err => of([])))
+      .subscribe(res => this.categoryDataList = Array.isArray(res) ? res : []);
+
+    this.dropDownService.getProductDropDown().pipe(catchError(err => of([])))
+      .subscribe(res => this.productDataList = Array.isArray(res) ? res : []);
+  }
+
+  onCategoriesSubmit() {
+    const data: InsertCategoriesDataModel = { IssueCategoriesName: this.categoryTextValue, isProgramIssue: this.isProgram };
+    this.issueProductService.onSaveCategories(data)
+      .pipe(catchError(err => of(err)))
+      .subscribe(() => {
+        Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
+        this.getCategoriesProductDataList();
+        this.categoryPopupHide();
+      });
+  }
+
+  onProductSubmit() {
+    const data: InsertProductDataModel = { productName: this.productTextValue };
+    this.issueProductService.onSaveProduct(data)
+      .pipe(catchError(err => of(err)))
+      .subscribe(() => {
+        Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
+        this.getCategoriesProductDataList();
+        this.productPopupHide();
+      });
+  }
+
+  onDeleteCategory(data: CategoriesDeleteFormData) {
+    this.issueProductService.onDeleteCategories(data)
+      .pipe(catchError(err => of(err)))
+      .subscribe(() => {
+        this.getCategoriesProductDataList();
+        Swal.fire('สำเร็จ', 'ลบข้อมูลสำเร็จ', 'success');
+      });
+  }
+
+  onDeleteProduct(data: ProductDeleteFormData) {
+    this.issueProductService.onDeleteProduct(data)
+      .pipe(catchError(err => of(err)))
+      .subscribe(() => {
+        this.getCategoriesProductDataList();
+        Swal.fire('สำเร็จ', 'ลบข้อมูลสำเร็จ', 'success');
+      });
+  }
+
+  onEditPopupSubmit() {
+    const newData = { ...this.editProductFormData, productName: this.editProductText };
+    this.issueProductService.onUpdateProduct(newData)
+      .pipe(catchError(err => of(err)))
+      .subscribe(() => {
+        this.onEditProductPopupHide();
+        this.getCategoriesProductDataList();
+        Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
+      });
   }
 
   onEditCategoriesPopupSubmit() {
-
-    var newData = {
-      issueCategoriesId: this.editCategoriesFormData.issueCategoriesId,
-      issueCategoriesName: this.editCategoriesText,
-      isProgramIssue: this.editCategoriesFormData.isProgramIssue,
-      modifiedTime: this.editCategoriesFormData.modifiedTime
-    }
-    this.issueProductService.onUpdateCategories(newData).pipe
-      (catchError(err => {
-        if (err.error && err.error.messages) {
-          this.editCategoriesVisible = false;
-          return Swal.fire({
-            title: 'บันทึกข้อมูลไม่สำเร็จ',
-            text: `${err.error.messages.modifiedTime}`,
-            icon: 'error',
-
-            confirmButtonText: 'ตกลง',
-            timer: 3000
-          });
-        }
-        this.editCategoriesVisible = false;
-        return Swal.fire({
-          title: 'error',
-          text: 'บันทึกข้อมูลไม่สำเร็จ',
-          icon: 'error',
-
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        }); 
-      })).subscribe((res: any) => {
+    const newData = { ...this.editCategoriesFormData, issueCategoriesName: this.editCategoriesText };
+    this.issueProductService.onUpdateCategories(newData)
+      .pipe(catchError(err => of(err)))
+      .subscribe(() => {
         this.onEditCategoriesPopupHide();
         this.getCategoriesProductDataList();
-        Swal.fire({
-          title: 'สำเร็จ',
-          text: 'บันทึกข้อมูลสำเร็จ',
-          icon: 'success',
-
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
-      })
-  }
-  getCheckBoxItem() {
-
-
-    this.dropDownService.getCategoryDropDown()
-      .pipe(
-        catchError(err => {
-          this.categoryDataList = [];
-          return of([]);
-        })
-      )
-      .subscribe((res: any) => {
-        const resArray = Array.isArray(res) ? res : [];
-        this.categoryDataList = resArray.map((item: any) => ({
-          ...item,
-          selected: false 
-        }));
+        Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
       });
-
-
   }
 
-  onCategoriesValueCheck(e: any) {
-    this.categoriesIdSearch = this.getSelectedCategories();
-  }
-
-  onSearch() {
-    this.initProductByNameCategoriesDataSource(this.productSearch, this.categoriesIdSearch)
-  }
-
-  onChangeTest(e: string) {
-    this.productSearch = e;
-  }
+  // ================= Search / Filter =================
+  onSearch() { this.initProductByNameCategoriesDataSource(this.productSearch, this.categoriesIdSearch); }
 
   initProductByNameCategoriesDataSource(productName: string | null = null, categoriesId: string | null = null) {
     this.ProductByCategoriesDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
-        var newLoad: DevExthemeParam<productSearch> = {
-          searchCriteria: {
-            productName: productName,
-            categoriesText: categoriesId
-          },
-          loadOption: loadOptions
-        }
-        return this.issueProductService.QueryProductOnCategories(newLoad).pipe(catchError(err => {
-          return err
-        })).toPromise()
-
+        const newLoad: DevExthemeParam<productSearch> = { searchCriteria: { productName, categoriesText: categoriesId }, loadOption: loadOptions };
+        return this.issueProductService.QueryProductOnCategories(newLoad)
+          .pipe(catchError(err => of(err)))
+          .toPromise();
       }
     });
   }
 
-
-  getSelectedCategories(): string {
-    return this.categoryDataList
-      .filter(c => c.selected)           
-      .map(c => c.issueCategoriesId)     
-      .join(',');                      
+  getCheckBoxItem() {
+    this.dropDownService.getCategoryDropDown()
+      .pipe(catchError(err => of([])))
+      .subscribe((res: any) => {
+        this.categoryDataList = Array.isArray(res) ? res.map((item: any) => ({ ...item, selected: false })) : [];
+      });
   }
 
-
-
+  getSelectedCategories(): string {
+    return this.categoryDataList.filter(c => c.selected).map(c => c.issueCategoriesId).join(',');
+  }
 
 }

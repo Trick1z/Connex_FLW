@@ -22,7 +22,7 @@ namespace Services.Implements
             _context = context;
         }
 
-        public async Task<Rel_User_Categories> SaveUserCategories(SaveUserCategoriesParam param)
+        public async Task<Rel_User_Categories> SaveUserCategoriesMapping(SaveUserCategoriesParam param)
         {
             // ดึง user พร้อม relation ปัจจุบัน
             var validate = new ValidateException();
@@ -122,7 +122,7 @@ namespace Services.Implements
 
 
 
-        public async Task<QueryViewModel<USP_Query_NameResult>> QueryUserByRole(DevExtremeParam<SearchUsernameParam> param )
+        public async Task<QueryViewModel<USP_Query_NameResult>> QueryUser(DevExtremeParam<SearchUsernameParam> param )
         {
 
 

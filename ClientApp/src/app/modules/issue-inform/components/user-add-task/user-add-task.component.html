@@ -27,6 +27,7 @@
     <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
       <app-button [color]="'blue'" [message]="'Edit'" (clicked)="onClickEditItem(cell.data)"></app-button>
       <app-button [color]="'red'" [message]="'Delete'" (clicked)="deleteItem(cell.data)"></app-button>
+      <!-- <app-button [color]="'red'" [message]="'Delete'" (clicked)="deleteItem(cell.data)"></app-button> -->
     </div>
   </dx-data-grid>
 </div>

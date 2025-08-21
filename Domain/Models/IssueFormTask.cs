@@ -7,7 +7,7 @@ namespace Domain.Models;
 
 public partial class IssueFormTask
 {
-    public int FromId { get; set; }
+    public int FormId { get; set; }
 
     public int TaskSeq { get; set; }
 
@@ -41,7 +41,7 @@ public partial class IssueFormTask
 
     public virtual FileAttach File { get; set; }
 
-    public virtual IssueForm From { get; set; }
+    public virtual IssueForm Form { get; set; }
 
     public virtual Rel_Categories_Product Rel_Categories_Product { get; set; }
 

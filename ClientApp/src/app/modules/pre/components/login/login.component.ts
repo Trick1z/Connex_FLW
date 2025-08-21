@@ -11,39 +11,42 @@ import Swal from 'sweetalert2';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
-  constructor(
-    private router: Router,
-    private authService: AuthServiceService
 
-  ) { }
-
+  // =================== Variables ===================
   passwordMode: string = "password";
+
   userData: UserData = {
     username: "",
     password: ""
-  }
+  };
+
   usernameError: string[] = [];
-  showError: boolean = false
+  showError: boolean = false;
 
+  // =================== Constructor ===================
+  constructor(
+    private router: Router,
+    private authService: AuthServiceService
+  ) { }
 
+  // =================== Error Handling ===================
   handleCloseError() {
     this.showError = false;
   }
-  triggerError() {
 
+  triggerError() {
     this.showError = true;
   }
 
-
+  // =================== Navigation ===================
   NavigateToRegisterPage() {
-
-    return this.router.navigate([AuthRoute.RegisterFullPath])
+    return this.router.navigate([AuthRoute.RegisterFullPath]);
   }
 
+  // =================== Login Submit ===================
   onSubmit() {
     this.authService.login(this.userData).subscribe({
       next: () => {
-
         Swal.fire({
           title: 'สำเร็จ',
           text: 'เข้าสู่ระบบสำเร็จ',
@@ -54,8 +57,7 @@ export class LoginComponent {
         this.router.navigate([ViewsRoute.HomeFullPath]);
       },
       error: (err) => {
-        // console.log(err);
-        this.usernameError = []
+        this.usernameError = [];
         if (err.error && err.error.messages) {
           Object.keys(err.error.messages).forEach((key) => {
             const val = err.error.messages[key];
@@ -66,8 +68,9 @@ export class LoginComponent {
             }
           });
         }
+        this.triggerError();
       }
     });
   }
-}
 
+}

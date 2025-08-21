@@ -10,24 +10,26 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthServiceService {
 
-
+  // =================== LocalStorage Keys ===================
   private readonly TOKEN_KEY = 'token';
   private readonly ROLE_KEY = 'roleId';
   private readonly ACCESS_PAGES_KEY = 'accessPages';
 
+  // =================== Constructor ===================
   constructor(private http: HttpClient, private router: Router) { }
 
+  // =================== Authentication ===================
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http.post(`${environment.apiUrl}Authentication/login`, credentials).pipe(
       tap((res: any) => {
         if (res?.token) {
           this.setToken(res.token);
+          // Optional: สามารถ setRole/res.accessPages ได้ถ้ามีจาก backend
         }
       })
     );
   }
 
-  // Logout: ล้างข้อมูลและกลับไปหน้า login
   logout(): void {
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.ROLE_KEY);
@@ -35,7 +37,7 @@ export class AuthServiceService {
     this.router.navigate([AuthRoute.LoginFullPath]);
   }
 
-  // Getters
+  // =================== Getters ===================
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
@@ -50,7 +52,7 @@ export class AuthServiceService {
     return pages ? JSON.parse(pages) : [];
   }
 
-  // Setters (private)
+  // =================== Setters (Private) ===================
   private setToken(token: string) {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
@@ -63,16 +65,13 @@ export class AuthServiceService {
     localStorage.setItem(this.ACCESS_PAGES_KEY, JSON.stringify(pages));
   }
 
-  // Check if user has access to a page
+  // =================== Authorization ===================
   hasAccess(pageUrl: string): boolean {
     const pages = this.getAccessPages();
     return pages.includes(pageUrl);
   }
 
-  // Check if logged in
   isLoggedIn(): boolean {
     return !!this.getToken();
   }
-
-
 }

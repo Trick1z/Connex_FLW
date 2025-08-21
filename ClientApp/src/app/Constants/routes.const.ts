@@ -1,27 +1,27 @@
+// ======================== Auth Routes ========================
 export class AuthRoute {
   static prefix: string = `auth`;
 
   static Login: string = `login`;
   static LoginFullPath: string = `${AuthRoute.prefix}/${AuthRoute.Login}`;
-  // register path
+
   static Register: string = `register`;
   static RegisterFullPath: string = `${AuthRoute.prefix}/${AuthRoute.Register}`;
-
-  // static LandingPage: string = `Landing`;
-  // static LandingPageFullPath: string = `${AuthRoute.prefix}/${AuthRoute.LandingPage}`;
 }
 
+// ======================== Views Routes =======================
 export class ViewsRoute {
   static prefix: string = `view`;
 
   static Home: string = `home`;
   static HomeFullPath: string = `${ViewsRoute.prefix}/${ViewsRoute.Home}`;
 
-    static Landing: string = `landing`;
+  static Landing: string = `landing`;
   static LandingFullPath: string = `${ViewsRoute.prefix}/${ViewsRoute.Landing}`;
   static LandingName: string = `landing`;
 }
 
+// ======================== Games Routes =======================
 export class GamesRoute {
   static prefix: string = `game`;
 
@@ -29,6 +29,7 @@ export class GamesRoute {
   static WordFullPath: string = `${GamesRoute.prefix}/${GamesRoute.Word}`;
 }
 
+// ======================== Customer Routes ====================
 export class CustomerRoute {
   static prefix: string = `customer`;
 
@@ -41,6 +42,7 @@ export class CustomerRoute {
   static CustomerAddFormName: string = `customer-add-form`;
 }
 
+// ======================== User Routes ========================
 export class UserRoute {
   static prefix: string = `user`;
 
@@ -51,14 +53,13 @@ export class UserRoute {
   static UserAddForm: string = `add-form-task`;
   static UserAddFormFullPath: string = `${UserRoute.prefix}/${UserRoute.UserAddForm}`;
   static UserAddFormName: string = `user-add-form`;
-  
-  
+
   static UserEditForm: string = `edit-form-task`;
   static UserEditFormFullPath: string = `${UserRoute.prefix}/${UserRoute.UserEditForm}`;
   static UserEditFormName: string = `user-edit-form`;
-
 }
 
+// ======================== Admin Routes =======================
 export class AdminRoute {
   static prefix: string = `admin`;
 
@@ -74,30 +75,16 @@ export class AdminRoute {
   static AdminUserCategoriesFullPath: string = `${AdminRoute.prefix}/${AdminRoute.AdminUserCategories}`;
   static AdminUserCategoriesName: string = `map-user-categories`;
 
-
   static AdminDashboard: string = `dashboard`;
   static AdminDashboardFullPath: string = `${AdminRoute.prefix}/${AdminRoute.AdminDashboard}`;
   static AdminDashboardName: string = `dashboard`;
-
-
 }
 
-
+// ======================== Support Routes =====================
 export class SupportRoute {
   static prefix: string = `support`;
 
   static SupportWork: string = `work`;
   static SupportWorkFullPath: string = `${SupportRoute.prefix}/${SupportRoute.SupportWork}`;
   static SupportWorkName: string = `work`;
-
-
-
 }
-
-
-// export class LandingRoute {
-//   static prefix: string = `error`;
-
-
-
-// }

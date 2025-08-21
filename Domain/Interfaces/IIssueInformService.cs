@@ -1,24 +1,23 @@
 ﻿using Domain.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Domain.Interfaces
 {
     public interface IIssueInformService
     {
+        public Task<IEnumerable<AllProducts>> GetProductItemsMapByCategories(int id); 
 
-        public Task<IEnumerable<AllProducts>> GetProductItemsMapByCategories(int id);
+        public Task<List<TaskParamViewModel>> ValidateTaskItemsAsync(ValidateTaskParam param);
 
+        public Task<List<TaskParamViewModel>> DeleteTask(ValidateTaskParam param); 
 
-        public Task<List<TaskParamViewModel>> SaveTask(ValidateTaskParam param);
+       
+        public Task<IssueFormParam> SaveIssueForm(IssueFormParam param, int formId, string status); 
 
-        //public Task<ValidatedTaskViewModel> EditValidateTaskItem(EditValidatedTaskViewModel param);
+        public Task<IssueFormParam> GetIssueFormById(int formId); 
 
-        public Task<IssueFormParam> SaveIssueForm(IssueFormParam param , string status);
-        public Task<IssueFormParam> GetIssueFormById(int formId);
-        public Task<List<IssueFormDto>> GetSubmittedOrInProgressForms();
+        public Task<List<IssueFormDto>> GetSubmittedOrInProgressForms(); 
     }
 }

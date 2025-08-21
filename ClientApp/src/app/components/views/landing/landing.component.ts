@@ -8,10 +8,12 @@ import { ViewsRoute } from 'src/app/constants/routes.const';
   styleUrls: ['./landing.component.scss']
 })
 export class LandingComponent {
-  constructor(
-    private route: Router
-  ) { }
-  NavToHome() {
-    this.route.navigate([ViewsRoute.HomeFullPath])
+
+  constructor(private router: Router) {}
+
+
+  navigateToHome(): void {
+    this.router.navigate([ViewsRoute.HomeFullPath]);
   }
+
 }

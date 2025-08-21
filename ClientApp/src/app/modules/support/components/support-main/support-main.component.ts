@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { catchError, pipe } from 'rxjs';
+import { catchError } from 'rxjs';
 import { CheckboxService } from 'src/app/services/checkbox.service';
 
 @Component({
@@ -9,44 +9,46 @@ import { CheckboxService } from 'src/app/services/checkbox.service';
 })
 export class SupportMainComponent implements OnInit {
 
-  ngOnInit(): void {
-    this.getCategoriesCheckBoxItem()
-  }
-  constructor(
-    private checkBoxService: CheckboxService
-  ){}
+  // =================== Variables ===================
   FieldDocNo: string = '';
   categoriesCheckBoxItem: any = [];
 
+  assignment: any = [
+    {
+      docNo: "YYMM001",
+      issueCategoriesName: "borrow",
+      productName: "mouse",
+      qty: 2,
+      location: "asd",
+      timeToFound: "2023-10-01",
+      img: "somebiew"
+    }
+  ];
 
-  assignment: any  =[
+  // =================== Constructor ===================
+  constructor(private checkBoxService: CheckboxService) { }
 
-    {docNo : "YYMM001" , issueCategoriesName : "borrow" , productName : "mouse",qty : 2,
-      location : "asd", timeToFound : "2023-10-01" , img : "somebiew" 
-     }
+  // =================== Lifecycle ===================
+  ngOnInit(): void {
+    this.getCategoriesCheckBoxItem();
+  }
 
-  ]
-
+  // =================== Event Handlers ===================
   onOptionsChanged(e: any) {
-    // this.options = elog
-    // ;
-
     console.log(e);
-    
   }
 
-  getCategoriesCheckBoxItem (){
-    this.checkBoxService.getCategoriesCheckBoxItem().pipe(catchError(err => {
-
-      return err
-    })).subscribe((res: any) => {
-      console.log(res);
-      
-      this.categoriesCheckBoxItem = res;
-    }); 
+  // =================== Load Checkbox Items ===================
+  getCategoriesCheckBoxItem() {
+    this.checkBoxService.getCategoriesCheckBoxItem()
+      .pipe(catchError(err => {
+        console.error('Error loading checkbox items:', err);
+        return err;
+      }))
+      .subscribe((res: any) => {
+        console.log('Checkbox items loaded:', res);
+        this.categoriesCheckBoxItem = res;
+      });
   }
-
-
-
 
 }

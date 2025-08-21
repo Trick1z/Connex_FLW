@@ -104,7 +104,7 @@ public partial class MYGAMEContext : DbContext
 
         modelBuilder.Entity<IssueFormTask>(entity =>
         {
-            entity.HasKey(e => new { e.FromId, e.TaskSeq }).HasName("PK_IssueFormTask_1");
+            entity.HasKey(e => new { e.FormId, e.TaskSeq }).HasName("PK_IssueFormTask_1");
 
             entity.Property(e => e.AssignedTime).HasColumnType("datetime");
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
@@ -126,8 +126,8 @@ public partial class MYGAMEContext : DbContext
                 .HasForeignKey(d => d.FileId)
                 .HasConstraintName("FK_IssueFormTask_FileAttach");
 
-            entity.HasOne(d => d.From).WithMany(p => p.IssueFormTask)
-                .HasForeignKey(d => d.FromId)
+            entity.HasOne(d => d.Form).WithMany(p => p.IssueFormTask)
+                .HasForeignKey(d => d.FormId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_IssueFormTask_IssueForm");
 

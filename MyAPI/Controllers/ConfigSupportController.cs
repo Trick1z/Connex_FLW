@@ -20,24 +20,28 @@ namespace MyAPI.Controllers
         [HttpPost("InsertMappingUserCategories")]
         public async Task<IActionResult> InsertMappingUserCategoriesItem(SaveUserCategoriesParam req)
         {
-            return Ok(await _configSupportService.SaveUserCategories(req));
+
+            return Ok(await _configSupportService.SaveUserCategoriesMapping(req));
         }
 
         [HttpGet("userByRole")]
         public async Task<IActionResult> GetUserByRoleItem()
         {
+    
             return Ok(await _configSupportService.GetUserByRoleSupport());
         }
+
         [HttpGet("loadUser/{id}")]
         public async Task<IActionResult> LoadUser(int id)
         {
+
             return Ok(await _configSupportService.LoadUser(id));
         }
 
         [HttpPost("queryUserByText")]
-        public async Task<IActionResult> QueryUserByRole(DevExtremeParam<SearchUsernameParam> param)
+        public async Task<IActionResult> QueryUser(DevExtremeParam<SearchUsernameParam> param)
         {
-            return Ok(await _configSupportService.QueryUserByRole(param));
+            return Ok(await _configSupportService.QueryUser(param));
         }
     }
 }

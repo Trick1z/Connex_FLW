@@ -25,12 +25,12 @@ export class DropDownService {
 
   getCategoryDropDown(){
 
-    return this.http.get(`${environment.apiUrl}IssueProduct/Categories/item`)
+    return this.http.get(`${environment.apiUrl}DropDown/CategoriesItem`)
   }
 
   getProductDropDown(){
 
-    return this.http.get(`${environment.apiUrl}IssueProduct/Products/item`)
+    return this.http.get(`${environment.apiUrl}DropDown/ProductsItem`)
   }
 
   getRoleDropDownItem(){

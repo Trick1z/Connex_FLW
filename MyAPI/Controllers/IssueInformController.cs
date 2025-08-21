@@ -10,7 +10,6 @@ namespace MyAPI.Controllers
     [Route("api/[controller]")]
     public class IssueInformController : Controller
     {
-
         private readonly IIssueInformService _issueInformService;
 
         public IssueInformController(IIssueInformService issueInformService)
@@ -18,18 +17,23 @@ namespace MyAPI.Controllers
             _issueInformService = issueInformService;
         }
 
-        [HttpPost("ValidateTask")]
-        public async Task<IActionResult> ValidateTaskItem(ValidateTaskParam param)
+        [HttpPost("SaveTask")]
+        public async Task<IActionResult> TaskItemsAsync(ValidateTaskParam param)
         {
-            return Ok(await _issueInformService.SaveTask(param));
-        }
-   
-        [HttpPost("SaveIssueForm/{status}")]
-        public async Task<IActionResult> FinalValidateTaskItem(IssueFormParam param, string status)
-        {
-            return Ok(await _issueInformService.SaveIssueForm(param, status));
+            return Ok(await _issueInformService.ValidateTaskItemsAsync(param)); 
         }
 
+        [HttpPost("DeleteTask")]
+        public async Task<IActionResult> DeleteTask(ValidateTaskParam param)
+        {
+            return Ok(await _issueInformService.DeleteTask(param)); 
+        }
+
+        [HttpPost("SaveIssueForm/{formId}/{status}")]
+        public async Task<IActionResult> SaveIssueForm(IssueFormParam param, int formId, string status)
+        {
+            return Ok(await _issueInformService.SaveIssueForm(param, formId, status));
+        }
 
         [HttpGet("GetIssueForm/{formId}")]
         public async Task<IActionResult> GetIssueFormById(int formId)
@@ -37,11 +41,10 @@ namespace MyAPI.Controllers
             return Ok(await _issueInformService.GetIssueFormById(formId));
         }
 
-
         [HttpGet("issue-forms/unsuccess")]
         public async Task<IActionResult> GetSubmittedOrInProgressForms()
         {
-            return Ok(await _issueInformService.GetSubmittedOrInProgressForms());
+            return Ok(await _issueInformService.GetSubmittedOrInProgressForms()); 
         }
     }
 }

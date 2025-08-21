@@ -14,11 +14,14 @@ export class InformTaskService {
   ) { }
 
 
-  validateInformTask(data: ValidatedItem) {
-    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/ValidateTask`, data)
+  validateInformTask(data: ValidatedItem , formId :number) {
+    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/SaveTask/${formId}`, data)
+  }
+  DeleteTask(data: ValidatedItem ) {
+    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/DeleteTask`, data)
   }
   saveInformTask(data: TaskRequest,status :string) {
-    return this.http.post(`${environment.apiUrl}IssueInform/SaveIssueForm/${status}`, data)
+    return this.http.post(`${environment.apiUrl}IssueInform/SaveIssueForm/${data.formId}/${status}`, data)
   }
 
   getInformTaskById(formId : number ){

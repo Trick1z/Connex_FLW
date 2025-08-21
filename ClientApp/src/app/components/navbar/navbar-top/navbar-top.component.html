@@ -26,7 +26,7 @@
                 <!-- admin dropdown -->
                 <div class="relative inline-block ml-20 text-left ">
                     <!-- Dropdown toggle button -->
-                    <button *ngIf="adminRoutes.length != 0" (click)="adminToggleDropdown()" type="button"
+                    <button *ngIf="adminRoutes.length != 0" (click)="toggleAdminDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
                         aria-haspopup="true">
                         Admin Menus
@@ -41,12 +41,12 @@
                     </button>
 
                     <!-- Dropdown menu -->
-                    <div *ngIf="adminDropdownOpen"
+                    <div *ngIf="isAdminDropdownOpen"
                         class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical">
                         <div class="py-1" role="none">
                             <button *ngFor="let item of adminRoutes; index as i"
-                                (click)="navigateTo(item.path); CloseDropdown()" type="button"
+                                (click)="navigateTo(item.path); closeAllDropdowns()" type="button"
                                 class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
                                 role="menuitem">
                                 {{ item.name }}
@@ -60,7 +60,7 @@
                 <!-- user dropdown -->
                 <div class="relative inline-block ml-20 text-left ">
                     <!-- Dropdown toggle button -->
-                    <button *ngIf="userRoutes.length != 0" (click)="userToggleDropdown()" type="button"
+                    <button *ngIf="userRoutes.length != 0" (click)="toggleUserDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
                         aria-haspopup="true">
                         User Menus
@@ -75,12 +75,12 @@
                     </button>
 
                     <!-- Dropdown menu -->
-                    <div *ngIf="userDropdownOpen"
+                    <div *ngIf="isUserDropdownOpen"
                         class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical">
                         <div class="py-1" role="none">
                             <button *ngFor="let item of userRoutes; index as i"
-                                (click)="navigateTo(item.path); CloseDropdown()" type="button"
+                                (click)="navigateTo(item.path); closeAllDropdowns()" type="button"
                                 class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
                                 role="menuitem">
                                 {{ item.name }}
@@ -93,7 +93,7 @@
 
                 <div class="relative inline-block ml-20 text-left ">
                     <!-- Dropdown toggle button -->
-                    <button *ngIf="supportRoutes.length != 0" (click)="SupportToggleDropdown()" type="button"
+                    <button *ngIf="supportRoutes.length != 0" (click)="toggleSupportDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
                         aria-haspopup="true">
                         Support Menus
@@ -108,12 +108,12 @@
                     </button>
 
                     <!-- Dropdown menu -->
-                    <div *ngIf="supportDropdownOpen"
+                    <div *ngIf="isSupportDropdownOpen"
                         class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical">
                         <div class="py-1" role="none">
                             <button *ngFor="let item of supportRoutes; index as i"
-                                (click)="navigateTo(item.path); CloseDropdown()" type="button"
+                                (click)="navigateTo(item.path); closeAllDropdowns()" type="button"
                                 class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
                                 role="menuitem">
                                 {{ item.name }}

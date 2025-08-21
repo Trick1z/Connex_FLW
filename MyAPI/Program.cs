@@ -98,7 +98,7 @@ internal class Program
 
         app.UseAuthentication();
         app.UseAuthorization();
-
+            
         app.MapControllers();
 
         app.Run();

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DropDownService } from '../../../../services/drop-down.service';
-import { catchError, firstValueFrom, pipe } from 'rxjs';
+import { catchError, firstValueFrom, of } from 'rxjs';
 import { InformTask, ValidatedItem } from '../../models/inform.model';
 import { InformTaskService } from '../../services/inform-task.service';
 import DataSource from 'devextreme/data/data_source';
@@ -17,73 +17,15 @@ import { CheckAccessService } from '../../../../services/check-access.service';
 })
 export class UserAddTaskComponent implements OnInit {
 
-  ngOnInit(): void {
-    const id = this.activeRouter.snapshot.params['id'];
-    if (id) {
-      this.validateService.getInformTaskById(id).pipe(
-        catchError(err => {
-          console.error('Error loading task:', err);
-          return [];
-        })
-      ).subscribe((res: any) => {
-        this.formId = res.formId ?? 0;
-        this.documentNumber = res.docNo ?? "";
-        const itemsWithId = res.taskItems.map((item: any, index: number) => ({
-          ...item,
-          id: item.id ?? index + 1 // ถ้า id null ให้ใช้ index+1
-        }));
-
-        this.dataValidatedDataSource = new DataSource({
-          store: new ArrayStore({
-            data: itemsWithId,
-            key: 'id'
-          })
-        });
-      });
-
-    } else {
-      this.dataValidatedDataSource = new DataSource({
-        store: new ArrayStore({
-          data: [],
-          key: 'id'
-        })
-      });
-    }
-  }
-
-
-  constructor(
-    private dropDownService: DropDownService,
-    private validateService: InformTaskService,
-    private activeRouter: ActivatedRoute,
-    private router: Router,
-    private checkAccessService: CheckAccessService
-  ) { }
+  // =================== Variables ===================
   formId: number = 0;
-  documentNumber: string = "Waiting Generate Document Number"
+  documentNumber: string = "Waiting Generate Document Number";
   titlePopup: string = "";
   InformPopupState: boolean = false;
-  informTaskData!: InformTask;
-  productDataSource: DataSource = new DataSource({
-    store: [],
-    key: 'productId'
-  });
   editPopupVisible: boolean = false;
-  categoryDataSource: DataSource = new DataSource({
-    store: [],
-    key: 'issueCategoriesId'
-  });
-  dataValidatedArray: any = [];
+  informTaskData!: InformTask;
   originalData: InformTask | null = null;
   selectedEditIssueType: string | null = null;
-
-
-  dataValidatedDataSource = new DataSource({
-    store: new ArrayStore({
-      data: [],   // เริ่มต้นเป็น array ว่าง
-      key: "id"   // unique key
-    })
-  });
 
   createTaskErrorMessage: any = {
     form: '',
@@ -94,15 +36,65 @@ export class UserAddTaskComponent implements OnInit {
     detectedTime: ''
   };
 
+  productDataSource: DataSource = new DataSource({ store: [], key: 'productId' });
+  categoryDataSource: DataSource = new DataSource({ store: [], key: 'issueCategoriesId' });
 
+  dataValidatedDataSource: DataSource = new DataSource({
+    store: new ArrayStore({
+      data: [],
+      key: "id"
+    })
+  });
+
+  dataValidatedArray: any = [];
+
+  constructor(
+    private dropDownService: DropDownService,
+    private validateService: InformTaskService,
+    private activeRouter: ActivatedRoute,
+    private router: Router,
+    private checkAccessService: CheckAccessService
+  ) { }
+
+  // =================== Init ===================
+  ngOnInit(): void {
+    const id = this.activeRouter.snapshot.params['id'];
+    if (id) {
+      this.loadTaskById(id);
+    } else {
+      this.dataValidatedDataSource = new DataSource({
+        store: new ArrayStore({ data: [], key: 'id' })
+      });
+    }
+  }
+
+  private loadTaskById(id: number) {
+    this.validateService.getInformTaskById(id)
+      .pipe(catchError(err => {
+        console.error('Error loading task:', err);
+        return of([]);
+      }))
+      .subscribe((res: any) => {
+        this.formId = res.formId ?? 0;
+        this.documentNumber = res.docNo ?? "";
+
+        const itemsWithId = res.taskItems.map((item: any, index: number) => ({
+          ...item,
+          id: item.id ?? index + 1
+        }));
+
+        this.dataValidatedDataSource = new DataSource({
+          store: new ArrayStore({ data: itemsWithId, key: 'id' })
+        });
+      });
+  }
+
+  // =================== Popup Handlers ===================
   onAddInformPopupClose() {
-
     this.InformPopupState = false;
   }
 
-
   onClickCreateIssueTask() {
-
     this.onClickEditItem({
       issueCategoriesId: null,
       productId: null,
@@ -110,200 +102,131 @@ export class UserAddTaskComponent implements OnInit {
       location: null,
       detectedTime: new Date()
     });
-
   }
 
   async onClickEditItem(item: any) {
-
-    if (item.id == null) {
-      this.titlePopup = 'Create New Task';
-    } else {
-      this.titlePopup = "Edit Task"
-
-    }
-
-    await this.getEditProductDropDown(item.issueCategoriesId);
+    this.titlePopup = item.id == null ? 'Create New Task' : 'Edit Task';
     await this.getCategoriesDropDown();
+    await this.getEditProductDropDown(item.issueCategoriesId);
 
-
-    this.originalData = { ...item };       // เก็บค่าเดิมไว้
-    this.informTaskData = { ...item };           // clone สำหรับแก้ไข
-
+    this.originalData = { ...item };
+    this.informTaskData = { ...item };
     this.selectedEditIssueType = item.issueCategoriesName;
-    // this.editPopupVisible = true;
     this.InformPopupState = true;
     await this.productDataSource.load();
   }
 
+  onEditPopupHide() {
+    this.informTaskData = { ...this.originalData! };
+    this.editPopupVisible = false;
+    this.productDataSource = new DataSource({ store: [], key: 'productId' });
+  }
+
+  // =================== Dropdown Loaders ===================
   async getCategoriesDropDown() {
     try {
       const categories = await firstValueFrom(this.dropDownService.getCategoryDropDown()) as any[];
-      console.log('Categories loaded:', categories);
-
       this.categoryDataSource = new DataSource({
-        store: new ArrayStore({
-          key: 'issueCategoriesId',
-          data: categories
-        })
+        store: new ArrayStore({ key: 'issueCategoriesId', data: categories })
       });
     } catch (err) {
       console.error('Error loading categories:', err);
-
-      this.categoryDataSource = new DataSource({
-        store: new ArrayStore({ key: 'issueCategoriesId', data: [] })
-      });
+      this.categoryDataSource = new DataSource({ store: new ArrayStore({ key: 'issueCategoriesId', data: [] }) });
     }
   }
 
-
-
-
-
-
-
   onCategoriesValueChange(e: any) {
-
-
-
-    this.informTaskData.issueCategoriesId = e.value
+    this.informTaskData.issueCategoriesId = e.value;
     this.getEditProductDropDown(e.value);
   }
 
-
-  onValidateData() {
-    const allItems = this.dataValidatedDataSource.items(); // คืนค่า array ของทุก row
-    var NewItem: ValidatedItem = {
-      dataSource: allItems,
-      data: this.informTaskData
+  async getEditProductDropDown(categoryId: number) {
+    if (!categoryId) {
+      this.productDataSource = new DataSource({ store: [], key: 'productId' });
+      return;
     }
-    this.validateService.validateInformTask(NewItem)
-      .pipe(catchError(err => {
-
-        if (err) {
-          this.createTaskErrorMessage = err.error.messages;
-        }
-        else {
-          this.createTaskErrorMessage = []
-        }
-        console.log(err);
-
-        return [];
-      }))
-      .subscribe((res: any[]) => {
-
-        this.createTaskErrorMessage = []
-        this.dataValidatedDataSource = new DataSource({
-          store: new ArrayStore({
-            data: res,   // เริ่มต้นเป็น array ว่าง
-            key: "id"   // unique key
-          })
-        });
-
-        this.InformPopupState = false;
-
-      });
+    const products = await firstValueFrom(this.dropDownService.getProductMapByCategories(categoryId)) as any[];
+    this.productDataSource = new DataSource({
+      store: new ArrayStore({ key: 'productId', data: products })
+    });
   }
-
-
-
-
-  onEditPopupHide() {
-
-
-    this.informTaskData = { ... this.originalData! }
-
-    this.editPopupVisible = false;
-    this.productDataSource = new DataSource({ store: [], key: 'productId' });
-
-
-  }
-
 
   onEditCategoriesValueChange(e: any) {
     this.getEditProductDropDown(e.value);
-    if (e.previousValue == null) {
-      return
-    }
+    if (e.previousValue == null) return;
+
     const selectedCategory = this.categoryDataSource.items().find(
       (c: any) => c.issueCategoriesId === e.value
     );
     this.selectedEditIssueType = selectedCategory ? selectedCategory.issueCategoriesName : '-';
   }
 
+  // =================== Validation ===================
+  onValidateData() {
+    const allItems = this.dataValidatedDataSource.items();
+    const newItem: ValidatedItem = { dataSource: allItems, data: this.informTaskData };
 
-  async getEditProductDropDown(categoryId: number) {
-
-    if (!categoryId) {
-      this.productDataSource = new DataSource({
-        store: [],
-        key: 'productId'
+    this.validateService.validateInformTask(newItem, this.formId)
+      .pipe(catchError(err => {
+        this.createTaskErrorMessage = err?.error?.messages ?? [];
+        console.log(err);
+        return of([]);
+      }))
+      .subscribe((res: any[]) => {
+        this.createTaskErrorMessage = [];
+        this.dataValidatedDataSource = new DataSource({
+          store: new ArrayStore({ data: res, key: "id" })
+        });
+        this.InformPopupState = false;
       });
-      return;
-    }
-    const products = await firstValueFrom(this.dropDownService.getProductMapByCategories(categoryId)) as any[];
-    this.productDataSource = new DataSource({
-      store: new ArrayStore({
-        key: 'productId',
-        data: products
-      })
-    });
   }
-  deleteItem(data: any, fromId: number) {
+
+  // =================== Delete Item ===================
+  deleteItem(data: any) {
     Swal.fire({
       title: 'Are you sure?',
-      text: `ต้องการลบรายการ ${data.issueCategoriesName} , ${data.productName} หรือไม่?`,
+      text: `ต้องการลบรายการ ${data.issueCategoriesName}, ${data.productName} หรือไม่?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Yes',
       cancelButtonText: 'No'
     }).then((result) => {
-      if (result.isConfirmed) {
-        const store = this.dataValidatedDataSource.store() as ArrayStore;
-        store.remove(data.id).then(() => {
+      if (!result.isConfirmed) return;
 
+      const allItems = this.dataValidatedDataSource.items();
+      const newItem: ValidatedItem = { dataSource: allItems, data: data };
 
-          // herer 
-          const allItems = this.dataValidatedDataSource.items();
-          var NewItem: ValidatedItem = {
-            dataSource: allItems,
-            data: this.informTaskData
-          }
-
-          this.validateService.validateInformTask(NewItem)
-          this.dataValidatedDataSource.reload();
+      this.validateService.DeleteTask(newItem)
+        .pipe(catchError(err => { console.error(err); return of([]); }))
+        .subscribe((res: any[]) => {
+          this.dataValidatedDataSource = new DataSource({
+            store: new ArrayStore({ data: res, key: 'id' })
+          });
         });
-      }
     });
   }
+
+  // =================== Save Form ===================
   onSaveForm(status: string) {
-
-
-    this.validateService.saveInformTask({
+    const payload = {
       docNo: "",
       formId: this.formId,
       statusCode: status,
       taskItems: this.dataValidatedDataSource.items()
-    }, status).pipe(
-      catchError(err => {
+    };
 
-        this.createTaskErrorMessage.form = err?.error?.messages.task[0]
-
-        return err;
-      })
-    ).subscribe((res: any) => {
-
-      this.checkAccessService.CheckAccess(UserRoute.UserFormFullPath)
-        .pipe(catchError(err => { return err })).subscribe((res: any) => {
-
-          if (res.allowed) {
-            this.router.navigate([UserRoute.UserFormFullPath])
-          } else {
-            this.router.navigate([ViewsRoute.LandingFullPath])
-
-          }
-        })
-    });
+    this.validateService.saveInformTask(payload, status)
+      .pipe(catchError(err => {
+        this.createTaskErrorMessage.form = err?.error?.messages?.task?.[0];
+        return of(err);
+      }))
+      .subscribe(() => {
+        this.checkAccessService.CheckAccess(UserRoute.UserFormFullPath)
+          .pipe(catchError(err => of(err)))
+          .subscribe((res: any) => {
+            const route = res.allowed ? UserRoute.UserFormFullPath : ViewsRoute.LandingFullPath;
+            this.router.navigate([route]);
+          });
+      });
   }
-
-
 }
