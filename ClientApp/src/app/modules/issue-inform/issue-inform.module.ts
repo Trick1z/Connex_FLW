@@ -5,7 +5,8 @@ import { IssueInformRoutingModule } from './issue-inform-routing.module';
 import { UserMainComponent } from './components/user-main/user-main.component';
 import { SharedModule } from '../shared/shared.module';
 import { UserAddTaskComponent } from './components/user-add-task/user-add-task.component';
-import { DxDataGridModule } from 'devextreme-angular';
+import { DxDataGridModule, DxValidatorModule } from 'devextreme-angular';
+import dxValidator from 'devextreme/ui/validator';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { DxDataGridModule } from 'devextreme-angular';
     CommonModule,
     IssueInformRoutingModule,
     SharedModule,
-    DxDataGridModule
+    DxDataGridModule,
+    DxValidatorModule
   ]
 })
 export class IssueInformModule { }

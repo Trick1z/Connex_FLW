@@ -13,7 +13,11 @@
 </div>
 
 <div class="mt-10 ml-20 mr-20" id="">
-  <dx-data-grid [dataSource]="dataValidatedDataSource" keyExpr="id" [showBorders]="true"
+
+  <div *ngIf="createTaskErrorMessage.form"
+    class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
+    ⚠ {{ createTaskErrorMessage.form }}
+  </div> <dx-data-grid [dataSource]="dataValidatedDataSource" keyExpr="id" [showBorders]="true"
     [paging]="{ enabled: true, pageSize: 5 }">
     <dxo-paging [pageSize]="5"></dxo-paging>
     <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
@@ -33,15 +37,103 @@
   <app-button [color]="'red'" [message]="'Cancel'"></app-button>
 </div>
 
+<dx-popup [width]="600" [height]="600" [(visible)]="InformPopupState" [showTitle]="true" [dragEnabled]="true"
+  [closeOnOutsideClick]="true" [title]="titlePopup" (onHiding)="onAddInformPopupClose()">
+
+  <div class="p-4 space-y-6" *ngIf="informTaskData">
+
+    <!-- Category -->
+    <div class="flex items-start max-w-full space-x-4 text-xl text-end">
+      <label class="mt-2 font-semibold w-36">Issue Category</label>
+      <div class="flex-1">
+        <dx-select-box [dataSource]="categoryDataSource" [(value)]="informTaskData.issueCategoriesId"
+          displayExpr="issueCategoriesName" valueExpr="issueCategoriesId"
+          (onValueChanged)="onCategoriesValueChange($event)">
+        </dx-select-box>
+        <div *ngIf="createTaskErrorMessage.categories"
+          class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
+          ⚠ {{ createTaskErrorMessage.categories }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Product -->
+    <div class="flex items-start max-w-full space-x-4 text-xl text-end">
+      <label class="mt-2 font-semibold w-36">Product</label>
+      <div class="flex-1">
+        <dx-select-box [dataSource]="productDataSource" [(value)]="informTaskData.productId" displayExpr="productName"
+          valueExpr="productId" (onValueChanged)="informTaskData.productId = $event.value">
+        </dx-select-box>
+        <div *ngIf="createTaskErrorMessage.product"
+          class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
+          ⚠ {{ createTaskErrorMessage.product }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Quantity -->
+    <div class="flex items-start max-w-full space-x-4 text-xl text-end" *ngIf="informTaskData.issueCategoriesId === 1">
+      <label class="mt-2 font-semibold w-36">Quantity</label>
+      <div class="flex-1">
+        <dx-number-box [(value)]="informTaskData.quantity!" (onValueChanged)="informTaskData.quantity = $event.value">
+        </dx-number-box>
+        <div *ngIf="createTaskErrorMessage.quantity"
+          class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
+          ⚠ {{ createTaskErrorMessage.quantity }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Location -->
+    <div class="flex items-start max-w-full space-x-4 text-xl text-end" *ngIf="informTaskData.issueCategoriesId === 2">
+      <label class="mt-2 font-semibold w-36">Location</label>
+      <div class="flex-1">
+        <dx-text-box [(value)]="informTaskData.location!" (onValueChanged)="informTaskData.location = $event.value">
+        </dx-text-box>
+        <div *ngIf="createTaskErrorMessage.location"
+          class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
+          ⚠ {{ createTaskErrorMessage.location }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Detected Time -->
+    <div class="flex items-start max-w-full space-x-4 text-xl text-end"
+      *ngIf="informTaskData.issueCategoriesId === 2 || informTaskData.issueCategoriesId === 3">
+      <label class="mt-2 font-semibold w-36">Detected Time</label>
+      <div class="flex-1">
 
 
 
-<dx-popup [width]="600" [height]="500" [(visible)]="InformPopupState" [showTitle]="true" [dragEnabled]="true"
+        <dx-date-box [value]="informTaskData.detectedTime!"
+          (onValueChanged)="informTaskData.detectedTime = $event.value">
+        </dx-date-box>
+        <div *ngIf="createTaskErrorMessage.detectedTime"
+          class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg ">
+          ⚠ {{ createTaskErrorMessage.detectedTime }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Button -->
+    <div class="flex justify-start pt-4 ml-40">
+      <dx-button text="Create" type="success" (onClick)="onValidateData()">
+      </dx-button>
+    </div>
+
+  </div>
+</dx-popup>
+
+
+
+<!-- <dx-popup [width]="600" [height]="500" [(visible)]="InformPopupState" [showTitle]="true" [dragEnabled]="true"
   [closeOnOutsideClick]="true" [title]="titlePopup" (onHiding)="onAddInformPopupClose()">
   <div class="p-4 space-y-4" *ngIf="informTaskData != null">
     <dx-select-box placeholder="Select Issue *" [dataSource]="categoryDataSource"
       [(value)]="informTaskData.issueCategoriesId" displayExpr="issueCategoriesName" valueExpr="issueCategoriesId"
       (onValueChanged)=" onCategoriesValueChange($event)"></dx-select-box>
+    <h1 class="text-xl text-red-600" *ngIf="createTaskErrorMessage.categories"> * {{createTaskErrorMessage.categories}}</h1>
+
 
     <dx-select-box placeholder="Select Product *" [dataSource]="productDataSource" [(value)]="informTaskData.productId"
       displayExpr="productName" valueExpr="productId"
@@ -57,14 +149,8 @@
       placeholder="Time To Found" [value]="informTaskData.detectedTime!"
       (onValueChanged)="informTaskData.detectedTime = $event.value"></dx-date-box>
 
-    <!-- File Upload -->
-    <!-- <dx-file-uploader
-      placeholder="Upload File (Optional)"
-      [(value)]="uploadedFile"
-    ></dx-file-uploader> -->
-
     <div class="flex justify-end gap-2 mt-4">
       <dx-button text="Create" type="success" (onClick)="onValidateData()"></dx-button>
     </div>
   </div>
-</dx-popup>
+</dx-popup> -->

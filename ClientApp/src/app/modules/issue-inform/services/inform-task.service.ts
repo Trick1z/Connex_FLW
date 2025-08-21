@@ -25,5 +25,17 @@ export class InformTaskService {
     return this.http.get(`${environment.apiUrl}IssueInform/GetIssueForm/${formId}`)
   }
 
+  getUnsuccessInform(){
+
+    return this.http.get(`${environment.apiUrl}IssueInform/issue-forms/unsuccess`)
+
+  }
+
+  // getUnsuccessInform(){
+
+  //   return this.http.get(`${environment.apiUrl}IssueInform/issue-forms/unsuccess`)
+
+  // }
+
 
 }

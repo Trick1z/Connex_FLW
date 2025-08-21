@@ -19,5 +19,6 @@ namespace Domain.Interfaces
 
         public Task<IssueFormParam> SaveIssueForm(IssueFormParam param , string status);
         public Task<IssueFormParam> GetIssueFormById(int formId);
+        public Task<List<IssueFormDto>> GetSubmittedOrInProgressForms();
     }
 }

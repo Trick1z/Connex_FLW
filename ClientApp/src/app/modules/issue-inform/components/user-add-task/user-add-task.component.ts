@@ -78,6 +78,23 @@ export class UserAddTaskComponent implements OnInit {
   selectedEditIssueType: string | null = null;
 
 
+  dataValidatedDataSource = new DataSource({
+    store: new ArrayStore({
+      data: [],   // เริ่มต้นเป็น array ว่าง
+      key: "id"   // unique key
+    })
+  });
+
+  createTaskErrorMessage: any = {
+    form: '',
+    categories: '',
+    product: '',
+    quantity: '',
+    location: '',
+    detectedTime: ''
+  };
+
+
   onAddInformPopupClose() {
 
     this.InformPopupState = false;
@@ -152,14 +169,6 @@ export class UserAddTaskComponent implements OnInit {
     this.getEditProductDropDown(e.value);
   }
 
-  dataValidatedDataSource = new DataSource({
-    store: new ArrayStore({
-      data: [],   // เริ่มต้นเป็น array ว่าง
-      key: "id"   // unique key
-    })
-  });
-
-
 
   onValidateData() {
     const allItems = this.dataValidatedDataSource.items(); // คืนค่า array ของทุก row
@@ -169,12 +178,20 @@ export class UserAddTaskComponent implements OnInit {
     }
     this.validateService.validateInformTask(NewItem)
       .pipe(catchError(err => {
-        console.error(err);
+
+        if (err) {
+          this.createTaskErrorMessage = err.error.messages;
+        }
+        else {
+          this.createTaskErrorMessage = []
+        }
+        console.log(err);
+
         return [];
       }))
       .subscribe((res: any[]) => {
 
-
+        this.createTaskErrorMessage = []
         this.dataValidatedDataSource = new DataSource({
           store: new ArrayStore({
             data: res,   // เริ่มต้นเป็น array ว่าง
@@ -231,8 +248,7 @@ export class UserAddTaskComponent implements OnInit {
       })
     });
   }
-  deleteItem(data: any) {
-
+  deleteItem(data: any, fromId: number) {
     Swal.fire({
       title: 'Are you sure?',
       text: `ต้องการลบรายการ ${data.issueCategoriesName} , ${data.productName} หรือไม่?`,
@@ -244,6 +260,16 @@ export class UserAddTaskComponent implements OnInit {
       if (result.isConfirmed) {
         const store = this.dataValidatedDataSource.store() as ArrayStore;
         store.remove(data.id).then(() => {
+
+
+          // herer 
+          const allItems = this.dataValidatedDataSource.items();
+          var NewItem: ValidatedItem = {
+            dataSource: allItems,
+            data: this.informTaskData
+          }
+
+          this.validateService.validateInformTask(NewItem)
           this.dataValidatedDataSource.reload();
         });
       }
@@ -251,7 +277,6 @@ export class UserAddTaskComponent implements OnInit {
   }
   onSaveForm(status: string) {
 
-    // console.log(this.dataValidatedDataSource);
 
     this.validateService.saveInformTask({
       docNo: "",
@@ -260,15 +285,15 @@ export class UserAddTaskComponent implements OnInit {
       taskItems: this.dataValidatedDataSource.items()
     }, status).pipe(
       catchError(err => {
-        console.error(err);
-        return [];
+
+        this.createTaskErrorMessage.form = err?.error?.messages.task[0]
+
+        return err;
       })
     ).subscribe((res: any) => {
-      // console.log(res);
 
       this.checkAccessService.CheckAccess(UserRoute.UserFormFullPath)
         .pipe(catchError(err => { return err })).subscribe((res: any) => {
-
 
           if (res.allowed) {
             this.router.navigate([UserRoute.UserFormFullPath])
@@ -277,9 +302,6 @@ export class UserAddTaskComponent implements OnInit {
 
           }
         })
-
-
-      // this.router.navigate([UserRoute.UserFormFullPath])
     });
   }
 

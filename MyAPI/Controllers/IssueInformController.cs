@@ -36,5 +36,12 @@ namespace MyAPI.Controllers
         {
             return Ok(await _issueInformService.GetIssueFormById(formId));
         }
+
+
+        [HttpGet("issue-forms/unsuccess")]
+        public async Task<IActionResult> GetSubmittedOrInProgressForms()
+        {
+            return Ok(await _issueInformService.GetSubmittedOrInProgressForms());
+        }
     }
 }
