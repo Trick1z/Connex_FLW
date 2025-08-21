@@ -1,6 +1,90 @@
 <app-head-underline [title]="'User Form'"></app-head-underline>
+
+<!-- Search / Filter Section -->
+<div class="flex items-center justify-between max-w-full ml-10 mr-10 search-box">
+  <div class="gap-4 space-y-4 text-end text-box">
+    <div class="flex items-center">
+      <label class="w-40 mr-2 font-bold">Document Number</label>
+      <div class="flex-1">
+        <app-text-box class="w-full" [value]="FieldDocNo" [placeHolder]="'Document Number'"></app-text-box>
+      </div>
+    </div>
+    <div class="flex items-center">
+      <label class="w-40 mr-2 font-bold">Product Name</label>
+      <div class="flex-1">
+        <app-text-box class="w-full" [value]="ProductName" [placeHolder]="'Product Name'"></app-text-box>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex flex-col items-start">
+    <div class="flex items-center text-end check-box">
+      <label class="w-40 font-bold">Categories</label>
+      <app-check-box [options]="options" (optionsChange)="onOptionsChanged($event)"></app-check-box>
+    </div>
+    <div class="flex items-center text-end check-box">
+      <label class="w-40 font-bold">Status</label>
+      <app-check-box [options]="statusOptions" (optionsChange)="onStatusOptionsChanged($event)"></app-check-box>
+    </div>
+  </div>
+
+  <div class="flex items-start gap-3 btns">
+    <dx-date-box displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date" width="200"></dx-date-box>
+    <dx-date-box displayFormat="dd/MM/yyyy" type="date" placeholder="End Date" width="200"></dx-date-box>
+  </div>
+</div>
+
+<div class="flex justify-between max-w-full my-3 mr-10 ml-52 button">
+  <app-button [message]="'Search'"></app-button>
+</div>
+
+<div class="mx-10">
+  <app-head-underline></app-head-underline>
+</div>
+
+<!-- Master-Detail DataGrid -->
+<div class="mx-10">
+  <dx-data-grid [dataSource]="ordersDataSource" keyExpr="docNo" [showBorders]="true"
+    [masterDetail]="{ enabled: true, template: 'detailTemplate' }" [paging]="{ enabled: true, pageSize: 5 }">
+
+    <dxo-paging [pageSize]="5"></dxo-paging>
+    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
+
+    <!-- Master Columns -->
+    <dxi-column dataField="docNo" caption="Document Number" width="120" alignment="center"></dxi-column>
+    <dxi-column dataField="status" caption="Status" minWidth="100"></dxi-column>
+    <dxi-column dataField="progressing" caption="Progressing" minWidth="120" alignment="center"></dxi-column>
+    <dxi-column dataField="modifiedBy" caption="Modified By" minWidth="120" alignment="center"></dxi-column>
+    <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"></dxi-column>
+
+    <!-- Master Action Column -->
+    <dxi-column type="buttons">
+      <dxi-button text="Edit" icon="edit"></dxi-button>
+      <dxi-button text="Delete" icon="trash"></dxi-button>
+    </dxi-column>
+
+    <!-- Detail Template -->
+    <div *dxTemplate="let masterData of 'detailTemplate'">
+      <dx-data-grid [dataSource]="getOrderItems(masterData.data.docNo)" [showBorders]="true" [columnAutoWidth]="true">
+        <dxi-column dataField="issueCategoriesName" caption="Categories" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="productName" caption="Product Name" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="status" caption="Status" minWidth="100" alignment="center"></dxi-column>
+        <dxi-column dataField="actionBy" caption="Action By" minWidth="100" alignment="center"></dxi-column>
+        <dxi-column dataField="actionTime" caption="Action Time" minWidth="150" alignment="center"></dxi-column>
+
+        <!-- Detail Action Column -->
+        <dxi-column type="buttons">
+          <dxi-button text="Edit" icon="edit"></dxi-button>
+          <dxi-button text="Delete" icon="trash"></dxi-button>
+        </dxi-column>
+      </dx-data-grid>
+    </div>
+  </dx-data-grid>
+</div>
+
+
+<!-- <app-head-underline [title]="'User Form'"></app-head-underline>
 <div class="flex justify-between max-w-full ml-10 mr-10 items- search-box">
-  <!-- Textbox ชิดซ้าย -->
   <div class="gap-4 space-y-4 text-end text-box">
 
     <div class="flex items-center">
@@ -40,7 +124,6 @@
 
 
 
-  <!-- Buttons ชิดขวา -->
   <div class="flex items-start gap-3 btns">
     <div class="flex items-center gap-3">
       <dx-date-box displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date" width="200">
@@ -63,65 +146,6 @@
 <div class="mx-10">
   <app-head-underline></app-head-underline>
 </div>
-
-
-
-
-<!-- Master Grid -->
-<!-- <div class="flex m-10 dx-grid">
-  <dx-data-grid [dataSource]="orders" keyExpr="id" [showBorders]="true"
-    [masterDetail]="{ enabled: true, template: 'detailTemplate' }" [paging]="{ enabled: true, pageSize: 5 }">
-
-    <dxo-paging [pageSize]="5"></dxo-paging>
-    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
-
-
-
-    <div *dxTemplate="let masterData of 'detailTemplate'">
-      <dx-data-grid [dataSource]="getOrderItems(masterData.key)" [showBorders]="true" [columnAutoWidth]="true">
-      </dx-data-grid>
-    </div>
-
-    <dxi-column type="buttons">
-      <dxi-button text="Edit" icon="edit" hint="Edit"></dxi-button>
-      <dxi-button text="Delete" icon="trash" hint="Delete"></dxi-button>
-    </dxi-column>
-  </dx-data-grid>
-</div> -->
-<!-- 
-<div class="flex m-10 dx-grid">
-  <dx-data-grid [dataSource]="orders" keyExpr="docNo" [showBorders]="true"
-    [masterDetail]="{ enabled: true, template: 'detailTemplate' }" [paging]="{ enabled: true, pageSize: 5 }">
-
-    <dxo-paging [pageSize]="5"></dxo-paging>
-    <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
-
-
-
-    <dxi-column dataField="docNo" caption="DocNo" width="80" alignment="center"></dxi-column>
-
-    <dxi-column dataField="status" caption="status" minWidth="80" alignment="left"></dxi-column>
-    <dxi-column dataField="progressing" caption="progressing" minWidth="120" alignment="center"></dxi-column>
-    <dxi-column dataField="modifiedBy" caption="modifiedBy" minWidth="130" alignment="center"></dxi-column>
-    <dxi-column dataField="modifiedTime" caption="modifiedTime" minWidth="200" alignment="center"></dxi-column>
-
-    <dxi-column type="buttons">
-      <dxi-button text="Edit" icon="edit" hint="Edit"></dxi-button>
-      <dxi-button text="Delete" icon="trash" hint="Delete"></dxi-button>
-    </dxi-column>
-
- 
-
-    <div *dxTemplate="let masterData of 'detailTemplate'">
-      <dx-data-grid [dataSource]="getOrderItems(masterData.data.docNo)" [showBorders]="true" [columnAutoWidth]="true">
-      </dx-data-grid>
-    </div>
-
-
-  </dx-data-grid>
-</div> -->
-
-<!-- Master Grid -->
 <div class="mx-10" id="">
 
   <dx-data-grid [dataSource]="orders" keyExpr="docNo" [showBorders]="true"
@@ -136,21 +160,16 @@
     <dxi-column dataField="modifiedBy" caption="Modified By" minWidth="130" alignment="center"></dxi-column>
     <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="200" alignment="center"></dxi-column>
 
-    <!-- Action Column in Master Grid -->
     <dxi-column type="buttons">
       <dxi-button text="Edit" icon="edit"></dxi-button>
       <dxi-button text="Delete" icon="trash"></dxi-button>
     </dxi-column>
 
-    <!-- Detail Grid Template -->
     <div *dxTemplate="let masterData of 'detailTemplate'">
 
       <dx-data-grid [dataSource]="orderItems" [showBorders]="true" [columnAutoWidth]="true">
-        <!-- <dx-data-grid [dataSource]="getOrderItems(masterData.key)" [showBorders]="true" [columnAutoWidth]="true"> -->
         <dxi-column dataField="issuecategoriesName" caption="issuecategories" minWidth="200"
           alignment="center"></dxi-column>
-
-        <!-- add log btn -->
         <dxi-column type="buttons">
           <dxi-button text="Edit" icon="edit"></dxi-button>
           <dxi-button text="Delete" icon="trash"></dxi-button>
@@ -172,7 +191,6 @@
 </div>
 
 <div class="flex justify-between max-w-full ml-10 mr-10 search-box">
-  <!-- Textbox ชิดซ้าย -->
   <div class="gap-4 space-y-4 text-end text-box">
 
     <div class="flex items-center">
@@ -203,7 +221,6 @@
   </div>
 
 
-  <!-- Buttons ชิดขวา -->
   <div class="flex items-start gap-3 btns">
     <div class="flex items-center gap-3">
       <dx-date-box displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date" width="200">
@@ -215,10 +232,6 @@
 
   </div>
 </div>
-
-
-
-
 
 
 <div class="mx-10 my-10">
@@ -234,21 +247,17 @@
     <dxi-column dataField="modifiedBy" caption="Modified By" minWidth="130" alignment="center"></dxi-column>
     <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="200" alignment="center"></dxi-column>
 
-    <!-- Action Column in Master Grid -->
     <dxi-column type="buttons">
       <dxi-button text="Edit" icon="edit"></dxi-button>
       <dxi-button text="Delete" icon="trash"></dxi-button>
     </dxi-column>
 
-    <!-- Detail Grid Template -->
     <div *dxTemplate="let masterData of 'detailTemplate'">
 
       <dx-data-grid [dataSource]="orderItems" [showBorders]="true" [columnAutoWidth]="true">
-        <!-- <dx-data-grid [dataSource]="getOrderItems(masterData.key)" [showBorders]="true" [columnAutoWidth]="true"> -->
         <dxi-column dataField="issuecategoriesName" caption="issuecategories" minWidth="200"
           alignment="center"></dxi-column>
 
-        <!-- add log btn -->
         <dxi-column type="buttons">
           <dxi-button text="Edit" icon="edit"></dxi-button>
           <dxi-button text="Delete" icon="trash"></dxi-button>
@@ -265,7 +274,6 @@
 
 
 
-<!-- reject popup -->
 <dx-popup [height]="300" [(visible)]="rejectPopupState" [width]="500" [showTitle]="true" [closeOnOutsideClick]="true"
   title="Task Remark" (onHiding)="onRejectViewPopupHide()">
   <div class="popup-content">
@@ -291,7 +299,6 @@
 
 
 
-<!-- history Log  -->
 
 <dx-popup [height]="500" [(visible)]="historyPopupState" [width]="700" [showTitle]="true" [closeOnOutsideClick]="true"
   title="Task Remark" (onHiding)="onRejectViewPopupHide()">
@@ -321,4 +328,4 @@
 
 
   </div>
-</dx-popup>
+</dx-popup> -->
