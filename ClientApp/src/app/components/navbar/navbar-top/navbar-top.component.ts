@@ -107,7 +107,7 @@ export class NavbarTopComponent {
     }
 
     // เรียก backend ตรวจสอบสิทธิ์
-    this.checkAccessService.CheckAccess(path).pipe(catchError(err => {
+    this.checkAccessService.CheckAccess(`/${path}`).pipe(catchError(err => {
       this.route.navigate([ViewsRoute.LandingFullPath]);
 
       return err
