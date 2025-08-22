@@ -3,7 +3,6 @@ import { catchError, of } from 'rxjs';
 import { CheckboxService } from 'src/app/services/checkbox.service';
 import { TaskService } from '../../services/task.service';
 import DataSource from 'devextreme/data/data_source';
-import { Data } from '@angular/router';
 import { LoadOptions } from 'devextreme/data';
 import { DevExtremeParam, JobForUserParam } from 'src/app/modules/admin/models/search.Model';
 import Swal from 'sweetalert2';
@@ -42,7 +41,6 @@ export class SupportMainComponent implements OnInit {
   ngOnInit(): void {
     this.getTaskDataGrid()
     this.getCategoriesCheckBoxItem();
-    // this.initUnassignedTaskDataSource()
   }
 
   // =================== Event Handlers ===================
@@ -146,148 +144,102 @@ export class SupportMainComponent implements OnInit {
     });
   }
 
-
-
-  onDoneClicked(id: number) {
-    const allData = this.assignedTaskDataSource.items()
-    this.prepareData = allData.find(item => item.id === id);
-
-
-    if (this.prepareData.issueCategoriesId == 1) {
-      this.DonePopupVisible = true
-      return
+  private getPreparedData(data: any, status: string, jobType: string | null) {
+    if (status === "CancelCompleted") {
+      return this.doneTaskDataSource.items()
+        .find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
     }
 
-  }
-
-  onDonePopupHide() {
-    this.prepareData = null;
-    this.DonePopupVisible = false;
-  }
-
-  onDoneSubmit() {
-
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `ต้องการยืนยันส่งงาน `,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then((result) => {
-      if (result.isConfirmed) {
-
-
-        var newItem: USP_Query_FormTasksByStatusResult = this.prepareData
-        this.taskService.taskManagement(newItem, "Done")
-          .pipe(catchError(err => {
-            return err
-          })).subscribe((res => {
-
-            Swal.fire({
-              title: 'Done',
-              text: 'Your Task Are Done',
-              timer: 1500
-            })
-          }))
-
-
-      };
-    });
-  }
-
-  onSubmit(data: any, status: string, jobType: string | null = null) {
-    if (status === 'CancelCompleted') {
-      const allData = this.doneTaskDataSource.items()
-      this.prepareData = allData.find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
-    } else {
-      if (jobType) {
-        const allData = this.assignedTaskDataSource.items()
-        this.prepareData = allData.find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
-      }
-      else {
-        const allData = this.unassignedTaskDataSource.items()
-        this.prepareData = allData.find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
-      }
+    if (jobType) {
+      return this.assignedTaskDataSource.items()
+        .find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
     }
 
+    return this.unassignedTaskDataSource.items()
+      .find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
+  }
 
 
+  async onSubmit(data: any, status: string, jobType: string | null = null, requiredCategoryId: number | null = null) {
+    this.prepareData = this.getPreparedData(data, status, jobType);
 
-    var title = "Are you sure?"
-    Swal.fire({
-      title: title,
-      text: `Continue to the process`,
-      icon: 'warning',
+    if (status === "Rejected") {
+
+      const { value: reason } = await Swal.fire({
+        title: "Enter reject reason",
+        input: "textarea",
+        inputPlaceholder: "Type your reason here...",
+        inputValidator: (value) => {
+          return null;
+        },
+        showCancelButton: true
+      });
+
+      // if (!reason) return;
+      this.prepareData.rejectReason = reason;
+    }
+
+    if (status === "Done" && this.prepareData.issueCategoriesId == 1) {
+
+      const { value: quantity } = await Swal.fire({
+        title: "Enter borrow quantity",
+        input: "number",
+        inputPlaceholder: "Type borrow quantity here...",
+        inputValue: this.prepareData.br_Qty,
+        inputValidator: (quantity) => {
+          if (parseInt(quantity) <= 0) return "This field can not be 0";
+          return;
+        },
+
+        showCancelButton: true
+      });
+
+      this.prepareData.br_Qty = parseInt(quantity);
+    }
+
+    // Confirm การทำงาน
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Continue to the process",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Yes',
-      cancelButtonText: 'No'
-    }).then((result) => {
-      if (result.isConfirmed) {
-
-
-        var newItem: USP_Query_FormTasksByStatusResult = this.prepareData
-
-        if (status == "Rejected") {
-          newItem.rejectReason = this.rejectDescriptions
-        }
-        this.taskService.taskManagement(newItem, status)
-          .pipe(catchError(err => {
-            return err
-          })).subscribe((res => {
-
-            this.getTaskDataGrid()
-
-            Swal.fire({
-              title: 'Done',
-              text: 'You have completed the process',
-              timer: 1500
-            })
-          }))
-      };
+      confirmButtonText: "Yes",
+      cancelButtonText: "No"
     });
-  }
+
+    if (!result.isConfirmed) return;
+
+    // เตรียมข้อมูลส่ง API
+    const newItem: USP_Query_FormTasksByStatusResult = { ...this.prepareData };
+
+    //  เรียก service
+    this.taskService.taskManagement(newItem, status)
+      .pipe(catchError(err => {
 
 
-  onRejectClicked(data: any) {
-    this.rejectPopupVisible = true;
-    this.prepareData = data
+        Swal.fire({
+          title: "Error",
+          icon: "error",
+          text: err?.error?.messages.update[0],
+          timer: 1500,
+          showConfirmButton: false
+        });
 
-  }
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
 
+        return err
+      }))
+      .subscribe(() => {
+        this.getTaskDataGrid();
 
-  onSubmitReject() {
-    var newItem: USP_Query_FormTasksByStatusResult = this.prepareData
-    newItem.rejectReason = this.rejectDescriptions
-
-
-    this.taskService.taskManagement(newItem, "Rejected").pipe(catchError(err => {
-
-
-      return err
-    })).subscribe((res => {
-
-
-      this.getTaskDataGrid()
-      Swal.fire({
-        title: 'Rejected',
-        text: 'Your Task Has Been Rejected',
-        timer: 1500
-      })
-
-      this.onRejectPopupHide()
-    }))
-
-  }
-
-  onRejectPopupHide() {
-    this.prepareData = null
-    this.rejectDescriptions = ''
-    this.rejectPopupVisible = false;
-
-  }
-  test() {
-    console.log("work");
-
+        Swal.fire({
+          title: "Done",
+          text: "You have completed the process",
+          timer: 1500,
+          showConfirmButton: false
+        });
+      });
   }
 }

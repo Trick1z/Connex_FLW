@@ -18,6 +18,6 @@ export interface USP_Query_FormTasksByStatusResult {
     assignedTo: number | null;
     assignedTime: string | null;
     doneTime: string | null;
-    rejectReason: string;
+    rejectReason: string | null ;
     totalCount: number | null;
 }

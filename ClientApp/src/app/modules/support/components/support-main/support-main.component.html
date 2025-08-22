@@ -11,27 +11,7 @@
 
     <app-head-underline [title]="'Waiting Task'"></app-head-underline>
 
-    <!-- <div class="flex justify-between pl-10 pr-10" id="">
-
-        <div class="max-w-sm gap-4 text-box">
-            <app-text-box [value]="FieldDocNo" [placeHolder]="'DocNo'"></app-text-box>
-        </div>
-
-        <div class="space-x-3 btn-group">
-            <app-button [message]="'Create Form'"></app-button>
-            <app-button [message]="'Create To'"></app-button>
-        </div>
-    </div>
-
-
-    <div class="m-10 check-box">
-        <app-check-box [text]="'Categories'" [options]="categoriesCheckBoxItem"
-            (optionsChange)="onOptionsChanged($event)">
-        </app-check-box>
-    </div> -->
-
     <div class="flex items-center justify-between max-w-full my-5 ml-10 mr-10 search-box">
-        <!-- Textbox ชิดซ้าย -->
         <div class="gap-4 space-y-4 text-end text-box">
 
             <div class="flex items-center">
@@ -41,11 +21,8 @@
                         [placeHolder]="'Document Number'">
                     </app-text-box>
                 </div>
-
             </div>
-
         </div>
-
         <div class="flex flex-col items-start">
             <div class="flex items-center text-end check-box">
 
@@ -54,11 +31,6 @@
                 </app-check-box>
             </div>
         </div>
-
-
-
-
-        <!-- Buttons ชิดขวา -->
         <div class="flex items-center gap-3">
             <dx-date-box [value]="startDate!" (onValueChanged)="onStartDateChange($event.value)"
                 displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date" width="200">
@@ -70,12 +42,12 @@
         </div>
 
     </div>
-
-
-
-
-
     <div class="pl-10 pr-10 datagrid-assignment">
+
+        <div class="my-5" id="">
+            <app-button [color]="'blue'" [message]="'Take All Task'"></app-button>
+        </div>
+
 
         <dx-data-grid [dataSource]="unassignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
@@ -83,36 +55,39 @@
             <dxo-paging [pageSize]="5"></dxo-paging>
             <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
 
-            <dxi-column dataField="docNo" caption="Document No" width="120" alignment="center"></dxi-column>
-            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="80"
+            <dxi-column [headerCellTemplate]="'wrapHeader'" dataField="docNo" caption="Document Number" minWidth="80"
+                width="100" alignment="center"></dxi-column>
+            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="100" width="120"
                 alignment="center"></dxi-column>
             <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
-            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="130" alignment="center"></dxi-column>
-            <dxi-column dataField="rp_Location" caption="Location" minWidth="200" alignment="center"></dxi-column>
-            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" alignment="center"></dxi-column>
-            <dxi-column dataField="systemStatusCode" caption="Status" minWidth="200" alignment="center"></dxi-column>
-            <!-- <dxi-column dataField="img" caption="Image" minWidth="200" alignment="center"></dxi-column> -->
-
-            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
-            <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
+            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80"></dxi-column>
+            <dxi-column dataField="rp_Location" caption="Location" minWidth="100" alignment="center"></dxi-column>
+            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" width="200"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="systemStatusCode" caption="Status" minWidth="80" width="140"
+                alignment="center"></dxi-column>
+            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="120" alignment="center"
+                [cellTemplate]="'actionCell'"></dxi-column>
+            <div class="space-x-2 " *dxTemplate="let cell of 'actionCell'">
                 <app-button [color]="'blue'" [message]="'Take'"
                     (clicked)="onSubmit(cell.data , 'Assigned')"></app-button>
-                <app-button [color]="'red'" [message]="'Reject'"
-                    (clicked)=" onSubmit(cell.data , 'Rejected')"></app-button>
+                <!-- <app-button [color]="'red'" [message]="'Reject'"
+                    (clicked)=" onSubmit(cell.data , 'Rejected')"></app-button> -->
             </div>
 
 
 
+
+            <div *dxTemplate="let cellData of 'wrapCell'" class="break-words whitespace-normal text-center">
+                {{ cellData.value }}
+            </div>
+            <div *dxTemplate="let headerData of 'wrapHeader'" class="break-words whitespace-normal text-center">
+                {{ headerData.column.caption }}
+            </div>
+
         </dx-data-grid>
-
-
     </div>
-
 </div>
-
-
-
-
 
 
 <div class="m-10 my-36">
@@ -126,26 +101,37 @@
             <dxo-paging [pageSize]="5"></dxo-paging>
             <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
 
-            <dxi-column dataField="docNo" caption="Document No" width="120" alignment="center"></dxi-column>
-            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="80"
+            <dxi-column [headerCellTemplate]="'wrapHeader'" dataField="docNo" caption="Document Number" minWidth="80"
+                width="100" alignment="center"></dxi-column>
+            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="100" width="120"
                 alignment="center"></dxi-column>
             <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
-            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="130" alignment="center"></dxi-column>
-            <dxi-column dataField="rp_Location" caption="Location" minWidth="200" alignment="center"></dxi-column>
-            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" alignment="center"></dxi-column>
-            <dxi-column dataField="systemStatusCode" caption="Status" minWidth="200" alignment="center"></dxi-column>
-
-            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80" width="90"></dxi-column>
+            <dxi-column dataField="rp_Location" caption="Location" minWidth="100" width="150"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" width="200"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="systemStatusCode" caption="Status" minWidth="80" width="140"
+                alignment="center"></dxi-column>
+            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="250" alignment="center"
+                [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
-                <app-button [color]="'blue'" [message]="'Done'" (clicked)="onSubmit(cell.data,'Done','AssignedJob')"></app-button>
+                <app-button [color]="'blue'" [message]="'Done'"
+                    (clicked)="onSubmit(cell.data,'Done','AssignedJob')"></app-button>
+
                 <app-button [color]="'red'" [message]="'Reject'"
                     (clicked)=" onSubmit(cell.data,'Rejected','AssignedJob')"></app-button>
+                <app-button [color]="'yellow'" [message]="'Cancel'"
+                    (clicked)=" onSubmit(cell.data,'CancelAssigned','AssignedJob')"></app-button>
             </div>
 
-            <!-- Detail Grid Template -->
 
-
-
+            <div *dxTemplate="let cellData of 'wrapCell'" class="break-words whitespace-normal text-center">
+                {{ cellData.value }}
+            </div>
+            <div *dxTemplate="let headerData of 'wrapHeader'" class="break-words whitespace-normal text-center">
+                {{ headerData.column.caption }}
+            </div>
         </dx-data-grid>
 
     </div>
@@ -157,70 +143,45 @@
 
     <app-head-underline [title]="'Done Task'"></app-head-underline>
 
-    <div class="m-10">
+    <!-- <div class="m-10" id="">
+        <app-button [message]="'Cancel All Task'"></app-button>
+    </div> -->
+    <div class="flex m-10">
         <dx-data-grid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
 
             <dxo-paging [pageSize]="5"></dxo-paging>
             <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
 
-            <dxi-column dataField="docNo" caption="Document No" width="120" alignment="center"></dxi-column>
-            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="80"
+            <dxi-column [headerCellTemplate]="'wrapHeader'" dataField="docNo" caption="Document Number" minWidth="80"
+                width="100" alignment="center"></dxi-column>
+            <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="100" width="120"
                 alignment="center"></dxi-column>
             <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
-            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="130" alignment="center"></dxi-column>
-            <dxi-column dataField="rp_Location" caption="Location" minWidth="200" alignment="center"></dxi-column>
-            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" alignment="center"></dxi-column>
-            <dxi-column dataField="systemStatusCode" caption="Status" minWidth="200" alignment="center"></dxi-column>
-            <!-- <dxi-column dataField="img" caption="Image" minWidth="200" alignment="center"></dxi-column> -->
-            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80" width="90"></dxi-column>
+            <dxi-column dataField="rp_Location" caption="Location" minWidth="100" width="150"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" width="200"
+                alignment="center"></dxi-column>
+            <dxi-column dataField="systemStatusCode" caption="Status" minWidth="80" width="140"
+                alignment="center"></dxi-column>
+            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center"
+                [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
-                <!-- <app-button [color]="'blue'" [message]="'Done'" (clicked)="onSubmit(cell.data.id,'Rejected')"></app-button> -->
-                <app-button  [color]="'red'" [message]="'Cancel'"
+                <app-button [color]="'red'" [message]="'Cancel'"
                     (clicked)=" onSubmit(cell.data,'CancelCompleted')"></app-button>
             </div>
 
 
 
+
+            <div *dxTemplate="let cellData of 'wrapCell'" class="break-words whitespace-normal text-center">
+                {{ cellData.value }}
+            </div>
+            <div *dxTemplate="let headerData of 'wrapHeader'" class="break-words whitespace-normal text-center">
+                {{ headerData.column.caption }}
+            </div>
         </dx-data-grid>
 
     </div>
 </div>
-
-
-
-
-
-<!-- reject pupup -->
-<dx-popup [width]="500" [height]="450" [(visible)]="rejectPopupVisible" [showTitle]="true" [dragEnabled]="true"
-    [closeOnOutsideClick]="true" [title]="'Reject Task'" (onHiding)="onRejectPopupHide()">
-
-    <div class="p-4 space-y-4">
-        <!-- Label สำหรับ textarea -->
-        <label class="block mb-1 font-medium text-gray-700">Reject Reason</label>
-        <dx-text-area placeholder="Enter Issue Description" [(value)]="rejectDescriptions" [height]="100">
-        </dx-text-area>
-
-        <div class="flex justify-between gap-2 mt-4">
-            <app-button [color]="'blue'" [message]="'Submit'" (clicked)="onSubmitReject()"></app-button>
-            <app-button [color]="'red'" [message]="'Cancel'" (clicked)="onRejectPopupHide()"></app-button>
-        </div>
-    </div>
-</dx-popup>
-<!-- done pupup -->
-
-<dx-popup [width]="500" [height]="350" [(visible)]="DonePopupVisible" [showTitle]="true" [dragEnabled]="true"
-    [closeOnOutsideClick]="true" [title]="'Reject Task'" (onHiding)="onDonePopupHide()">
-
-    <div class="p-4 space-y-4">
-        <!-- Label สำหรับ NumberBox -->
-        <label class="block mb-1 font-medium text-gray-700">Quantity</label>
-        <dx-number-box [(value)]="borrowQuantity" placeholder="Enter Quantity" [showSpinButtons]="true">
-        </dx-number-box>
-
-        <div class="flex justify-between gap-2 mt-4">
-            <app-button [color]="'blue'" [message]="'Submit'" (clicked)="onDoneSubmit()"></app-button>
-            <app-button [color]="'red'" [message]="'Cancel'" (clicked)="onDonePopupHide()"></app-button>
-        </div>
-    </div>
-</dx-popup>

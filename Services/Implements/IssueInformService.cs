@@ -688,6 +688,7 @@ namespace Services.Implements
             if (status == "Done" || status == "Rejected")
             {
                 userTaskSeq.DoneTime = dateNow;
+                userTaskSeq.Br_Qty = param.Br_Qty;
 
             }
 
@@ -711,6 +712,7 @@ namespace Services.Implements
                 userTaskSeq.AssignedTime = dateNow;
 
             }
+
 
 
             _context.IssueFormTask.Update(userTaskSeq);
