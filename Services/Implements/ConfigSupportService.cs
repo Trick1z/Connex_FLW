@@ -47,7 +47,7 @@ namespace Services.Implements
                 if (param.ModifiedTime != dbModifiedTime)
                 {
                     //validate
-                    validate.Add("ModifiedTime", "Time Not Match!");  
+                    validate.Add("ModifiedTime", "Time Not Match!");
                 }
 
 
@@ -102,7 +102,7 @@ namespace Services.Implements
             var selectedCategories = await _context.Rel_User_Categories
                 .Include(x => x.IssueCategories)
                      .Where(rc => rc.UserId == id)
-                     
+
 
                      .ToListAsync();
 
@@ -122,7 +122,7 @@ namespace Services.Implements
 
 
 
-        public async Task<QueryViewModel<USP_Query_NameResult>> QueryUser(DevExtremeParam<SearchUsernameParam> param )
+        public async Task<QueryViewModel<USP_Query_NameResult>> QueryUser(DevExtremeParam<SearchUsernameParam> param)
         {
 
 
@@ -138,5 +138,9 @@ namespace Services.Implements
 
 
         }
+
+     
+
+
     }
 }

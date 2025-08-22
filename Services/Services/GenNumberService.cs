@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Implements
+namespace Services.Services
 {
     public class GenNumberService : IGenNumberService
 

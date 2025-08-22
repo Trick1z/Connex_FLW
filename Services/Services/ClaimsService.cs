@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.UserControl
+namespace Services.Services
 {
     public class ClaimsService : IClaimsService
     {
@@ -25,7 +25,6 @@ namespace Services.UserControl
         public int GetCurrentUserId()
         {
             var user = _contextAccessor.HttpContext?.User;
-            //if (user == null) throw new Exception("User not found");
 
             return int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
         }

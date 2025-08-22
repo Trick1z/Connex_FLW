@@ -1,4 +1,6 @@
-﻿namespace Domain.ViewModels
+﻿using Domain.Models;
+
+namespace Domain.ViewModels
 {
     public class SaveUserCategoriesParam
     {
@@ -34,6 +36,21 @@
 
     }
 
+    public class JobForUser
+    {
+
+        public string Status { get; set; }
+
+        public string? DocNo { get; set; }
+
+        public string? Categories { get; set; }
+
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
+
+
+    }
 
 
 }

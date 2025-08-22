@@ -21,19 +21,34 @@ namespace Services.UserControl
         }
 
 
-        public async Task<IEnumerable<CheckBoxViewModel>> GetCategoryCheckBoxesAsync()
+        public async Task<IEnumerable<CheckBoxViewModel<int>>> GetCategoryCheckBoxesAsync()
         {
             var categories = await _context.IssueCategories
                 .Where(c => c.IsActive == true)
-                        .Select(c => new CheckBoxViewModel
+                        .Select(c => new CheckBoxViewModel<int>
                         {
-                            Id = c.IssueCategoriesId,
+                            Value  = c.IssueCategoriesId,
                             Text = c.IssueCategoriesName,
                             Selected = false
                         })
                         .ToListAsync();
 
             return categories;
+        }
+
+        public async Task<IEnumerable<CheckBoxViewModel<string>>> GetStatusCheckBoxesAsync()
+        {
+            var categories = await _context.Ref_FormStatus
+                 .Select(c => new CheckBoxViewModel<string>
+                 {
+                     Value = c.SystemStatusCode,
+                     Text = c.UserStatusCode,
+                     Selected = false
+                 })
+                 .ToListAsync();
+
+            return categories;
+
         }
     }
 }

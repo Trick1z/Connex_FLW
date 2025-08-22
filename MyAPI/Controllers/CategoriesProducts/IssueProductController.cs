@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace MyAPI.Controllers
+namespace MyAPI.Controllers.CategoriesProducts
 {
     [ApiController]
     //[Authorize]
