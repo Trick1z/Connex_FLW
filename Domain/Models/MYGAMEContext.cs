@@ -148,8 +148,9 @@ public partial class MYGAMEContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.ActionTime).HasColumnType("datetime");
-            entity.Property(e => e.TaskSeq)
-                .HasMaxLength(50)
+            entity.Property(e => e.DectectedTime).HasColumnType("datetime");
+            entity.Property(e => e.Location)
+                .HasMaxLength(512)
                 .IsUnicode(false);
         });
 

@@ -96,6 +96,91 @@ namespace Domain.Models
             return _;
         }
 
+        public virtual async Task<List<USP_Query_FormTasksByStatusResult>> USP_Query_FormTasksByStatusAsync(int? userId, string status, string searchDocNo, string searchCategoriesItems, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "UserId",
+                    Value = userId ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Status",
+                    Size = 20,
+                    Value = status ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SearchDocNo",
+                    Size = -1,
+                    Value = searchDocNo ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.NVarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SearchCategoriesItems",
+                    Size = -1,
+                    Value = searchCategoriesItems ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.NVarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "StartDate",
+                    Value = startDate ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.DateTime,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "EndDate",
+                    Value = endDate ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.DateTime,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Skip",
+                    Value = skip ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Take",
+                    Value = take ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortBy",
+                    Size = 50,
+                    Value = sortBy ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortDirection",
+                    Size = 4,
+                    Value = sortDirection ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_FormTasksByStatusResult>("EXEC @returnValue = [dbo].[USP_Query_FormTasksByStatus] @UserId = @UserId, @Status = @Status, @SearchDocNo = @SearchDocNo, @SearchCategoriesItems = @SearchCategoriesItems, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
         public virtual async Task<List<USP_Query_IssueProductResult>> USP_Query_IssueProductAsync(string searchProductName, string searchCategoriesId, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter

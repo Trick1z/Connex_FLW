@@ -11,7 +11,7 @@ public partial class IssueFormTaskAudit
 
     public int FormId { get; set; }
 
-    public string TaskSeq { get; set; }
+    public int? TaskSeq { get; set; }
 
     public string Action { get; set; }
 
@@ -24,4 +24,8 @@ public partial class IssueFormTaskAudit
     public int? ProductId { get; set; }
 
     public int? Qty { get; set; }
+
+    public string Location { get; set; }
+
+    public DateTime? DectectedTime { get; set; }
 }

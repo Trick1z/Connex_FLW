@@ -1,4 +1,5 @@
 ﻿using Domain.Exceptions;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ViewModels;
@@ -10,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -36,11 +38,11 @@ namespace Services.Implements
 
         //service start here 
 
-        public async Task<List<IssueFormDto>> GetSubmittedOrInProgressForms()
+        public async Task<List<IssueFormDto>> GetUnsuccessForms()
         {
             // 1. ดึง IssueForm + TaskItems + Product + Category
             var forms = await _context.IssueForm
-                .Where(f => f.SystemStatusCode != "Completed" || f.SystemStatusCode != "Rejected" )
+                .Where(f => f.SystemStatusCode != "Completed" || f.SystemStatusCode != "Rejected")
                 .Include(f => f.IssueFormTask)
                     .ThenInclude(t => t.Rel_Categories_Product)
                         .ThenInclude(rcp => rcp.Product)
@@ -71,7 +73,7 @@ namespace Services.Implements
                     IssueCategoriesName = t.Rel_Categories_Product?.IssueCategories?.IssueCategoriesName ?? "",
                     ProductId = t.Rel_Categories_Product?.ProductId,
                     ProductName = t.Rel_Categories_Product?.Product?.ProductName ?? "",
-                    StatusCode = t.SystemStatusCode ,
+                    StatusCode = t.SystemStatusCode,
                     Quantity = t.Br_Qty,
                     Location = t.Rp_Location,
                     DetectedTime = t.DetectedTime
@@ -80,13 +82,80 @@ namespace Services.Implements
                 // 4. คำนวณ Progressing (ตัวอย่าง: count task ที่ approve/reject ต่อทั้งหมด)
                 int total = taskItems.Count;
                 //int completed = f.IssueFormTask.Count(t => f.SystemStatusCode != "Completed" || f.SystemStatusCode != "Rejected" || f.SystemStatusCode != "Draft");
-                int completed = f.IssueFormTask.Count(t => t.SystemStatusCode == "Approve" || t.SystemStatusCode == "Reject" 
+                int completed = f.IssueFormTask.Count(t => t.SystemStatusCode == "Approve" || t.SystemStatusCode == "Reject"
                                                    || t.SystemStatusCode == "InProgress" || t.SystemStatusCode == "Completed");
                 bool editDeleteState = true;
                 if (completed != 0)
                 {
                     editDeleteState = false;
                 }
+
+                return new IssueFormDto
+                {
+                    FormId = f.FormId,
+                    DocNo = f.DocNo,
+                    CanEditDelete = editDeleteState,
+                    StatusCode = f.SystemStatusCode,
+                    Progressing = $"{completed}/{total}",
+                    ModifiedByName = f.ModifiedBy.HasValue && users.ContainsKey(f.ModifiedBy.Value) ? users[f.ModifiedBy.Value] : null,
+                    ModifiedTime = f.ModifiedTime,
+                    TaskItems = taskItems
+                };
+            }).ToList();
+
+            return result;
+        }
+
+
+        public async Task<List<IssueFormDto>> GetSuccessForms()
+        {
+            // 1. ดึง IssueForm + TaskItems + Product + Category
+            var forms = await _context.IssueForm
+                .Where(f => f.SystemStatusCode == "Completed" || f.SystemStatusCode == "Rejected") // <-- เอาเฉพาะ Completed + Rejected
+                .Include(f => f.IssueFormTask)
+                    .ThenInclude(t => t.Rel_Categories_Product)
+                        .ThenInclude(rcp => rcp.Product)
+                .Include(f => f.IssueFormTask)
+                    .ThenInclude(t => t.Rel_Categories_Product)
+                        .ThenInclude(rcp => rcp.IssueCategories)
+                .ToListAsync();
+
+            // 2. ดึง UserName สำหรับ CreatedBy / ModifiedBy
+            var userIds = forms
+                .SelectMany(f => new[] { f.CreatedBy, f.ModifiedBy })
+                .Where(x => x.HasValue)
+                .Select(x => x.Value)
+                .Distinct()
+                .ToList();
+
+            var users = await _context.User
+                .Where(u => userIds.Contains(u.UserId))
+                .ToDictionaryAsync(u => u.UserId, u => u.Username);
+
+            // 3. Map EF Models -> DTO
+            var result = forms.Select(f =>
+            {
+                var taskItems = f.IssueFormTask.Select(t => new TaskItemDto
+                {
+                    Id = Guid.NewGuid(),
+                    IssueCategoriesId = t.Rel_Categories_Product?.IssueCategoriesId,
+                    IssueCategoriesName = t.Rel_Categories_Product?.IssueCategories?.IssueCategoriesName ?? "",
+                    ProductId = t.Rel_Categories_Product?.ProductId,
+                    ProductName = t.Rel_Categories_Product?.Product?.ProductName ?? "",
+                    StatusCode = t.SystemStatusCode,
+                    Quantity = t.Br_Qty,
+                    Location = t.Rp_Location,
+                    DetectedTime = t.DetectedTime
+                }).ToList();
+
+                // 4. คำนวณ Progressing
+                int total = taskItems.Count;
+                int completed = f.IssueFormTask.Count(t => t.SystemStatusCode == "Approve" ||
+                                                           t.SystemStatusCode == "Reject" ||
+                                                           t.SystemStatusCode == "InProgress" ||
+                                                           t.SystemStatusCode == "Completed");
+
+                bool editDeleteState = completed == 0;
 
                 return new IssueFormDto
                 {
@@ -130,6 +199,8 @@ namespace Services.Implements
                 TaskItems = dbIssueForm.IssueFormTask.Select(t => new TaskParamViewModel
                 {
                     Id = Guid.NewGuid(),
+                    FormId = t.FormId,
+                    TaskSeq = t.TaskSeq,
                     IssueCategoriesId = t.Rel_Categories_Product?.IssueCategoriesId,
                     IssueCategoriesName = t.Rel_Categories_Product?.IssueCategories?.IssueCategoriesName ?? "",
                     ProductId = t.Rel_Categories_Product?.ProductId,
@@ -290,200 +361,6 @@ namespace Services.Implements
         }
 
 
-        //public async Task<IssueFormParam> SaveIssueForm(IssueFormParam param,int formId, string status)
-        //{
-        //    var userId = _claimsService.GetCurrentUserId();
-        //    var dateNow = DateTime.Now;
-        //    int lastestId = 0;
-        //    var validate = new ValidateException();
-
-
-        //    if (param.FormId == 0)
-        //    {
-
-        //        if (param.TaskItems.Count() == 0)
-        //        {
-
-        //            validate.Add("Task", "No Task Added");
-        //            validate.Throw();
-
-        //        }
-
-        //        // Validate TaskItems
-        //        foreach (var item in param.TaskItems)
-        //        {
-        //            validate = ValidateTaskItem(item, validate);
-        //        }
-
-        //        validate.Throw();
-
-
-
-        //        //if (param.FormId == 0)
-        //        //{
-        //            // CREATE
-        //            var genDocNumber = await _genNumberService.GenDocNo("yymmm");
-        //            var dbIssueForm = new IssueForm
-        //            {
-        //                DocNo = genDocNumber,
-        //                SystemStatusCode = status,
-        //                CreatedBy = userId,
-        //                CreatedTime = dateNow,
-        //                ModifiedTime = dateNow
-        //            };
-
-        //            int taskSeq = 1;
-        //            foreach (var taskItem in param.TaskItems)
-        //            {
-        //                var dbIssueFormTask = new IssueFormTask
-        //                {
-        //                    TaskSeq = taskSeq,
-        //                    IssueCategoriesId = taskItem.IssueCategoriesId,
-        //                    ProductId = taskItem.ProductId,
-        //                    SystemStatusCode = status,
-        //                    CreatedTime = dateNow,
-        //                    ModifiedTime = dateNow,
-        //                    Br_Qty = taskItem.IssueCategoriesId == 1 ? taskItem.Quantity : null,
-        //                    Rp_Location = taskItem.IssueCategoriesId == 2 ? taskItem.Location : null,
-        //                    DetectedTime = (taskItem.IssueCategoriesId == 2 || taskItem.IssueCategoriesId == 3) ? taskItem.DetectedTime : null,
-        //                    SubmitTime = status == "Submit" ? dateNow : null
-        //                };
-
-        //                dbIssueForm.IssueFormTask.Add(dbIssueFormTask);
-        //                taskSeq++;
-        //            }
-
-        //            _context.IssueForm.Add(dbIssueForm);
-        //            await _context.SaveChangesAsync();
-
-        //            lastestId = dbIssueForm.FormId;
-        //            LogSaved(param, dbIssueForm, "User Added Form", userId, dateNow);
-        //        //}
-        //        //else
-        //        //{
-
-
-        //        //    // EDIT
-        //        //    var dbIssueForm = await _context.IssueForm
-        //        //        .Include(x => x.IssueFormTask)
-        //        //        .FirstOrDefaultAsync(x => x.FormId == param.FormId);
-
-        //        //    CheckDbIssueFormFound(validate, dbIssueForm);
-
-        //        //    dbIssueForm.SystemStatusCode = status;
-        //        //    dbIssueForm.ModifiedTime = dateNow;
-        //        //    dbIssueForm.ModifiedBy = userId;
-
-        //        //    int taskSeq = 1;
-        //        //    foreach (var taskItem in param.TaskItems)
-        //        //    {
-        //        //        var dbTask = dbIssueForm.IssueFormTask.FirstOrDefault(t => t.TaskSeq == taskSeq);
-
-        //        //        if (dbTask == null)
-        //        //        {
-        //        //            dbTask = new IssueFormTask
-        //        //            {
-        //        //                TaskSeq = taskSeq,
-        //        //                CreatedTime = dateNow
-        //        //            };
-        //        //            dbIssueForm.IssueFormTask.Add(dbTask);
-        //        //        }
-
-        //        //        dbTask.IssueCategoriesId = taskItem.IssueCategoriesId;
-        //        //        dbTask.ProductId = taskItem.ProductId;
-        //        //        dbTask.SystemStatusCode = status;
-        //        //        dbTask.ModifiedTime = dateNow;
-        //        //        dbTask.Br_Qty = taskItem.IssueCategoriesId == 1 ? taskItem.Quantity : null;
-        //        //        dbTask.Rp_Location = taskItem.IssueCategoriesId == 2 ? taskItem.Location : null;
-        //        //        dbTask.DetectedTime = (taskItem.IssueCategoriesId == 2 || taskItem.IssueCategoriesId == 3) ? taskItem.DetectedTime : null;
-        //        //        dbTask.SubmitTime = status == "Submit" ? dateNow : null;
-
-        //        //        taskSeq++;
-        //        //    }
-
-        //        //    await _context.SaveChangesAsync();
-        //        //    lastestId = param.FormId;
-
-        //        //    LogSaved(param, dbIssueForm, "User Edited Form", userId, dateNow);
-        //        //}
-
-        //        //param.FormId = lastestId;
-        //        //return param;
-        //    }
-        //    else
-        //    {
-        //        // EDIT MODE
-        //        var dbIssueForm = await _context.IssueForm
-        //            .Include(x => x.IssueFormTask)
-        //            .FirstOrDefaultAsync(x => x.FormId == param.FormId);
-
-        //        CheckDbIssueFormFound(validate, dbIssueForm);
-
-        //        dbIssueForm.SystemStatusCode = status;
-        //        dbIssueForm.ModifiedTime = dateNow;
-        //        dbIssueForm.ModifiedBy = userId;
-
-        //        // ------------------------
-        //        // Step 1) ลบตัวที่ไม่มีใน DS
-        //        // ------------------------
-        //        var dsTaskSeqs = param.TaskItems.Select(t => t.TaskSeq).ToList();
-        //        var toDelete = dbIssueForm.IssueFormTask
-        //            .Where(dbTask => !dsTaskSeqs.Contains(dbTask.TaskSeq))
-        //            .ToList();
-
-        //        foreach (var del in toDelete)
-        //        {
-        //            _context.IssueFormTask.Remove(del);
-        //        }
-
-        //        // ------------------------
-        //        // Step 2 & 3) อัปเดต หรือ เพิ่ม
-        //        // ------------------------
-        //        foreach (var dsTask in param.TaskItems)
-        //        {
-        //            // หาใน DB ด้วย FormId + TaskSeq
-        //            var dbTask = dbIssueForm.IssueFormTask
-        //                .FirstOrDefault(t => t.TaskSeq == dsTask.TaskSeq);
-
-        //            if (dbTask == null)
-        //            {
-        //                // ADD
-
-        //                int maxTaskSeq = await GetMaxTaskSeqAsync(formId) ;
-        //                dbTask = new IssueFormTask
-        //                {
-        //                    FormId = dbIssueForm.FormId,
-        //                    TaskSeq = maxTaskSeq + 1,
-        //                    CreatedTime = dateNow
-        //                };
-        //                dbIssueForm.IssueFormTask.Add(dbTask);
-        //            }
-
-        //            // UPDATE common fields
-        //            dbTask.IssueCategoriesId = dsTask.IssueCategoriesId;
-        //            dbTask.ProductId = dsTask.ProductId;
-        //            dbTask.SystemStatusCode = status;
-        //            dbTask.ModifiedTime = dateNow;
-        //            dbTask.Br_Qty = dsTask.IssueCategoriesId == 1 ? dsTask.Quantity : null;
-        //            dbTask.Rp_Location = dsTask.IssueCategoriesId == 2 ? dsTask.Location : null;
-        //            dbTask.DetectedTime = (dsTask.IssueCategoriesId == 2 || dsTask.IssueCategoriesId == 3) ? dsTask.DetectedTime : null;
-        //            dbTask.SubmitTime = status == "Submit" ? dateNow : null;
-        //        }
-
-        //        await _context.SaveChangesAsync();
-        //        lastestId = param.FormId;
-
-        //        LogSaved(param, dbIssueForm, "User Edited Form", userId, dateNow);
-
-        //        param.FormId = lastestId;
-        //        return param;
-        //    }
-
-        //    return param;
-
-
-
-        //}
 
         private static void CheckDbIssueFormFound(ValidateException validate, IssueForm? dbIssueForm)
         {
@@ -495,11 +372,11 @@ namespace Services.Implements
             validate.Throw();
         }
 
-        private void LogSaved(IssueFormParam param, IssueForm dbIssueForm, string action, int userId, DateTime dateNow  )
+        private void LogSaved(IssueFormParam param, IssueForm dbIssueForm, string action, int userId, DateTime dateNow)
         {
             var log = new Log_User_Form();
- 
-            log.ActionBy= userId;
+
+            log.ActionBy = userId;
             log.ActionTime = dateNow;
             log.ActionType = action;
             log.FormId = param.FormId;
@@ -510,10 +387,14 @@ namespace Services.Implements
 
         }
 
-        public async Task<List<TaskParamViewModel>> DeleteTask(ValidateTaskParam param) 
+        public async Task<List<TaskParamViewModel>> DeleteTask(ValidateTaskParam param)
         {
-            if (param?.DataSource == null || param.Data?.Id == null)
-                return param?.DataSource;
+            var dbIssueFormTasks = await _context.IssueFormTask
+                .Where(x => x.FormId == param.Data.FormId && x.TaskSeq == param.Data.TaskSeq).FirstOrDefaultAsync();
+
+
+            var validate = new ValidateException();
+            ValidateTask(param, dbIssueFormTasks, validate);
 
             // ลบรายการที่ Id ตรงกับ Data.Id
             param.DataSource.RemoveAll(x => x.Id == param.Data.Id);
@@ -522,72 +403,90 @@ namespace Services.Implements
 
         }
 
+        private static void ValidateTask(ValidateTaskParam param, IssueFormTask? dbIssueFormTasks, ValidateException validate)
+        {
+            if (dbIssueFormTasks.SystemStatusCode != "Draft")
+            {
+                validate.Add("Task", "Task Already Assigned");
+            }
+
+
+            if (param?.DataSource == null || param.Data?.Id == null)
+            {
+
+                validate.Add("Task", "No Data");
+
+            }
+
+
+            validate.Throw();
+        }
 
         public async Task<List<TaskParamViewModel>> ValidateTaskItemsAsync(ValidateTaskParam param)
         {
 
             //if (formId <= 0 || formId == null)
             //{
-                ValidateException validate = ValidateTaskItem(param.Data, new ValidateException());
+            ValidateException validate = ValidateTaskItem(param.Data, new ValidateException());
 
 
-                var singleData = await _context.Rel_Categories_Product
-                        .Include(c => c.IssueCategories)
-                        .Include(p => p.Product)
-                        .FirstOrDefaultAsync(r => r.IssueCategoriesId == param.Data.IssueCategoriesId && r.ProductId == param.Data.ProductId);  // หรือเงื่อนไขอื่น
+            var singleData = await _context.Rel_Categories_Product
+                    .Include(c => c.IssueCategories)
+                    .Include(p => p.Product)
+                    .FirstOrDefaultAsync(r => r.IssueCategoriesId == param.Data.IssueCategoriesId && r.ProductId == param.Data.ProductId);  // หรือเงื่อนไขอื่น
 
-                if (singleData == null)
+            if (singleData == null)
+            {
+                validate.Add("CategoriesProduct", "Invalid Categories");
+                validate.Throw();
+            }
+
+            List<TaskParamViewModel> newData = param.DataSource;
+
+
+            if (param.Data.Id == null)
+            {
+
+                var item = new TaskParamViewModel
                 {
-                    validate.Add("CategoriesProduct", "Invalid Categories");
-                    validate.Throw();
-                }
-
-                List<TaskParamViewModel> newData = param.DataSource;
-
-
-                if (param.Data.Id == null)
-                {
-
-                    var item = new TaskParamViewModel
-                    {
-                        ProductId = singleData.ProductId,
-                        ProductName = singleData.Product.ProductName,
-                        IssueCategoriesId = singleData.IssueCategoriesId,
-                        IssueCategoriesName = singleData.IssueCategories.IssueCategoriesName,
-                        Quantity = param.Data.Quantity,
-                        Location = param.Data.Location,
-                        DetectedTime = param.Data.DetectedTime
-                    };
+                    ProductId = singleData.ProductId,
+                    ProductName = singleData.Product.ProductName,
+                    IssueCategoriesId = singleData.IssueCategoriesId,
+                    IssueCategoriesName = singleData.IssueCategories.IssueCategoriesName,
+                    Quantity = param.Data.Quantity,
+                    Location = param.Data.Location,
+                    DetectedTime = param.Data.DetectedTime
+                };
 
 
 
-                    item.Id = Guid.NewGuid();
+                item.Id = Guid.NewGuid();
 
-                    newData.Add(item);
-                    return newData;
+                newData.Add(item);
+                return newData;
 
-                }
-                else
-                {
-
-
-
-                    var item = param.DataSource.FirstOrDefault(item => item.Id == param.Data.Id);
+            }
+            else
+            {
 
 
 
-                    item.ProductId = singleData.ProductId;
-                    item.ProductName = singleData.Product.ProductName;
-                    item.IssueCategoriesId = singleData.IssueCategoriesId;
-                    item.IssueCategoriesName = singleData.IssueCategories.IssueCategoriesName;
-                    item.Quantity = param.Data.Quantity;
-                    item.Location = param.Data.Location;
-                    item.DetectedTime = param.Data.DetectedTime;
+                var item = param.DataSource.FirstOrDefault(item => item.Id == param.Data.Id);
 
-                    return param.DataSource;
 
-                }
-            
+
+                item.ProductId = singleData.ProductId;
+                item.ProductName = singleData.Product.ProductName;
+                item.IssueCategoriesId = singleData.IssueCategoriesId;
+                item.IssueCategoriesName = singleData.IssueCategories.IssueCategoriesName;
+                item.Quantity = param.Data.Quantity;
+                item.Location = param.Data.Location;
+                item.DetectedTime = param.Data.DetectedTime;
+
+                return param.DataSource;
+
+            }
+
         }
 
         public async Task<int> GetMaxTaskSeqAsync(int formId)
@@ -645,7 +544,7 @@ namespace Services.Implements
 
 
 
-        private static void CheckDateNull(TaskParamViewModel param, ValidateException validate )
+        private static void CheckDateNull(TaskParamViewModel param, ValidateException validate)
         {
             if (param.DetectedTime == null)
             {
@@ -664,7 +563,7 @@ namespace Services.Implements
         private static void CheckiQuantityBelowOrZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.Quantity <= 0 || param.Quantity == null)
-                validate.Add("Quantity","Quantity Is Required");
+                validate.Add("Quantity", "Quantity Is Required");
         }
 
         private static void CheckProductNullOrBelowZero(TaskParamViewModel param, ValidateException validate)
@@ -687,6 +586,185 @@ namespace Services.Implements
             return int.Parse(user.FindFirstValue(ClaimTypes.NameIdentifier));
         }
 
+        public async Task<QueryViewModel<USP_Query_FormTasksByStatusResult>> QueryFormUser(DevExtremeParam<JobForUser> param)
+        {
+            var userId = _claimsService.GetCurrentUserId();
+
+            var result = await _context.Procedures.USP_Query_FormTasksByStatusAsync(userId,
+                   param.SearchCriteria.Status, param.SearchCriteria.DocNo, param.SearchCriteria.Categories
+                   , param.SearchCriteria.StartDate, param.SearchCriteria.EndDate, param.LoadOption.Skip
+                   , param.LoadOption.Take, param.SortField, param.SortBy);
+            var data = new QueryViewModel<USP_Query_FormTasksByStatusResult>();
+            data.Data = result;
+            data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
+
+
+
+            return data;
+
+
+        }
+
+        //public async Task<bool> UnassignTaskManagement(USP_Query_FormTasksByStatusResult param, bool isTakeTask)
+        //{
+        //    var validate = new ValidateException();
+        //    var userId = _claimsService.GetCurrentUserId();
+        //    var userTaskSeq = await _context.IssueFormTask
+        //        .FirstOrDefaultAsync(t => t.AssignedTo == userId && t.TaskSeq == param.TaskSeq);
+
+        //    IsTaskFound(validate, userTaskSeq);
+
+        //    var dateNow = DateTime.Now;
+
+        //    if (isTakeTask)
+        //    {
+        //        IsLatestData(param, validate, userTaskSeq);
+
+        //        await UpdateTask(param, userTaskSeq, dateNow, "Assigned");
+        //        await AddLog(userId, userTaskSeq, dateNow, "Done");
+
+        //    }
+        //    //reject
+        //    else
+        //    {
+                
+
+        //    }
+
+
+        //    return true;
+        //}
+
+
+
+        public async Task<bool> TaskManagement(USP_Query_FormTasksByStatusResult param, string status)
+        {
+            var validate = new ValidateException();
+            var userId = _claimsService.GetCurrentUserId();
+
+            var userTaskSeq = await _context.IssueFormTask
+                .FirstOrDefaultAsync(t => t.FormId == param.FormId && t.TaskSeq == param.TaskSeq);
+
+            IsTaskFound(validate, userTaskSeq);
+
+            var dateNow = DateTime.Now;
+            
+            //if (status == "Done")
+            //{
+
+            IsLatestData(param, validate, userTaskSeq);
+            await UpdateTask(param,userTaskSeq, dateNow,status ,userId);
+            await AddLog(userId, userTaskSeq, dateNow, status);
+
+            //}
+            //reject
+            //else
+            //{
+            //    IsLatestData(param, validate, userTaskSeq);
+
+            //    await UpdateTask(param, userTaskSeq, dateNow , "Rejected"  );
+            //    await AddLog(userId, userTaskSeq, dateNow ,"Rejected");
+
+            //}
+
+
+            return true;
+        }
+
+        private async Task UpdateTask(USP_Query_FormTasksByStatusResult param, IssueFormTask? userTaskSeq, DateTime dateNow, string status ,int userId)
+        {
+
+            var userStatusCode = await _context.Ref_TaskStatus
+                .Where(s => s.SystemStatusCode == status)
+                .Select(s => s.UserStatusCode)
+                .FirstOrDefaultAsync();
+
+            if (!string.IsNullOrWhiteSpace(param.RejectReason))
+                userTaskSeq.RejectReason = param.RejectReason;
+
+            userTaskSeq.SystemStatusCode = userStatusCode;
+            userTaskSeq.ModifiedTime = dateNow;
+
+            if (status == "Done" || status == "Rejected")
+            {
+                userTaskSeq.DoneTime = dateNow;
+
+            }
+
+            if (status == "Assigned")
+            {
+                userTaskSeq.AssignedTime = dateNow;
+                userTaskSeq.AssignedTo = userId;
+
+            }
+            if (status == "CancelAssigned")
+            {
+                userTaskSeq.AssignedTo = null;
+                userTaskSeq.AssignedTime = null;
+
+            }
+
+            if (status == "CancelCompleted")
+            {
+                userTaskSeq.DoneTime = null;
+                userTaskSeq.AssignedTo = userId;
+                userTaskSeq.AssignedTime = dateNow;
+
+            }
+
+
+            _context.IssueFormTask.Update(userTaskSeq);
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task AddLog(int userId, IssueFormTask? userTaskSeq, DateTime dateNow,string status)
+        {
+            var log = new IssueFormTaskAudit
+            {
+                FormId = userTaskSeq.FormId,
+                TaskSeq = userTaskSeq.TaskSeq,
+                Action = status,
+                ActionBy = userId,
+                ActionTime = dateNow,
+                IssueCategoriesId = userTaskSeq.IssueCategoriesId,
+                ProductId = userTaskSeq.ProductId,
+                Qty = userTaskSeq.Br_Qty,
+                Location = userTaskSeq.Rp_Location,
+                DectectedTime = userTaskSeq.DetectedTime,
+
+            };
+
+            _context.IssueFormTaskAudit.Add(log);
+
+            // Save Log
+            await _context.SaveChangesAsync();
+        }
+
+        private static bool IsLatestData(USP_Query_FormTasksByStatusResult param, ValidateException validate, IssueFormTask? userTaskSeq)
+        {
+
+            //ไม่เจอโยน validate
+            if (param.ModifiedTime != userTaskSeq.ModifiedTime)
+            {
+                validate.Add("update", "Please f5 before do the procress");
+                validate.Throw();
+
+            }
+
+            return true;
+        }
+
+        private static bool IsTaskFound(ValidateException validate, IssueFormTask? userTaskSeq)
+        {
+            //ไม่เจอโยน validate
+            if (userTaskSeq == null)
+            {
+                validate.Add("task", "Task Not Found !");
+                validate.Throw();
+            }
+
+            return true;
+        }
     }
 
 

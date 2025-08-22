@@ -1,4 +1,5 @@
-﻿using Domain.ViewModels;
+﻿using Domain.Models;
+using Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -18,6 +19,10 @@ namespace Domain.Interfaces
 
         public Task<IssueFormParam> GetIssueFormById(int formId); 
 
-        public Task<List<IssueFormDto>> GetSubmittedOrInProgressForms(); 
+        public Task<List<IssueFormDto>> GetUnsuccessForms(); 
+        public Task<List<IssueFormDto>> GetSuccessForms();
+
+        public Task<QueryViewModel<USP_Query_FormTasksByStatusResult>> QueryFormUser(DevExtremeParam<JobForUser> param);
+        public Task<bool> TaskManagement(USP_Query_FormTasksByStatusResult param, string status);
     }
 }
