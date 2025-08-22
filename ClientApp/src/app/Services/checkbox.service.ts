@@ -14,8 +14,9 @@ export class CheckboxService {
 
 
   getCategoriesCheckBoxItem(){
-
-
     return this.http.get(`${environment.apiUrl}CheckBox/CheckBoxCategoriesItem`)
+  }
+  getStatusCodeCheckBoxItem(){
+    return this.http.get(`${environment.apiUrl}CheckBox/CheckBoxStatusCodeItem`)
   }
 }

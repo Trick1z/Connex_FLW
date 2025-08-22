@@ -11,7 +11,7 @@ import {
   ProductDeleteFormData, ProductUpdateFormData 
 } from '../../models/categories.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../../models/insert-categories.model';
-import { DevExthemeParam, productSearch } from '../../models/search.Model';
+import { DevExtremeParam, productSearch } from '../../models/search.Model';
 import DataSource from 'devextreme/data/data_source';
 import Swal from 'sweetalert2';
 
@@ -187,7 +187,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
   initProductByNameCategoriesDataSource(productName: string | null = null, categoriesId: string | null = null) {
     this.ProductByCategoriesDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
-        const newLoad: DevExthemeParam<productSearch> = { searchCriteria: { productName, categoriesText: categoriesId }, loadOption: loadOptions };
+        const newLoad: DevExtremeParam<productSearch> = { searchCriteria: { productName, categoriesText: categoriesId }, loadOption: loadOptions };
         return this.issueProductService.QueryProductOnCategories(newLoad)
           .pipe(catchError(err => of(err)))
           .toPromise();

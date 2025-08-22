@@ -7,7 +7,7 @@ import { DropDownService } from 'src/app/services/drop-down.service';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
 import { catchError, of } from 'rxjs';
-import { DevExthemeParam, Search } from '../../models/search.Model';
+import { DevExtremeParam, Search } from '../../models/search.Model';
 import { DropDownList } from 'src/app/models/dropDown.model';
 
 @Component({
@@ -169,7 +169,7 @@ export class MasterComponent implements OnInit {
   initCategoriesDataSource(textParam: string | null = null) {
     this.CategoriesDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
-        const newLoad: DevExthemeParam<Search> = {
+        const newLoad: DevExtremeParam<Search> = {
           searchCriteria: { text: textParam },
           loadOption: loadOptions
         };

@@ -7,7 +7,7 @@ import { catchError, of } from 'rxjs';
 import { DropDownService } from 'src/app/services/drop-down.service';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
-import { DevExthemeParam, Search } from '../../models/search.Model';
+import { DevExtremeParam, Search } from '../../models/search.Model';
 import { DropDownList } from 'src/app/models/dropDown.model';
 
 @Component({
@@ -47,7 +47,7 @@ export class MapUserCategoriesComponent implements OnInit {
   initUserByRoleDataSource(text: string | null = null) {
     this.userByRoleDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
-        const newLoad: DevExthemeParam<Search> = {
+        const newLoad: DevExtremeParam<Search> = {
           searchCriteria: { text },
           loadOption: loadOptions
         };

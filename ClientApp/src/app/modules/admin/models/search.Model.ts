@@ -9,7 +9,15 @@ export interface productSearch {
     categoriesText: string | null
 }
 
-export interface DevExthemeParam<T> {
+export interface DevExtremeParam<T> {
     loadOption: LoadOptions
     searchCriteria: T
+}
+
+export interface JobForUserParam {
+    status: string;
+    docNo: string | null;
+    categories: string | null;
+    startDate: Date | null;
+    endDate: Date | null;
 }
