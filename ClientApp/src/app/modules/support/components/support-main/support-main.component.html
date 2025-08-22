@@ -93,7 +93,7 @@
             <dxi-column dataField="systemStatusCode" caption="Status" minWidth="200" alignment="center"></dxi-column>
             <!-- <dxi-column dataField="img" caption="Image" minWidth="200" alignment="center"></dxi-column> -->
 
-            <dxi-column caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
                 <app-button [color]="'blue'" [message]="'Take'"
                     (clicked)="onSubmit(cell.data , 'Assigned')"></app-button>
@@ -135,7 +135,7 @@
             <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" alignment="center"></dxi-column>
             <dxi-column dataField="systemStatusCode" caption="Status" minWidth="200" alignment="center"></dxi-column>
 
-            <dxi-column caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
                 <app-button [color]="'blue'" [message]="'Done'" (clicked)="onSubmit(cell.data,'Done','AssignedJob')"></app-button>
                 <app-button [color]="'red'" [message]="'Reject'"
@@ -173,10 +173,10 @@
             <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" alignment="center"></dxi-column>
             <dxi-column dataField="systemStatusCode" caption="Status" minWidth="200" alignment="center"></dxi-column>
             <!-- <dxi-column dataField="img" caption="Image" minWidth="200" alignment="center"></dxi-column> -->
-            <dxi-column caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
                 <!-- <app-button [color]="'blue'" [message]="'Done'" (clicked)="onSubmit(cell.data.id,'Rejected')"></app-button> -->
-                <app-button [color]="'red'" [message]="'Cancel'"
+                <app-button  [color]="'red'" [message]="'Cancel'"
                     (clicked)=" onSubmit(cell.data,'CancelCompleted')"></app-button>
             </div>
 
