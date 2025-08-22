@@ -15,7 +15,7 @@
   <div class="flex space-x-2">
     <dx-check-box
       *ngFor="let opt of options"
-      [id]="'check-box-' + opt.id"
+      [id]="'check-box-' + opt.value"
       [value]="opt.selected"
       [text]="opt.text"
       (onValueChanged)="onValueChanged(opt, $event)">

@@ -4,6 +4,7 @@ import ArrayStore from 'devextreme/data/array_store';
 import { firstValueFrom } from 'rxjs';
 import { InformTaskService } from '../../services/inform-task.service';
 import { CheckboxService } from '../../../../services/checkbox.service';
+import { CheckboxList } from 'src/app/models/checkBox.model';
 
 @Component({
   selector: 'app-user-main',
@@ -19,8 +20,8 @@ export class UserMainComponent implements OnInit {
   // =================== Search / Filters ===================
   documentNumberSearch: string = "";
   productName: string = "";
-  options: any = [];          // Categories
-  statusOptions: any = [];    // Status
+  categoriesCheckBoxItem: CheckboxList<number>[]= [];       
+  statusCheckBoxItem: CheckboxList<string>[] = [];   
 
   constructor(
     private informTaskService: InformTaskService,
@@ -32,18 +33,32 @@ export class UserMainComponent implements OnInit {
     this.loadUnsuccessData();
     // this.loadSuccessData(); // ถ้าต้องการโหลด Success
 
-    this.loadStatusOptions();
+    // this.loadStatusOptions();
     this.loadCategories();
+
+    this.loadStatusCode();
   }
 
-  // =================== Load Categories ===================
-  async loadCategories() {
+  // =================== Load CheckBox ===================
+  async loadCategories(): Promise<void> {
+  try {
+    const res = await firstValueFrom(
+      this.checkboxService.getCategoriesCheckBoxItem()
+    );
+    this.categoriesCheckBoxItem = res as CheckboxList<number>[];
+  } catch (error) {
+    console.error('Error loading categories:', error);
+    this.categoriesCheckBoxItem = [];
+  }
+}
+
+  async loadStatusCode() {
     try {
-      const res = await firstValueFrom(this.checkboxService.getCategoriesCheckBoxItem());
-      this.options = res;
+      const res = await firstValueFrom(this.checkboxService.getStatusCodeCheckBoxItem()) as CheckboxList<string>[];
+      this.statusCheckBoxItem = res;
     } catch (err) {
-      console.error('Error loading categories', err);
-      this.options = [];
+      console.error('Error loading status code', err);
+      this.statusCheckBoxItem = [];
     }
   }
 
@@ -52,14 +67,14 @@ export class UserMainComponent implements OnInit {
   }
 
   // =================== Load Status ===================
-  loadStatusOptions() {
-    this.statusOptions = [
-      { code: "Done", text: 'Done', selected: false },
-      { code: "Rejected", text: 'Rejected', selected: false },
-      { code: "New", text: 'New', selected: false },
-      { code: "Draft", text: 'Draft', selected: false }
-    ];
-  }
+  // loadStatusOptions() {
+  //   this.statusCheckBoxItem = [
+  //     { code: "Done", text: 'Done', selected: false },
+  //     { code: "Rejected", text: 'Rejected', selected: false },
+  //     { code: "New", text: 'New', selected: false },
+  //     { code: "Draft", text: 'Draft', selected: false }
+  //   ];
+  // }
 
   onStatusCheck(e: any) {
     console.log('Status checked:', e);

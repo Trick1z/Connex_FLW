@@ -182,7 +182,7 @@ export class UserAddTaskComponent implements OnInit {
   }
 
   // =================== Delete Item ===================
-  deleteItem(data: any) {
+  deleteTaskItem(data: any) {
     Swal.fire({
       title: 'Are you sure?',
       text: `ต้องการลบรายการ ${data.issueCategoriesName}, ${data.productName} หรือไม่?`,
@@ -197,8 +197,23 @@ export class UserAddTaskComponent implements OnInit {
       const newItem: ValidatedItem = { dataSource: allItems, data: data };
 
       this.validateService.DeleteTask(newItem)
-        .pipe(catchError(err => { console.error(err); return of([]); }))
-        .subscribe((res: any[]) => {
+        .pipe(catchError(err => {
+          const allItems = this.dataValidatedDataSource.items();
+          this.dataValidatedDataSource = new DataSource({
+            store: new ArrayStore({ data: allItems, key: 'id' })
+          });
+
+
+          this.createTaskErrorMessage = err?.error?.messages ?? [];
+          console.error(err);
+          return err;
+        }))
+        .subscribe((res: any) => {
+
+                    this.createTaskErrorMessage =  [];
+
+
+
           this.dataValidatedDataSource = new DataSource({
             store: new ArrayStore({ data: res, key: 'id' })
           });
