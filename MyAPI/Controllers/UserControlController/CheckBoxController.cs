@@ -24,6 +24,12 @@ namespace MyAPI.Controllers.UserControlController
             return Ok(await _checkBoxService.GetCategoryCheckBoxesAsync());
         }
 
+        [HttpGet("CheckBoxStatusCodeItem")]
+        public async Task<IActionResult> GetCheckStatusCodeItem()
+        {
+            return Ok(await _checkBoxService.GetStatusCheckBoxesAsync());
+        }
+
 
     }
 }
