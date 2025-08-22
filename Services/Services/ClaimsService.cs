@@ -8,7 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Implements
+namespace Services.UserControl
 {
     public class ClaimsService : IClaimsService
     {

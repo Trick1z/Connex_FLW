@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
-namespace MyAPI.Controllers
+namespace MyAPI.Controllers.Authentication
 {
     [ApiController]
     [Route("api/[controller]")]

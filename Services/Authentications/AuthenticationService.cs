@@ -15,7 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Services.Implements.Auth
+namespace Services.Authentications
 {
     public class AuthenticationService : IAuthenticationService
     {

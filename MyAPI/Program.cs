@@ -5,10 +5,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Services.Authentications;
+
 
 //using Services.CalculateScore;
 //using Services.Form;
-using Services.Implements.Auth;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
