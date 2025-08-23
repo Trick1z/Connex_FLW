@@ -243,7 +243,7 @@ export class SupportMainComponent implements OnInit {
       });
   }
 
-  onAllTaskCliked(status: string) {
+  onAllTaskCliked(status: string, IsAssigned: boolean | null = null) {
     // 
     Swal.fire({
       title: "Are you sure?",
@@ -255,8 +255,15 @@ export class SupportMainComponent implements OnInit {
       confirmButtonText: "Yes"
     }).then((result) => {
       if (result.isConfirmed) {
+        var allTask!: Array<USP_Query_FormTasksByStatusResult>;
+        if (IsAssigned) {
+          allTask = this.assignedTaskDataSource.items()
+        } else if (IsAssigned == null) {
+          allTask = this.doneTaskDataSource.items().filter(item => item.canCancel);
+        } else {
+          allTask = this.unassignedTaskDataSource.items()
+        }
 
-        const allTask: Array<USP_Query_FormTasksByStatusResult> = this.unassignedTaskDataSource.items()
         this.taskService.listTaskManagement(allTask, status).pipe(catchError(err => {
           Swal.fire({
             title: "Somthing when wrong",
@@ -264,12 +271,12 @@ export class SupportMainComponent implements OnInit {
             icon: "success",
             timer: 1200
           });
-
-          return setTimeout(() => {
+          setTimeout(() => {
             window.location.reload();
           }, 1200);
 
           return err
+
         })).subscribe((res: any) => {
           this.getTaskDataGrid()
           return Swal.fire({

@@ -45,7 +45,7 @@
     <div class="pl-10 pr-10 datagrid-assignment">
 
         <div class="my-5" id="">
-            <app-button (clicked)="onAllTaskCliked('Assigned')" [color]="'blue'"
+            <app-button (clicked)="onAllTaskCliked('Assigned', false)" [color]="'blue'"
                 [message]="'Take All Task'"></app-button>
         </div>
 
@@ -94,6 +94,21 @@
 <div class="m-10 my-36">
 
     <app-head-underline [title]="'Process Task'"></app-head-underline>
+    <div class=" flex justify-end space-x-2" id="">
+        <div class="" id="">
+            <app-button (clicked)="onAllTaskCliked('Done',true)" [color]="'blue'"
+                [message]="'Done All Task'"></app-button>
+        </div>
+        <div class="mx-10" id="">
+            <app-button (clicked)="onAllTaskCliked('Rejected',true)" [color]="'red'"
+                [message]="'Rejected All Task'"></app-button>
+        </div>
+        <div class="mx-10" id="">
+            <app-button (clicked)="onAllTaskCliked('CancelAssigned',true)" [color]="'yellow'"
+                [message]="'Cancel All Task'"></app-button>
+        </div>
+
+    </div>
 
     <div class="m-10">
         <dx-data-grid [dataSource]="assignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
@@ -144,9 +159,15 @@
 
     <app-head-underline [title]="'Done Task'"></app-head-underline>
 
-    <!-- <div class="m-10" id="">
-        <app-button [message]="'Cancel All Task'"></app-button>
-    </div> -->
+
+
+    <div class="flex justify-end" id="">
+
+        <div class="mx-10" id="">
+            <app-button (clicked)="onAllTaskCliked('CancelCompleted',null)" [color]="'red'"
+                [message]="'Cancel All Task'"></app-button>
+        </div>
+    </div>
     <div class="flex m-10">
         <dx-data-grid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
@@ -168,7 +189,7 @@
                 alignment="center"></dxi-column>
 
 
-            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center"
+            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="120" alignment="center"
                 [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
 
