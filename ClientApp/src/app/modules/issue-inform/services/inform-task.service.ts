@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import {  InformTask, TaskRequest, ValidatedItem } from '../models/inform.model';
+import {   QueryUserForm, TaskRequest, USP_Query_IssueFormsResult, ValidatedItem } from '../models/inform.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { catchError } from 'rxjs';
+import { DevExtremeParam } from '../../admin/models/search.Model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class InformTaskService {
 
 
   validateInformTask(data: ValidatedItem , formId :number) {
-    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/SaveTask/${formId}`, data)
+    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/SaveTask`, data)
   }
   DeleteTask(data: ValidatedItem ) {
     return this.http.post<any[]>(`${environment.apiUrl}IssueInform/DeleteTask`, data)
@@ -28,17 +29,13 @@ export class InformTaskService {
     return this.http.get(`${environment.apiUrl}IssueInform/GetIssueForm/${formId}`)
   }
 
-  getUnsuccessInform(){
+  getUnsuccessInform(param : DevExtremeParam<QueryUserForm>){
 
-    return this.http.get(`${environment.apiUrl}IssueInform/issue-forms/unsuccess`)
+    return this.http.post(`${environment.apiUrl}IssueInform/queryIssueforms/unsuccess`,param)
 
   }
 
-  // getUnsuccessInform(){
 
-  //   return this.http.get(`${environment.apiUrl}IssueInform/issue-forms/unsuccess`)
-
-  // }
 
 
 }

@@ -17,9 +17,11 @@ namespace Domain.Interfaces
        
         public Task<IssueFormParam> SaveIssueForm(IssueFormParam param, int formId, string status); 
 
-        public Task<IssueFormParam> GetIssueFormById(int formId); 
+        public Task<IssueFormParam> GetIssueFormById(int formId);
 
-        public Task<List<IssueFormDto>> GetUnsuccessForms(); 
+        //public Task<List<IssueFormDto>> GetUnsuccessForms(); 
+
+        public Task<QueryViewModel<USP_Query_IssueFormsResult>> GetUnsuccessForms(DevExtremeParam<QueryUserForm> param);
         public Task<List<IssueFormDto>> GetSuccessForms();
 
         public Task<QueryViewModel<USP_Query_FormTasksByStatusResult>> QueryFormUser(DevExtremeParam<JobForUser> param);

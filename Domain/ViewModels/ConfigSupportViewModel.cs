@@ -39,7 +39,7 @@ namespace Domain.ViewModels
     public class JobForUser
     {
 
-        public string Status { get; set; }
+        public string? Status { get; set; }
 
         public string? DocNo { get; set; }
 
@@ -51,6 +51,25 @@ namespace Domain.ViewModels
 
 
     }
+
+    public class QueryUserForm
+    {
+
+        public string? DocNo { get; set; }
+
+        public string? ProductName { get; set; }
+
+        public string? Categories { get; set; }
+        public string? StatusCode { get; set; }
+
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+
+
+
+    }
+
+
 
 
 }

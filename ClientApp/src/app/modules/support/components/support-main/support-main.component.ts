@@ -96,7 +96,7 @@ export class SupportMainComponent implements OnInit {
       load: (loadOptions: LoadOptions) => {
         const newLoad: DevExtremeParam<JobForUserParam> = {
           searchCriteria: {
-            status: "Draft", docNo: this.fieldDocNo, categories: this.categoriesSearchId
+            status: "Submit", docNo: this.fieldDocNo, categories: this.categoriesSearchId
             , startDate: this.startDate, endDate: this.endDate
           },
           loadOption: loadOptions
@@ -127,6 +127,7 @@ export class SupportMainComponent implements OnInit {
       }
     });
   }
+  
   initDoneTaskDataSource() {
     this.doneTaskDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {

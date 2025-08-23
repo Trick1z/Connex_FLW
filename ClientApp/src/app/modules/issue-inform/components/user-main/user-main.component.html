@@ -5,7 +5,8 @@
     <div class="flex items-center">
       <label class="w-40 mr-2 font-bold">Document Number </label>
       <div class="flex-1">
-        <app-text-box class="w-full" [value]="documentNumberSearch" [placeHolder]="'Document Number'">
+        <app-text-box class="w-full" (onValueChanged)="onDocumentChange($event)" [value]="documentNumberSearch!"
+          [placeHolder]="'Document Number'">
         </app-text-box>
       </div>
     </div>
@@ -13,7 +14,8 @@
     <div class="flex items-center">
       <label class="w-40 mr-2 font-bold">Product Name</label>
       <div class="flex-1">
-        <app-text-box class="w-full" [value]="productName" [placeHolder]="'Product Name'">
+        <app-text-box class="w-full" (onValueChanged)="onProductNameChange($event)" [value]="productName!"
+          [placeHolder]="'Product Name'">
         </app-text-box>
       </div>
     </div>
@@ -31,7 +33,7 @@
     <div class="flex items-center text-end check-box">
       <label for="check-box" class="w-40 font-bold">status</label>
 
-      <app-check-box [options]="statusCheckBoxItem" (onValueChanged)="onSearchChange($event)">
+      <app-check-box [options]="statusCheckBoxItem" (optionsChange)="onStatusCodeCheck($event)">
       </app-check-box>
     </div>
 
@@ -42,12 +44,12 @@
 
   <div class="flex items-start gap-3 btns">
     <div class="flex items-center gap-3">
-      <dx-date-box (onValueChanged)="onSearchChange($event)" displayFormat="dd/MM/yyyy" type="date"
-        placeholder="Start Date" width="200">
+      <dx-date-box [value]="startDate!" (onValueChanged)="onStartDateChange($event)" displayFormat="dd/MM/yyyy"
+        type="date" placeholder="Start Date" width="200">
       </dx-date-box>
 
-      <dx-date-box (onValueChanged)="onSearchChange($event)" displayFormat="dd/MM/yyyy" type="date"
-        placeholder="End Date" width="200">
+      <dx-date-box [value]="startDate!" (onValueChanged)="onEndDateChange($event)" displayFormat="dd/MM/yyyy"
+        type="date" placeholder="End Date" width="200">
       </dx-date-box>
     </div>
 
@@ -65,10 +67,10 @@
 
       <dxi-column alignment="center" dataField="docNo" caption="Document Number"></dxi-column>
 
-      <dxi-column dataField="statusCode" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
+      <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
       <div *dxTemplate="let cell of 'statusCell'">
-        <span [ngClass]="getStatusClass(cell.data.statusCode)">
-          {{ cell.data.statusCode }}
+        <span [ngClass]="getStatusClass(cell.data.status)">
+          {{ cell.data.status }}
         </span>
       </div>
 
@@ -87,10 +89,16 @@
       <dxi-column width="120" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
       <div *dxTemplate="let detail of 'actionCell'">
-        <div class="flex space-x-2">
-          <button *ngIf="detail.data.canEditDelete" class="px-2 py-1 text-white bg-blue-500 rounded">Edit</button>
-          <button *ngIf="detail.data.canEditDelete" class="px-2 py-1 text-white bg-red-500 rounded">Delete</button>
+        <div *ngIf="detail.data.canEdit" class="flex space-x-2">
+          <button (click)="test(detail.data)"  class="px-2 py-1 text-white bg-blue-500 rounded">Edit</button>
+          <button  class="px-2 py-1 text-white bg-red-500 rounded">Delete</button>
         </div>
+
+        <div *ngIf="!detail.data.canEdit" class="flex space-x-2">
+          <button  class="px-2 py-1 text-white bg-yellow-500 rounded">Close Form</button>
+        </div>
+
+
       </div>
 
 

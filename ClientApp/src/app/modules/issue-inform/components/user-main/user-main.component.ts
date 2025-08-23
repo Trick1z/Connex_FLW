@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 import { InformTaskService } from '../../services/inform-task.service';
 import { CheckboxService } from '../../../../services/checkbox.service';
 import { CheckboxList } from 'src/app/models/checkBox.model';
+import { LoadOptions } from 'devextreme/data';
+import { DevExtremeParam } from 'src/app/modules/admin/models/search.Model';
+import { QueryUserForm } from '../../models/inform.model';
+import CustomStore from 'devextreme/data/custom_store';
 
 @Component({
   selector: 'app-user-main',
@@ -18,10 +22,16 @@ export class UserMainComponent implements OnInit {
   successDataSource!: DataSource;
 
   // =================== Search / Filters ===================
-  documentNumberSearch: string = "";
-  productName: string = "";
-  categoriesCheckBoxItem: CheckboxList<number>[]= [];       
-  statusCheckBoxItem: CheckboxList<string>[] = [];   
+  documentNumberSearch: string | null = null;
+  productName: string | null = null;
+  categoriesSearchId: string | null = null;
+  statusCodeSearchText: string | null = null;
+  startDate: Date | null = null;;
+  endDate: Date | null = null;;
+
+
+  categoriesCheckBoxItem: CheckboxList<number>[] = [];
+  statusCheckBoxItem: CheckboxList<string>[] = [];
 
   constructor(
     private informTaskService: InformTaskService,
@@ -30,27 +40,70 @@ export class UserMainComponent implements OnInit {
 
   // =================== Init ===================
   ngOnInit(): void {
-    this.loadUnsuccessData();
-    // this.loadSuccessData(); // ถ้าต้องการโหลด Success
 
-    // this.loadStatusOptions();
+
+    this.initUnassignedTaskDataSource()
     this.loadCategories();
 
     this.loadStatusCode();
   }
 
+  onDocumentChange(e: any) {
+    this.documentNumberSearch = e
+    this.initUnassignedTaskDataSource()
+
+  }
+  onProductNameChange(e: any) {
+    this.productName = e
+    this.initUnassignedTaskDataSource()
+
+
+  }
+
+  onCategoriesCheck(e: any) {
+    const selectedItems = e
+      .filter((item: any) => item.selected)
+      .map((item: any) => item.value);
+
+    this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
+    this.initUnassignedTaskDataSource()
+
+  }
+
+  onStatusCodeCheck(e: any) {
+    const selectedItems = e
+      .filter((item: any) => item.selected)
+      .map((item: any) => item.value);
+
+    this.statusCodeSearchText = selectedItems.length > 0 ? selectedItems.join(',') : null;
+    this.initUnassignedTaskDataSource()
+
+
+  }
+
+  onStartDateChange(e: any) {
+    this.startDate = e.value
+    this.initUnassignedTaskDataSource()
+
+  }
+  onEndDateChange(e: any) {
+    this.endDate = e.value
+    this.initUnassignedTaskDataSource()
+  }
+
+
   // =================== Load CheckBox ===================
   async loadCategories(): Promise<void> {
-  try {
-    const res = await firstValueFrom(
-      this.checkboxService.getCategoriesCheckBoxItem()
-    );
-    this.categoriesCheckBoxItem = res as CheckboxList<number>[];
-  } catch (error) {
-    console.error('Error loading categories:', error);
-    this.categoriesCheckBoxItem = [];
+    try {
+      const res = await firstValueFrom(
+        this.checkboxService.getCategoriesCheckBoxItem()
+      );
+      this.categoriesCheckBoxItem = res as CheckboxList<number>[];
+    } catch (error) {
+      console.error('Error loading categories:', error);
+      this.categoriesCheckBoxItem = [];
+    }
   }
-}
 
   async loadStatusCode() {
     try {
@@ -62,74 +115,54 @@ export class UserMainComponent implements OnInit {
     }
   }
 
-  onCategoriesCheck(e: any) {
-    console.log('Categories checked:', e);
-  }
+
 
   // =================== Load Status ===================
-  // loadStatusOptions() {
-  //   this.statusCheckBoxItem = [
-  //     { code: "Done", text: 'Done', selected: false },
-  //     { code: "Rejected", text: 'Rejected', selected: false },
-  //     { code: "New", text: 'New', selected: false },
-  //     { code: "Draft", text: 'Draft', selected: false }
-  //   ];
-  // }
-
-  onStatusCheck(e: any) {
-    console.log('Status checked:', e);
-  }
-
-  onSearchChange(e: any) {
-    console.log('Search value changed:', e);
-  }
-
   getStatusClass(status: string): string {
     switch (status) {
       case 'Draft': return 'text-gray-500 font-bold';
       case 'Rejected': return 'text-red-600 font-bold';
-      case 'Pending': return 'text-yellow-600 font-bold';
+      case 'Submit': return 'text-yellow-600 font-bold';
       case 'InProgress': return 'text-yellow-600 font-bold';
-      case 'Completed': return 'text-green-600 font-bold';
+      case 'Done': return 'text-green-600 font-bold';
       default: return 'text-gray-600';
     }
   }
 
   // =================== Load Data ===================
-  loadUnsuccessData() {
-    firstValueFrom(this.informTaskService.getUnsuccessInform())
-      .then((data: any) => {
-        this.unsuccessDataSource = new DataSource({
-          store: new ArrayStore({
-            key: 'formId',
-            data: data || []
-          })
-        });
-      })
-      .catch((err) => {
-        console.error('Error loading unsuccess data:', err);
-        this.unsuccessDataSource = new DataSource({
-          store: new ArrayStore({ key: 'formId', data: [] })
-        });
-      });
+  initUnassignedTaskDataSource() {
+    this.unsuccessDataSource = new DataSource({
+      load: (loadOptions: LoadOptions) => {
+
+
+        const newLoad: DevExtremeParam<QueryUserForm> = {
+          searchCriteria: {
+            docNo: this.documentNumberSearch,
+            productName: this.productName,
+            categories: this.categoriesSearchId,
+            statusCode: this.statusCodeSearchText,
+            startDate: this.startDate,
+            endDate: this.endDate
+          },
+          loadOption: loadOptions
+        };
+
+
+        return this.informTaskService.getUnsuccessInform(newLoad).pipe(catchError(err => { return err }))
+          .toPromise()
+      }
+    });
   }
 
-  // =================== Load Success (commented) ===================
-  // loadSuccessData() {
-  //   this.successDataSource = new DataSource({
-  //     store: new ArrayStore({
-  //       key: 'formId',
-  //       load: async () => {
-  //         try {
-  //           const data: any = await firstValueFrom(this.getSuccessInform());
-  //           return data;
-  //         } catch (err) {
-  //           console.error('Error loading success data:', err);
-  //           return [];
-  //         }
-  //       }
-  //     })
-  //   });
-  // }
+
+
+  // =================== Method ===================
+
+
+  test(data:any){
+
+    console.log(data);
+    
+  }
 
 }

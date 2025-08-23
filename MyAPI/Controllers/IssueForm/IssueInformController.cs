@@ -42,11 +42,12 @@ namespace MyAPI.Controllers.IssueForm
             return Ok(await _issueInformService.GetIssueFormById(formId));
         }
 
-        [HttpGet("issue-forms/unsuccess")]
-        public async Task<IActionResult> GetUnsuscessForms()
+        [HttpPost("queryIssueforms/unsuccess")]
+        public async Task<IActionResult> GetUnsuscessForms(DevExtremeParam<QueryUserForm> param)
         {
-            return Ok(await _issueInformService.GetUnsuccessForms()); 
+            return Ok(await _issueInformService.GetUnsuccessForms( param)); 
         }
+
 
         [HttpGet("issue-forms/success")]
         public async Task<IActionResult> GetSuscessForms()

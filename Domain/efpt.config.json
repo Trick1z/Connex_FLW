@@ -104,6 +104,10 @@
          "ObjectType": 1
       },
       {
+         "Name": "[dbo].[USP_Query_IssueForms]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[USP_Query_IssueProduct]",
          "ObjectType": 1
       },
