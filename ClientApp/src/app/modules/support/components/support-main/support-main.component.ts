@@ -242,4 +242,50 @@ export class SupportMainComponent implements OnInit {
         });
       });
   }
+
+  onAllTaskCliked(status: string) {
+    // 
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Task All Task",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        const allTask: Array<USP_Query_FormTasksByStatusResult> = this.unassignedTaskDataSource.items()
+        this.taskService.listTaskManagement(allTask, status).pipe(catchError(err => {
+          Swal.fire({
+            title: "Somthing when wrong",
+            text: "Trying to reload in 1 second",
+            icon: "success",
+            timer: 1200
+          });
+
+          return setTimeout(() => {
+            window.location.reload();
+          }, 1200);
+
+          return err
+        })).subscribe((res: any) => {
+          this.getTaskDataGrid()
+          return Swal.fire({
+            title: "Done",
+            text: "Your task are taken.",
+            icon: "success",
+            timer: 1200
+          });
+        })
+
+
+
+
+      }
+    });
+
+
+  }
 }

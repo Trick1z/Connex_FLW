@@ -45,7 +45,8 @@
     <div class="pl-10 pr-10 datagrid-assignment">
 
         <div class="my-5" id="">
-            <app-button [color]="'blue'" [message]="'Take All Task'"></app-button>
+            <app-button (clicked)="onAllTaskCliked('Assigned')" [color]="'blue'"
+                [message]="'Take All Task'"></app-button>
         </div>
 
 

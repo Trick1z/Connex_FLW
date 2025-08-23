@@ -605,36 +605,14 @@ namespace Services.Implements
 
         }
 
-        //public async Task<bool> UnassignTaskManagement(USP_Query_FormTasksByStatusResult param, bool isTakeTask)
-        //{
-        //    var validate = new ValidateException();
-        //    var userId = _claimsService.GetCurrentUserId();
-        //    var userTaskSeq = await _context.IssueFormTask
-        //        .FirstOrDefaultAsync(t => t.AssignedTo == userId && t.TaskSeq == param.TaskSeq);
-
-        //    IsTaskFound(validate, userTaskSeq);
-
-        //    var dateNow = DateTime.Now;
-
-        //    if (isTakeTask)
-        //    {
-        //        IsLatestData(param, validate, userTaskSeq);
-
-        //        await UpdateTask(param, userTaskSeq, dateNow, "Assigned");
-        //        await AddLog(userId, userTaskSeq, dateNow, "Done");
-
-        //    }
-        //    //reject
-        //    else
-        //    {
-                
-
-        //    }
-
-
-        //    return true;
-        //}
-
+        public async Task<bool> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
+        {
+            foreach (var item in param)
+            {
+               await TaskManagement(item,status);
+            }
+            return true;
+        }
 
 
         public async Task<bool> TaskManagement(USP_Query_FormTasksByStatusResult param, string status)
@@ -648,24 +626,12 @@ namespace Services.Implements
             IsTaskFound(validate, userTaskSeq);
 
             var dateNow = DateTime.Now;
-            
-            //if (status == "Done")
-            //{
+
 
             IsLatestData(param, validate, userTaskSeq);
             await UpdateTask(param,userTaskSeq, dateNow,status ,userId);
             await AddLog(userId, userTaskSeq, dateNow, status);
 
-            //}
-            //reject
-            //else
-            //{
-            //    IsLatestData(param, validate, userTaskSeq);
-
-            //    await UpdateTask(param, userTaskSeq, dateNow , "Rejected"  );
-            //    await AddLog(userId, userTaskSeq, dateNow ,"Rejected");
-
-            //}
 
 
             return true;

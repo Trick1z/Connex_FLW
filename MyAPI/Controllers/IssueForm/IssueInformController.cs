@@ -62,6 +62,11 @@ namespace MyAPI.Controllers.IssueForm
         }
 
 
+        [HttpPost("ListTaskManagement/{status}")]
+        public async Task<IActionResult> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
+        {
+            return Ok(await _issueInformService.ListTaskManagement(param, status));
+        }
         [HttpPost("TaskManagement/{status}")]
         public async Task<IActionResult> TaskManagement(USP_Query_FormTasksByStatusResult param, string status)
         {

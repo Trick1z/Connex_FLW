@@ -20,6 +20,12 @@ export class TaskService {
 
   taskManagement(param : USP_Query_FormTasksByStatusResult , status : string){
     return this.http.post(`${environment.apiUrl}IssueInform/TaskManagement/${status}`,param)
-
   }
+
+   listTaskManagement(param : Array<USP_Query_FormTasksByStatusResult> , status : string){
+    return this.http.post(`${environment.apiUrl}IssueInform/ListTaskManagement/${status}`,param)
+  }
+
+
+  
 }
