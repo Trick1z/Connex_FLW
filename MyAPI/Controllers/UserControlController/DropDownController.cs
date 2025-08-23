@@ -41,26 +41,20 @@ namespace MyAPI.Controllers.UserControlController
             return Ok(await _getDropdownService.GetRoleItem()); 
         }
 
-        //[AllowAnonymous]
-        //[HttpGet("testGen/{prefix}/{delay}")]
-        //public async Task<IActionResult> GenNo(string prefix , int delay)
-        //{
-        //    return Ok(await _genNumberService.GenDocNo(prefix));
-        //}
-
-        [AllowAnonymous]
         [HttpGet("ProductMapByCategories/{id}")]
         public async Task<IActionResult> GetProductItemsMapByCategories(int id)
         {
             return Ok(await _issueInformService.GetProductItemsMapByCategories(id));
         }
 
+        [AllowAnonymous]
         [HttpGet("CategoriesItem")]
         public async Task<IActionResult> GetCategoriesItems()
         {
-            return Ok(await _getDropdownService.GetCategoriesItems()); 
+            return Ok(await _getDropdownService.GetCategoriesItems());
         }
 
+        [AllowAnonymous]
         [HttpGet("ProductsItem")]
         public async Task<IActionResult> GetProductsItems()
         {
