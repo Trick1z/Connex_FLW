@@ -165,11 +165,20 @@
                 alignment="center"></dxi-column>
             <dxi-column dataField="systemStatusCode" caption="Status" minWidth="80" width="140"
                 alignment="center"></dxi-column>
+
+
             <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="180" alignment="center"
                 [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
-                <app-button [color]="'red'" [message]="'Cancel'"
-                    (clicked)=" onSubmit(cell.data,'CancelCompleted')"></app-button>
+
+                <div class="" *ngIf="cell.data.canCancel">
+
+                    <app-button [color]="'red'" [message]="'Cancel'"
+                        (clicked)=" onSubmit(cell.data,'CancelCompleted')"></app-button>
+
+
+
+                </div>
             </div>
 
 
