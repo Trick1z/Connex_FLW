@@ -44,7 +44,7 @@
 <div class="flex justify-start mt-20 ml-20 space-x-2">
   <app-button (clicked)="onSaveForm('Draft')" [message]="'Save Draft'"></app-button>
   <app-button (clicked)="onSaveForm('Submit')" [message]="'Submit'"></app-button>
-  <app-button [color]="'red'" [message]="'Cancel'"></app-button>
+  <app-button (clicked)="navTo()" [color]="'red'" [message]="'Cancel'"></app-button>
 </div>
 
 <dx-popup [width]="600" [height]="600" [(visible)]="InformPopupState" [showTitle]="true" [dragEnabled]="true"

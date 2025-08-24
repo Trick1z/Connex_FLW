@@ -58,6 +58,8 @@ export class UserAddTaskComponent implements OnInit {
 
   // =================== Init ===================
   ngOnInit(): void {
+
+    
     const id = this.activeRouter.snapshot.params['id'];
     if (id) {
       this.loadTaskById(id);
@@ -243,5 +245,10 @@ export class UserAddTaskComponent implements OnInit {
             this.router.navigate([route]);
           });
       });
+  }
+
+  navTo( ){
+
+    this.router.navigate([UserRoute.UserFormFullPath])
   }
 }

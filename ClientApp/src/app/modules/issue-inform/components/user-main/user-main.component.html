@@ -23,16 +23,20 @@
   </div>
 
   <div class="flex flex-col ">
-    <div class="flex items-center text-end check-box">
-
+    <!-- <div class="grid grid-col-2 text-end check-box">
       <label for="check-box" class="w-40 font-bold">Categories</label>
+      <app-check-box [options]="categoriesCheckBoxItem" (optionsChange)="onCategoriesCheck($event)">
+      </app-check-box>
+    </div> -->
+
+    <div  class="flex items-center text-start text-end check-box">
+      <label for="check-box" class="w-20 mr-2 font-bold">Categories</label>
       <app-check-box [options]="categoriesCheckBoxItem" (optionsChange)="onCategoriesCheck($event)">
       </app-check-box>
     </div>
 
-    <div class="flex items-center text-end check-box">
-      <label for="check-box" class="w-40 font-bold">status</label>
-
+    <div  class="flex mt-10 items-start text-end check-box">
+      <label for="check-box" class="w-20 mr-2  font-bold">Status</label>
       <app-check-box [options]="statusCheckBoxItem" (optionsChange)="onStatusCodeCheck($event)">
       </app-check-box>
     </div>
@@ -91,11 +95,12 @@
       <div *dxTemplate="let detail of 'actionCell'">
         <div *ngIf="detail.data.canEdit" class="flex  justify-center space-x-2">
           <app-button [color]="'yellow'" [message]="'Edit'"></app-button>
-          <app-button  [color]="'red'" [message]="'Delete'"></app-button>
+          <app-button [color]="'red'" [message]="'Delete'"></app-button>
         </div>
 
         <div *ngIf="detail.data.canClose">
-          <app-button  [color]="'blue'" (clicked)="onCloseFormClicked(detail.data)" [message]="'Close Form'"></app-button>
+          <app-button [color]="'blue'" (clicked)="onCloseFormClicked(detail.data)"
+            [message]="'Close Form'"></app-button>
         </div>
 
       </div>
