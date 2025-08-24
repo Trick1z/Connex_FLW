@@ -18,6 +18,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services.Implements
 {
@@ -38,172 +39,41 @@ namespace Services.Implements
             _claimsService = claimsService;
         }
 
-        //service start here 
 
-        //public async Task<List<IssueFormDto>> GetUnsuccessForms()
-        //{
-
-
-
-        //}
-
-        //public async Task<List<IssueFormDto>> GetUnsuccessForms()
-        //{
-        //    // 1. ดึง IssueForm + TaskItems + Product + Category
-        //    var forms = await _context.IssueForm
-        //        .Where(f => f.SystemStatusCode != "Completed" || f.SystemStatusCode != "Rejected")
-        //        .Include(f => f.IssueFormTask)
-        //            .ThenInclude(t => t.Rel_Categories_Product)
-        //                .ThenInclude(rcp => rcp.Product)
-        //        .Include(f => f.IssueFormTask)
-        //            .ThenInclude(t => t.Rel_Categories_Product)
-        //                .ThenInclude(rcp => rcp.IssueCategories)
-        //        .ToListAsync();
-
-        //    // 2. ดึง UserName สำหรับ CreatedBy / ModifiedBy
-        //    var userIds = forms
-        //        .SelectMany(f => new[] { f.CreatedBy, f.ModifiedBy })
-        //        .Where(x => x.HasValue)
-        //        .Select(x => x.Value)
-        //        .Distinct()
-        //        .ToList();
-
-        //    var users = await _context.User
-        //        .Where(u => userIds.Contains(u.UserId))
-        //        .ToDictionaryAsync(u => u.UserId, u => u.Username);
-
-        //    // 3. Map EF Models -> DTO
-        //    var result = forms.Select(f =>
-        //    {
-        //        var taskItems = f.IssueFormTask.Select(t => new TaskItemDto
-        //        {
-        //            Id = Guid.NewGuid(),
-        //            IssueCategoriesId = t.Rel_Categories_Product?.IssueCategoriesId,
-        //            IssueCategoriesName = t.Rel_Categories_Product?.IssueCategories?.IssueCategoriesName ?? "",
-        //            ProductId = t.Rel_Categories_Product?.ProductId,
-        //            ProductName = t.Rel_Categories_Product?.Product?.ProductName ?? "",
-        //            StatusCode = t.SystemStatusCode,
-        //            Quantity = t.Br_Qty,
-        //            Location = t.Rp_Location,
-        //            DetectedTime = t.DetectedTime
-        //        }).ToList();
-
-        //        // 4. คำนวณ Progressing (ตัวอย่าง: count task ที่ approve/reject ต่อทั้งหมด)
-        //        int total = taskItems.Count;
-        //        //int completed = f.IssueFormTask.Count(t => f.SystemStatusCode != "Completed" || f.SystemStatusCode != "Rejected" || f.SystemStatusCode != "Draft");
-        //        int completed = f.IssueFormTask.Count(t => t.SystemStatusCode == "Approve" || t.SystemStatusCode == "Reject"
-        //                                           || t.SystemStatusCode == "InProgress" || t.SystemStatusCode == "Done");
-        //        bool editDeleteState = true;
-        //        if (completed != 0)
-        //        {
-        //            editDeleteState = false;
-        //        }
-
-        //        return new IssueFormDto
-        //        {
-        //            FormId = f.FormId,
-        //            DocNo = f.DocNo,
-        //            CanEditDelete = editDeleteState,
-        //            StatusCode = f.SystemStatusCode,
-        //            Progressing = $"{completed}/{total}",
-        //            ModifiedByName = f.ModifiedBy.HasValue && users.ContainsKey(f.ModifiedBy.Value) ? users[f.ModifiedBy.Value] : null,
-        //            ModifiedTime = f.ModifiedTime,
-        //            TaskItems = taskItems
-        //        };
-        //    }).ToList();
-
-        //    return result;
-        //}
-
-        public async Task<QueryViewModel<USP_Query_IssueFormsResult>> GetUnsuccessForms(DevExtremeParam<QueryUserForm> param)
+        public async Task<QueryViewModel<USP_Query_IssueFormsResult>> GetForms(DevExtremeParam<QueryUserForm> param ,string formStatus )
         {
 
-            var result = await _context.Procedures.USP_Query_IssueFormsAsync(param.SearchCriteria.DocNo ,param.SearchCriteria.ProductName ,
+            var result = await _context.Procedures.USP_Query_IssueFormsAsync(param.SearchCriteria.DocNo, formStatus, param.SearchCriteria.ProductName ,
                 param.SearchCriteria.Categories,param.SearchCriteria.StatusCode,param.SearchCriteria.StartDate,param.SearchCriteria.EndDate ,
                 param.LoadOption.Skip,param.LoadOption.Take,param.SortField, param.SortBy);
-            var data = new QueryViewModel<USP_Query_IssueFormsResult>();
 
+
+            var data = new QueryViewModel<USP_Query_IssueFormsResult>();
             data.Data = result;
             data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
-
-
-
             return data;
-
-
         }
 
-
-        public async Task<List<IssueFormDto>> GetSuccessForms()
+        public async Task<QueryViewModel<USP_Query_FormTaskDetailResult>> GetFormsDetail(DevExtremeParam<QueryUserFormDetail>  param)
         {
-            // 1. ดึง IssueForm + TaskItems + Product + Category
-            var forms = await _context.IssueForm
-                .Where(f => f.SystemStatusCode == "Completed" || f.SystemStatusCode == "Rejected") // <-- เอาเฉพาะ Completed + Rejected
-                .Include(f => f.IssueFormTask)
-                    .ThenInclude(t => t.Rel_Categories_Product)
-                        .ThenInclude(rcp => rcp.Product)
-                .Include(f => f.IssueFormTask)
-                    .ThenInclude(t => t.Rel_Categories_Product)
-                        .ThenInclude(rcp => rcp.IssueCategories)
-                .ToListAsync();
 
-            // 2. ดึง UserName สำหรับ CreatedBy / ModifiedBy
-            var userIds = forms
-                .SelectMany(f => new[] { f.CreatedBy, f.ModifiedBy })
-                .Where(x => x.HasValue)
-                .Select(x => x.Value)
-                .Distinct()
-                .ToList();
+            var result = await _context.Procedures.USP_Query_FormTaskDetailAsync(param.SearchCriteria.FormId , param.LoadOption.Skip
+                , param.LoadOption.Take, param.SortField, param.SortBy);
 
-            var users = await _context.User
-                .Where(u => userIds.Contains(u.UserId))
-                .ToDictionaryAsync(u => u.UserId, u => u.Username);
+            if (param.SearchCriteria.DataSource == null)
+                param.SearchCriteria.DataSource = new List<USP_Query_FormTaskDetailResult>();
 
-            // 3. Map EF Models -> DTO
-            var result = forms.Select(f =>
+            return new QueryViewModel<USP_Query_FormTaskDetailResult>
             {
-                var taskItems = f.IssueFormTask.Select(t => new TaskItemDto
-                {
-                    Id = Guid.NewGuid(),
-                    IssueCategoriesId = t.Rel_Categories_Product?.IssueCategoriesId,
-                    IssueCategoriesName = t.Rel_Categories_Product?.IssueCategories?.IssueCategoriesName ?? "",
-                    ProductId = t.Rel_Categories_Product?.ProductId,
-                    ProductName = t.Rel_Categories_Product?.Product?.ProductName ?? "",
-                    StatusCode = t.SystemStatusCode,
-                    Quantity = t.Br_Qty,
-                    Location = t.Rp_Location,
-                    DetectedTime = t.DetectedTime
-                }).ToList();
-
-                // 4. คำนวณ Progressing
-                int total = taskItems.Count;
-                int completed = f.IssueFormTask.Count(t => t.SystemStatusCode == "Approve" ||
-                                                           t.SystemStatusCode == "Reject" ||
-                                                           t.SystemStatusCode == "InProgress" ||
-                                                           t.SystemStatusCode == "Completed");
-
-                bool editDeleteState = completed == 0;
-
-                return new IssueFormDto
-                {
-                    FormId = f.FormId,
-                    DocNo = f.DocNo,
-                    CanEditDelete = editDeleteState,
-                    StatusCode = f.SystemStatusCode,
-                    Progressing = $"{completed}/{total}",
-                    ModifiedByName = f.ModifiedBy.HasValue && users.ContainsKey(f.ModifiedBy.Value) ? users[f.ModifiedBy.Value] : null,
-                    ModifiedTime = f.ModifiedTime,
-                    TaskItems = taskItems
-                };
-            }).ToList();
-
-            return result;
+                Data = result,
+                TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0
+            };
         }
 
 
 
 
-
+        
         public async Task<IssueFormParam> GetIssueFormById(int formId)
         {
             var dbIssueForm = await _context.IssueForm
@@ -240,11 +110,6 @@ namespace Services.Implements
 
             return result;
         }
-
-
-
-
-
 
         public async Task<IEnumerable<AllProducts>> GetProductItemsMapByCategories(int id)
         {
@@ -318,29 +183,14 @@ namespace Services.Implements
                 }
 
                 _context.IssueForm.Add(dbIssueForm);
+
+
+
                 await _context.SaveChangesAsync();
                 param.FormId = dbIssueForm.FormId;
 
-
-
-                foreach (var t in dbIssueForm.IssueFormTask)
-                {
-                    var log = new IssueFormTaskAudit();
-
-                    log.FormId = param.FormId;
-                    log.TaskSeq = t.TaskSeq;
-                    log.Action = "Created Task";
-                    log.ActionBy = userId;
-                    log.ActionTime = dateNow;
-                    log.IssueCategoriesId = t.IssueCategoriesId;
-                    log.ProductId = t.ProductId;
-                    log.Qty = t.Br_Qty;
-                    log.Location = t.Rp_Location;
-                    log.DectectedTime = t.DetectedTime;
-
-                    _context.IssueFormTaskAudit.Add(log);
-
-                }
+                CreatedFormAddFormLog(param, userId, dateNow);
+                CreatedFormAddTaskLog(param, userId, dateNow, dbIssueForm);
 
                 await _context.SaveChangesAsync();
 
@@ -427,32 +277,151 @@ namespace Services.Implements
                     dbTask.DetectedTime = (dsTask.IssueCategoriesId == 2 || dsTask.IssueCategoriesId == 3) ? dsTask.DetectedTime : null;
                     dbTask.SubmitTime = status == "Submit" ? dateNow : null;
 
-
-
-                    var log = new IssueFormTaskAudit
-                    {
-                        FormId = param.FormId,
-                        TaskSeq = maxTaskSeq + 1,
-                        Action = logAction,
-                        ActionBy = userId,
-                        ActionTime = dateNow,
-                        IssueCategoriesId = dsTask.IssueCategoriesId,
-                        ProductId = dsTask.ProductId,
-                        Qty = dsTask.Quantity,
-                        Location = dsTask.Location,
-                        DectectedTime = dsTask.DetectedTime
-                    };
-                    _context.IssueFormTaskAudit.Add(log);
+                    CreatedTaskAddLog(param, userId, dateNow, dsTask, logAction, maxTaskSeq);
                 }
+
+                EdtiedTaskFormAddLog(formId, userId, dateNow);
+
                 await _context.SaveChangesAsync();
             }
             return param;
         }
 
+        private void CreatedTaskAddLog(IssueFormParam param, int userId, DateTime dateNow, TaskParamViewModel dsTask, string logAction, int maxTaskSeq)
+        {
+            var log = new IssueFormTaskAudit
+            {
+                FormId = param.FormId,
+                TaskSeq = maxTaskSeq + 1,
+                Action = logAction,
+                ActionBy = userId,
+                ActionTime = dateNow,
+                IssueCategoriesId = dsTask.IssueCategoriesId,
+                ProductId = dsTask.ProductId,
+                Qty = dsTask.Quantity,
+                Location = dsTask.Location,
+                DectectedTime = dsTask.DetectedTime
+            };
+            _context.IssueFormTaskAudit.Add(log);
+        }
 
+        private void EdtiedTaskFormAddLog(int formId, int userId, DateTime dateNow)
+        {
+            var formLog = new IssueFormAudit();
+
+            formLog.ActionTime = dateNow;
+            formLog.ActionBy = userId;
+            formLog.Action = "Edited Task In Form";
+            formLog.FormId = formId;
+
+            _context.IssueFormAudit.Add(formLog);
+        }
+
+        private void CreatedFormAddFormLog(IssueFormParam param, int userId, DateTime dateNow)
+        {
+            var formLog = new IssueFormAudit();
+            formLog.Action = "Created Form";
+            formLog.ActionTime = dateNow;
+            formLog.FormId = param.FormId;
+            formLog.ActionBy = userId;
+
+            _context.IssueFormAudit.Add(formLog);
+        }
+
+        private void CreatedFormAddTaskLog(IssueFormParam param, int userId, DateTime dateNow, IssueForm dbIssueForm)
+        {
+            foreach (var t in dbIssueForm.IssueFormTask)
+            {
+                var taskLog = new IssueFormTaskAudit();
+
+                taskLog.TaskSeq = t.TaskSeq;
+                taskLog.Action = "Created Task";
+                taskLog.FormId = param.FormId;
+                taskLog.ActionBy = userId;
+                taskLog.ActionTime = dateNow;
+                taskLog.IssueCategoriesId = t.IssueCategoriesId;
+                taskLog.ProductId = t.ProductId;
+                taskLog.Qty = t.Br_Qty;
+                taskLog.Location = t.Rp_Location;
+                taskLog.DectectedTime = t.DetectedTime;
+
+                _context.IssueFormTaskAudit.Add(taskLog);
+
+            }
+        }
+
+        public async Task<bool> CloseForms(USP_Query_IssueFormsResult param)
+        {
+            var validate = new ValidateException();
+            var userId = _claimsService.GetCurrentUserId();
+            var dateNow = DateTime.Now;
+            var dbForm = await _context.IssueForm.FirstOrDefaultAsync(x => x.FormId == param.FormId);
+
+            CloseFormValidate(param, validate, dbForm);
+            ClosedFormUpdated(userId, dateNow, dbForm);
+            ClosedFormAddLog(param, userId, dateNow);
+
+            //await _context.SaveChangesAsync();
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                if (ex.InnerException != null)
+                    Console.WriteLine(ex.InnerException.Message);
+                throw; // หรือจัดการ error ตามต้องการ
+            }
+
+
+
+            return true;
+
+        }
+
+        private void ClosedFormAddLog(USP_Query_IssueFormsResult param, int userId, DateTime dateNow)
+        {
+            var log = new IssueFormAudit();
+            log.FormId = param.FormId;
+            log.Action = "Closed Form";
+            log.ActionTime = dateNow;
+            log.ActionBy = userId;
+            _context.IssueFormAudit.Add(log);
+        }
+
+        private void ClosedFormUpdated(int userId, DateTime dateNow, IssueForm? dbForm)
+        {
+            dbForm.SystemStatusCode = "Closed";
+            dbForm.ModifiedBy = userId;
+            dbForm.ClosedBy = userId;
+            dbForm.ModifiedTime = dateNow;
+            dbForm.ClosedTime = dateNow;
+
+            _context.IssueForm.Update(dbForm);
+
+        }
+
+        private static void CloseFormValidate(USP_Query_IssueFormsResult param, ValidateException validate, IssueForm? dbForm)
+        {
+            if (dbForm == null)
+            {
+                validate.Add("Form", "Form Not Found");
+                validate.Throw();
+            }
+
+            if (param.ModifiedTime != dbForm.ModifiedTime)
+            {
+                validate.Add("Form", "Please refresh this page before continue");
+                validate.Throw();
+
+            }
+        }
 
         private static void CheckDbIssueFormFound(ValidateException validate, IssueForm? dbIssueForm)
         {
+
+
             if (dbIssueForm == null)
             {
                 validate.Add("Form", "Form Not Found");

@@ -36,25 +36,30 @@ namespace MyAPI.Controllers.IssueForm
             return Ok(await _issueInformService.SaveIssueForm(param, formId, status));
         }
 
+
+        [HttpPost("CloseIssueForm")]
+        public async Task<IActionResult> CloseIssueForm(USP_Query_IssueFormsResult param)
+        {
+            return Ok(await _issueInformService.CloseForms(param));
+        }
+
         [HttpGet("GetIssueForm/{formId}")]
         public async Task<IActionResult> GetIssueFormById(int formId)
         {
             return Ok(await _issueInformService.GetIssueFormById(formId));
         }
 
-        [HttpPost("queryIssueforms/unsuccess")]
-        public async Task<IActionResult> GetUnsuscessForms(DevExtremeParam<QueryUserForm> param)
+        [HttpPost("queryIssueforms/unsuccess/{formStatus}")]
+        public async Task<IActionResult> GetForms(DevExtremeParam<QueryUserForm> param , string formStatus)
         {
-            return Ok(await _issueInformService.GetUnsuccessForms( param)); 
+            return Ok(await _issueInformService.GetForms( param , formStatus)); 
         }
 
-
-        [HttpGet("issue-forms/success")]
-        public async Task<IActionResult> GetSuscessForms()
+        [HttpPost("queryIssueforms/unsuccessTaskDetail")]
+        public async Task<IActionResult> GetUnsuscessFormTaskDetail(DevExtremeParam<QueryUserFormDetail> param)
         {
-            return Ok(await _issueInformService.GetSuccessForms());
+            return Ok(await _issueInformService.GetFormsDetail(param ));
         }
-
 
         [HttpPost("queryTask-user")]
         public async Task<IActionResult> QueryFormUser(DevExtremeParam<JobForUser> param)

@@ -14,8 +14,9 @@ namespace Domain.Models
     public partial interface IMYGAMEContextProcedures
     {
         Task<List<USP_Query_CategoriesResult>> USP_Query_CategoriesAsync(string searchText, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<List<USP_Query_FormTaskDetailResult>> USP_Query_FormTaskDetailAsync(int? formId, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_FormTasksByStatusResult>> USP_Query_FormTasksByStatusAsync(int? userId, string status, string searchDocNo, string searchCategoriesItems, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
-        Task<List<USP_Query_IssueFormsResult>> USP_Query_IssueFormsAsync(string docNo, string productName, string categories, string statusCode, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<List<USP_Query_IssueFormsResult>> USP_Query_IssueFormsAsync(string docNo, string formStatus, string productName, string categories, string statusCode, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_IssueProductResult>> USP_Query_IssueProductAsync(string searchProductName, string searchCategoriesId, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_NameResult>> USP_Query_NameAsync(string searchText, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
     }

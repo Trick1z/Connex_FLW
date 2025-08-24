@@ -55,12 +55,12 @@
 
   </div>
 </div>
-
+<!-- (onRowExpanding)="onMasterDetailRowExpanding($event.key.formId)"  -->
 <div class="gap-y-8 p-14">
   <app-head-underline [title]="'Open Issues'"></app-head-underline>
   <div class="mx-10 my-5">
-    <dx-data-grid [dataSource]="unsuccessDataSource" keyExpr="formId" [showBorders]="true"
-      [masterDetail]="{ enabled: true, template: 'unsuccessDetail' }" [paging]="{ enabled: true, pageSize: 5 }">
+    <dx-data-grid [dataSource]="openFormsDataSource" keyExpr="formId" [showBorders]="true"
+      [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
 
       <dxo-paging [pageSize]="5"></dxo-paging>
       <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
@@ -76,7 +76,7 @@
 
       <dxi-column alignment="center" dataField="progressing" caption="Progressing"></dxi-column>
 
-      <dxi-column alignment="center" dataField="modifiedByName" caption="Modified By"></dxi-column>
+      <dxi-column alignment="center" dataField="modifiedBy" caption="Modified By"></dxi-column>
 
       <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"></dxi-column>
 
@@ -86,25 +86,26 @@
         <dxi-button text="Delete" icon="trash"></dxi-button>
       </dxi-column> -->
 
-      <dxi-column width="120" caption="Actions" cellTemplate="actionCell"></dxi-column>
+      <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
       <div *dxTemplate="let detail of 'actionCell'">
-        <div *ngIf="detail.data.canEdit" class="flex space-x-2">
-          <button (click)="test(detail.data)"  class="px-2 py-1 text-white bg-blue-500 rounded">Edit</button>
-          <button  class="px-2 py-1 text-white bg-red-500 rounded">Delete</button>
+        <div *ngIf="detail.data.canEdit" class="flex  justify-center space-x-2">
+          <app-button [color]="'yellow'" [message]="'Edit'"></app-button>
+          <app-button  [color]="'red'" [message]="'Delete'"></app-button>
         </div>
 
-        <div *ngIf="!detail.data.canEdit" class="flex space-x-2">
-          <button  class="px-2 py-1 text-white bg-yellow-500 rounded">Close Form</button>
+        <div *ngIf="detail.data.canClose">
+          <app-button  [color]="'blue'" (clicked)="onCloseFormClicked(detail.data)" [message]="'Close Form'"></app-button>
         </div>
-
 
       </div>
 
-
+      <!-- [dataSource]="getDetailDataSource(masterData.data.formId)" -->
+      <!-- (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" -->
       <!-- Master-Detail Template -->
       <div *dxTemplate="let masterData of 'unsuccessDetail'">
-        <dx-data-grid [dataSource]="masterData.data.taskItems" [showBorders]="true" [columnAutoWidth]="true">
+        <dx-data-grid (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" [showBorders]="true"
+          [columnAutoWidth]="true">
           <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
           <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
           <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
@@ -112,10 +113,10 @@
           <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"></dxi-column>
 
 
-          <dxi-column dataField="statusCode" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
+          <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
           <div *dxTemplate="let cell of 'statusCell'">
-            <span [ngClass]="getStatusClass(cell.data.statusCode)">
-              {{ cell.data.statusCode }}
+            <span [ngClass]="getStatusClass(cell.data.status)">
+              {{ cell.data.status }}
             </span>
           </div>
 
@@ -125,45 +126,59 @@
     </dx-data-grid>
   </div>
 
-  <hr class="my-8">
 
-  <app-head-underline [title]="'Closed Issues'"></app-head-underline>
 
-  <div class="mx-10 my-5">
-    <dx-data-grid [dataSource]="successDataSource" keyExpr="formId" [showBorders]="true"
-      [masterDetail]="{ enabled: true, template: 'successDetail' }" [paging]="{ enabled: true, pageSize: 5 }">
+  <div class="my-8">
 
-      <dxo-paging [pageSize]="5"></dxo-paging>
-      <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
+    <app-head-underline [title]="'Closed Issues'"></app-head-underline>
 
-      <dxi-column dataField="docNo" caption="Document Number"></dxi-column>
-      <dxi-column dataField="statusCode" caption="Status"></dxi-column>
-      <dxi-column dataField="progressing" caption="Progressing"></dxi-column>
-      <dxi-column dataField="modifiedByName" caption="Modified By"></dxi-column>
-      <dxi-column dataField="modifiedTime" caption="Modified Time"></dxi-column>
+    <div class="mx-10 my-5">
+      <dx-data-grid [dataSource]="closedFormsDataSource" keyExpr="formId" [showBorders]="true"
+        [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
 
-      <!-- Action Buttons Master Grid -->
-      <dxi-column type="buttons">
-        <dxi-button text="Edit" icon="edit"></dxi-button>
-        <dxi-button text="Delete" icon="trash"></dxi-button>
-      </dxi-column>
+        <dxo-paging [pageSize]="5"></dxo-paging>
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
 
-      <!-- Master-Detail Template -->
-      <div *dxTemplate="let masterData of 'successDetail'">
-        <dx-data-grid [dataSource]="masterData.data.taskItems" [showBorders]="true" [columnAutoWidth]="true">
-          <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
-          <dxi-column dataField="productName" caption="Product"></dxi-column>
-          <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
-          <dxi-column dataField="location" caption="Location"></dxi-column>
-          <dxi-column dataField="detectedTime" caption="Detected Time"></dxi-column>
+        <dxi-column alignment="center" dataField="docNo" caption="Document Number"></dxi-column>
 
-          <!-- Action Buttons Detail Grid -->
-          <dxi-column type="buttons">
-            <dxi-button text="Edit" icon="edit"></dxi-button>
-            <dxi-button text="Delete" icon="trash"></dxi-button>
-          </dxi-column>
-        </dx-data-grid>
-      </div>
-    </dx-data-grid>
+        <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
+        <div *dxTemplate="let cell of 'statusCell'">
+          <span [ngClass]="getStatusClass(cell.data.status)">
+            {{ cell.data.status }}
+          </span>
+        </div>
+
+        <dxi-column alignment="center" dataField="progressing" caption="Progressing"></dxi-column>
+
+        <dxi-column alignment="center" dataField="modifiedBy" caption="Modified By"></dxi-column>
+
+        <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"></dxi-column>
+
+
+
+        <!-- [dataSource]="getDetailDataSource(masterData.data.formId)" -->
+        <!-- (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" -->
+        <!-- Master-Detail Template -->
+        <div *dxTemplate="let masterData of 'unsuccessDetail'">
+          <dx-data-grid (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" [showBorders]="true"
+            [columnAutoWidth]="true">
+            <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
+            <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
+            <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
+            <dxi-column alignment="center" dataField="location" caption="Location"></dxi-column>
+            <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"></dxi-column>
+
+
+            <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
+            <div *dxTemplate="let cell of 'statusCell'">
+              <span [ngClass]="getStatusClass(cell.data.status)">
+                {{ cell.data.status }}
+              </span>
+            </div>
+
+
+          </dx-data-grid>
+        </div>
+      </dx-data-grid>
+    </div>
   </div>
-</div>

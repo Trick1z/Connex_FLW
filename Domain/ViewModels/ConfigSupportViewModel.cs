@@ -70,6 +70,12 @@ namespace Domain.ViewModels
     }
 
 
+    public class QueryUserFormDetail
+    {
+
+        public int? FormId { get; set; }
+        public List<USP_Query_FormTaskDetailResult> DataSource { get; set; }
 
 
+    }
 }

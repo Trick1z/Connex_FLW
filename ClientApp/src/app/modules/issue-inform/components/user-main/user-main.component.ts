@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import DataSource from 'devextreme/data/data_source';
-import ArrayStore from 'devextreme/data/array_store';
-import { catchError, firstValueFrom, throwError } from 'rxjs';
+import { catchError, firstValueFrom, of, throwError } from 'rxjs';
 import { InformTaskService } from '../../services/inform-task.service';
 import { CheckboxService } from '../../../../services/checkbox.service';
 import { CheckboxList } from 'src/app/models/checkBox.model';
 import { LoadOptions } from 'devextreme/data';
 import { DevExtremeParam } from 'src/app/modules/admin/models/search.Model';
-import { QueryUserForm } from '../../models/inform.model';
+import { QueryUserForm, QueryUserFormDetail, USP_Query_FormTaskDetailResult } from '../../models/inform.model';
+import ArrayStore from 'devextreme/data/array_store';
 import CustomStore from 'devextreme/data/custom_store';
 
 @Component({
@@ -18,8 +18,8 @@ import CustomStore from 'devextreme/data/custom_store';
 export class UserMainComponent implements OnInit {
 
   // =================== DataSources ===================
-  unsuccessDataSource!: DataSource;
-  successDataSource!: DataSource;
+  openFormsDataSource!: DataSource;
+  closedFormsDataSource!: DataSource;
 
   // =================== Search / Filters ===================
   documentNumberSearch: string | null = null;
@@ -28,6 +28,7 @@ export class UserMainComponent implements OnInit {
   statusCodeSearchText: string | null = null;
   startDate: Date | null = null;;
   endDate: Date | null = null;;
+  taskDetailCache: { [formId: number]: USP_Query_FormTaskDetailResult[] } = {};
 
 
   categoriesCheckBoxItem: CheckboxList<number>[] = [];
@@ -41,8 +42,8 @@ export class UserMainComponent implements OnInit {
   // =================== Init ===================
   ngOnInit(): void {
 
-
-    this.initUnassignedTaskDataSource()
+    this.initOpenFormsDataSource()
+    this.initClosedFormsDataSource()
     this.loadCategories();
 
     this.loadStatusCode();
@@ -50,12 +51,12 @@ export class UserMainComponent implements OnInit {
 
   onDocumentChange(e: any) {
     this.documentNumberSearch = e
-    this.initUnassignedTaskDataSource()
+    this.initOpenFormsDataSource()
 
   }
   onProductNameChange(e: any) {
     this.productName = e
-    this.initUnassignedTaskDataSource()
+    this.initOpenFormsDataSource()
 
 
   }
@@ -66,7 +67,7 @@ export class UserMainComponent implements OnInit {
       .map((item: any) => item.value);
 
     this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    this.initUnassignedTaskDataSource()
+    this.initOpenFormsDataSource()
 
   }
 
@@ -76,19 +77,19 @@ export class UserMainComponent implements OnInit {
       .map((item: any) => item.value);
 
     this.statusCodeSearchText = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    this.initUnassignedTaskDataSource()
+    this.initOpenFormsDataSource()
 
 
   }
 
   onStartDateChange(e: any) {
     this.startDate = e.value
-    this.initUnassignedTaskDataSource()
+    this.initOpenFormsDataSource()
 
   }
   onEndDateChange(e: any) {
     this.endDate = e.value
-    this.initUnassignedTaskDataSource()
+    this.initOpenFormsDataSource()
   }
 
 
@@ -130,8 +131,8 @@ export class UserMainComponent implements OnInit {
   }
 
   // =================== Load Data ===================
-  initUnassignedTaskDataSource() {
-    this.unsuccessDataSource = new DataSource({
+  initOpenFormsDataSource() {
+    this.openFormsDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
 
 
@@ -148,21 +149,90 @@ export class UserMainComponent implements OnInit {
         };
 
 
-        return this.informTaskService.getUnsuccessInform(newLoad).pipe(catchError(err => { return err }))
+        return this.informTaskService.getUnsuccessInform(newLoad, 'Open')
+          .pipe(catchError(err => { return err }))
           .toPromise()
       }
     });
   }
+
+  initClosedFormsDataSource() {
+    this.closedFormsDataSource = new DataSource({
+      load: (loadOptions: LoadOptions) => {
+
+
+        const newLoad: DevExtremeParam<QueryUserForm> = {
+          searchCriteria: {
+            docNo: this.documentNumberSearch,
+            productName: this.productName,
+            categories: this.categoriesSearchId,
+            statusCode: this.statusCodeSearchText,
+            startDate: this.startDate,
+            endDate: this.endDate
+          },
+          loadOption: loadOptions
+        };
+
+
+        return this.informTaskService.getUnsuccessInform(newLoad, 'Closed')
+          .pipe(catchError(err => { return err }))
+          .toPromise()
+      }
+    });
+  }
+  // work
+  onDetailGridContentReady(e: any, formId: number) {
+    const detailGrid = e.component;
+    if (this.taskDetailCache[formId]) {
+      detailGrid.option('dataSource', this.taskDetailCache[formId]);
+      return;
+    }
+
+    const allTask: USP_Query_FormTaskDetailResult[] = Object.values(this.taskDetailCache).flat();
+    const newLoad: DevExtremeParam<QueryUserFormDetail> = {
+      searchCriteria: {
+        formId: formId,
+        dataSource: allTask
+      },
+      loadOption: {} as LoadOptions
+    };
+    this.informTaskService.getUnsuccessInformDetail(newLoad)
+      .pipe(
+        catchError(err => {
+          return of({ data: [], totalCount: 0 });
+        })
+      )
+      .subscribe((res: any) => {
+
+        this.taskDetailCache[formId] = res?.data ?? [];
+
+
+        // กำหนด DataSource ให้ detail grid
+        detailGrid.option('dataSource', this.taskDetailCache[formId]);
+      });
+  }
+
+  onCloseFormClicked(data: any) {
+
+
+    console.log("data", data);
+
+    return this.informTaskService.closeInformTask(data).pipe(catchError(err => {
+
+      return err
+    })).subscribe((res: any) => {
+
+      this.initOpenFormsDataSource()
+      this.initClosedFormsDataSource()
+    })
+
+  }
+  //endwork
 
 
 
   // =================== Method ===================
 
 
-  test(data:any){
-
-    console.log(data);
-    
-  }
 
 }

@@ -19,6 +19,7 @@ namespace Domain.Models
         public string ModifiedBy { get; set; }
         public DateTime? ModifiedTime { get; set; }
         public bool? CanEdit { get; set; }
+        public bool? CanClose { get; set; }
         public int? TotalCount { get; set; }
     }
 }

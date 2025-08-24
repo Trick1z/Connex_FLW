@@ -19,6 +19,8 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<IssueForm> IssueForm { get; set; }
 
+    public virtual DbSet<IssueFormAudit> IssueFormAudit { get; set; }
+
     public virtual DbSet<IssueFormTask> IssueFormTask { get; set; }
 
     public virtual DbSet<IssueFormTaskAudit> IssueFormTaskAudit { get; set; }
@@ -86,6 +88,7 @@ public partial class MYGAMEContext : DbContext
         {
             entity.HasKey(e => e.FormId).HasName("PK_Form");
 
+            entity.Property(e => e.ClosedTime).HasColumnType("datetime");
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
             entity.Property(e => e.DocNo)
                 .HasMaxLength(50)
@@ -100,6 +103,16 @@ public partial class MYGAMEContext : DbContext
             entity.HasOne(d => d.SystemStatusCodeNavigation).WithMany(p => p.IssueForm)
                 .HasForeignKey(d => d.SystemStatusCode)
                 .HasConstraintName("FK_Form_Status");
+        });
+
+        modelBuilder.Entity<IssueFormAudit>(entity =>
+        {
+            entity.HasKey(e => e.LogId);
+
+            entity.Property(e => e.Action)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ActionTime).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<IssueFormTask>(entity =>

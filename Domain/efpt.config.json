@@ -28,6 +28,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[IssueFormAudit]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[IssueFormTask]",
          "ObjectType": 0
       },
@@ -97,6 +101,10 @@
       },
       {
          "Name": "[dbo].[USP_Query_Categories]",
+         "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[USP_Query_FormTaskDetail]",
          "ObjectType": 1
       },
       {

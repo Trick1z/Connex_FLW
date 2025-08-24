@@ -14,6 +14,12 @@ export interface DevExtremeParam<T> {
     searchCriteria: T
 }
 
+export interface DevExtremeNoneClassParam<T> {
+    loadOption: LoadOptions
+    value: T
+}
+
+
 export interface JobForUserParam {
     status: string;
     docNo: string | null;

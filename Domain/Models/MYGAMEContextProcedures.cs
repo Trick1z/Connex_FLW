@@ -96,6 +96,58 @@ namespace Domain.Models
             return _;
         }
 
+        public virtual async Task<List<USP_Query_FormTaskDetailResult>> USP_Query_FormTaskDetailAsync(int? formId, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "FormId",
+                    Value = formId ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Skip",
+                    Value = skip ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Take",
+                    Value = take ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortBy",
+                    Size = 50,
+                    Value = sortBy ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortDirection",
+                    Size = 4,
+                    Value = sortDirection ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_FormTaskDetailResult>("EXEC @returnValue = [dbo].[USP_Query_FormTaskDetail] @FormId = @FormId, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
         public virtual async Task<List<USP_Query_FormTasksByStatusResult>> USP_Query_FormTasksByStatusAsync(int? userId, string status, string searchDocNo, string searchCategoriesItems, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
@@ -181,7 +233,7 @@ namespace Domain.Models
             return _;
         }
 
-        public virtual async Task<List<USP_Query_IssueFormsResult>> USP_Query_IssueFormsAsync(string docNo, string productName, string categories, string statusCode, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        public virtual async Task<List<USP_Query_IssueFormsResult>> USP_Query_IssueFormsAsync(string docNo, string formStatus, string productName, string categories, string statusCode, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
             {
@@ -198,6 +250,13 @@ namespace Domain.Models
                     Size = 100,
                     Value = docNo ?? Convert.DBNull,
                     SqlDbType = System.Data.SqlDbType.NVarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "FormStatus",
+                    Size = 50,
+                    Value = formStatus ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
                 },
                 new SqlParameter
                 {
@@ -260,7 +319,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_IssueFormsResult>("EXEC @returnValue = [dbo].[USP_Query_IssueForms] @DocNo = @DocNo, @ProductName = @ProductName, @Categories = @Categories, @StatusCode = @StatusCode, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryAsync<USP_Query_IssueFormsResult>("EXEC @returnValue = [dbo].[USP_Query_IssueForms] @DocNo = @DocNo, @FormStatus = @FormStatus, @ProductName = @ProductName, @Categories = @Categories, @StatusCode = @StatusCode, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 

@@ -25,6 +25,7 @@ namespace Domain.ViewModels
         public bool Desc { get; set; }
     }
 
+
     public class DevExtremeParam<T> where T : class
     {
         public LiteLoadOptions LoadOption { get; set; }
