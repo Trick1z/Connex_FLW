@@ -6,14 +6,15 @@ import { catchError, of } from 'rxjs';
 
 import { DropDownService } from 'src/app/services/drop-down.service';
 import { IssueProductService } from '../../services/issue-product.service';
-import { 
-  CategoriesDeleteFormData, CategoriesUpdateFormData, 
-  ProductDeleteFormData, ProductUpdateFormData 
+import {
+  CategoriesDeleteFormData, CategoriesUpdateFormData,
+  ProductDeleteFormData, ProductUpdateFormData
 } from '../../models/categories.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../../models/insert-categories.model';
 import { DevExtremeParam, productSearch } from '../../models/search.Model';
 import DataSource from 'devextreme/data/data_source';
 import Swal from 'sweetalert2';
+import { Data } from '@angular/router';
 
 @Component({
   selector: 'app-add-categories-product-main',
@@ -36,13 +37,17 @@ export class AddCategoriesProductMainComponent implements OnInit {
   editCategoriesText: string = "";
 
   categoryDataList: any[] = [];
-  productDataList: any[] = [];
+  // productDataList: any[] = [];
   checkBoxItem: any[] = [];
 
   categoriesIdSearch: string = "";
   productSearch: string = "";
 
-  ProductByCategoriesDataSource!: DataSource;
+
+  categoriesDatasource! : DataSource ;
+  ProductDataSource! : DataSource ;
+
+  // ProductByCategoriesDataSource!: DataSource;
 
   editCategoriesFormData: CategoriesUpdateFormData = {
     issueCategoriesId: 0,
@@ -59,7 +64,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
   constructor(
     private dropDownService: DropDownService,
     private issueProductService: IssueProductService
-  ) {}
+  ) { }
 
   // ================= Lifecycle =================
   ngOnInit(): void {
@@ -112,11 +117,34 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
   // ================= CRUD / API Calls =================
   getCategoriesProductDataList() {
-    this.dropDownService.getCategoryDropDown().pipe(catchError(err => of([])))
-      .subscribe(res => this.categoryDataList = Array.isArray(res) ? res : []);
+   this.getCategoriesItem()
+   this.initProductByNameCategoriesDataSource()
+  }
 
-    this.dropDownService.getProductDropDown().pipe(catchError(err => of([])))
-      .subscribe(res => this.productDataList = Array.isArray(res) ? res : []);
+  getCategoriesItem() {
+
+    this.dropDownService.getCategoryDropDown()
+      .pipe(
+        catchError(err => {
+          console.error('Error while loading category dropdown:', err);
+          return of([]); // ถ้า error ให้ return array ว่าง
+        })
+      )
+      .subscribe((res: any) => {
+        this.categoriesDatasource = res ?? [];
+      });
+
+  }
+
+    initProductByNameCategoriesDataSource(productName: string | null = null, categoriesId: string | null = null) {
+    this.ProductDataSource = new DataSource({
+      load: (loadOptions: LoadOptions) => {
+        const newLoad: DevExtremeParam<productSearch> = { searchCriteria: { productName, categoriesText: categoriesId }, loadOption: loadOptions };
+        return this.issueProductService.QueryProductOnCategories(newLoad)
+          .pipe(catchError(err => of(err)))
+          .toPromise();
+      }
+    });
   }
 
   onCategoriesSubmit() {
@@ -184,16 +212,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
   // ================= Search / Filter =================
   onSearch() { this.initProductByNameCategoriesDataSource(this.productSearch, this.categoriesIdSearch); }
 
-  initProductByNameCategoriesDataSource(productName: string | null = null, categoriesId: string | null = null) {
-    this.ProductByCategoriesDataSource = new DataSource({
-      load: (loadOptions: LoadOptions) => {
-        const newLoad: DevExtremeParam<productSearch> = { searchCriteria: { productName, categoriesText: categoriesId }, loadOption: loadOptions };
-        return this.issueProductService.QueryProductOnCategories(newLoad)
-          .pipe(catchError(err => of(err)))
-          .toPromise();
-      }
-    });
-  }
+
 
   getCheckBoxItem() {
     this.dropDownService.getCategoryDropDown()

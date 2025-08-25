@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { categoriesMapProductViewModel } from '../models/tag-option.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../models/insert-categories.model';
-import { CategoriesDeleteFormData, ProductDeleteFormData } from '../models/categories.model';
+import { CategoriesDeleteFormData, CategoriesParam, ProductDeleteFormData } from '../models/categories.model';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +59,18 @@ export class IssueProductService {
 
   QueryProductOnCategories(loadOptions: any) {
     return this.http.post(`${environment.apiUrl}IssueProduct/QueryProductOnCategories`, loadOptions);
+  }
+
+  // ===== new 
+
+  categoriesManagement(data : CategoriesParam ,action :string ){
+
+    return this.http.post(`${environment.apiUrl}IssueProduct/CategoriesManageMent/${action}` ,data)
+  }
+
+  getCategoriesItems(){
+
+    return this.http.get(`${environment.apiUrl}IssueProduct/GetIssueCategoriesItem`)
   }
 
 }
