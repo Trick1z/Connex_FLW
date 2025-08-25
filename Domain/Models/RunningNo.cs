@@ -14,4 +14,6 @@ public partial class RunningNo
     public int? NextNumber { get; set; }
 
     public DateTime? ModifiedTime { get; set; }
+
+    public string YearMonth { get; set; }
 }

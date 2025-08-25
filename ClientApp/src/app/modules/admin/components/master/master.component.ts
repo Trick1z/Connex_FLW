@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ValueChangedEvent as TagValueChangedEvent } from 'devextreme/ui/tag_box';
 import { categoriesMapProductViewModel, ProductsDataModel } from '../../models/tag-option.model';
 import Swal from 'sweetalert2';
@@ -9,6 +9,7 @@ import { LoadOptions } from 'devextreme/data';
 import { catchError, of } from 'rxjs';
 import { DevExtremeParam, Search } from '../../models/search.Model';
 import { DropDownList } from 'src/app/models/dropDown.model';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'app-master',
@@ -20,24 +21,20 @@ export class MasterComponent implements OnInit {
   // =================== Variables ===================
   categoryVisible = false;
   productVisible = false;
-  dataList: any;
-  categoryTextValue: string = '';
-  categorySelectedTags: number[] = [];
-  productTextValue: string = '';
-  productSelectedTags: number[] = [];
   CategoriesName: string = '';
-  globalId: number = 0;
 
   categoriesDataList: DropDownList[] = [];
   ProductTagOptions: ProductsDataModel[] = [];
   searchCategoriesValue: string = "";
-  CategoriesDataSource!: DataSource;
 
   viewPopupDetail: boolean = false;
   viewUserCategoriesName: string = '';
-  viewCategoriesDetail: Array<string> = [];
+  viewCategoriesDetail: Array<string> = []
+  ;
   categoriesDataSource!: DataSource; // <-- ใช้ DataSource แทน array
   categoriesMapProduct!: categoriesMapProductViewModel;
+
+  // @ViewChild('categoriesGrid', { static: false }) public categoriesGrid!: DxDataGridComponent;
 
   constructor(
     private dropDownService: DropDownService,
@@ -63,10 +60,11 @@ export class MasterComponent implements OnInit {
 
   // =================== Product Popup ===================
   productPopupShow(data: any) {
-    this.globalId = data.issueCategoriesId;
     this.CategoriesName = data.issueCategoriesName;
     this.loadCategoryProducts(data.issueCategoriesId);
     this.loadCategoriesMapProductDropdown();
+
+    this.categoriesDataSource.reload()
     this.productVisible = true;
   }
 
@@ -139,9 +137,11 @@ export class MasterComponent implements OnInit {
 
   // =================== View Product Detail ===================
   getViewProductDetail(data: any) {
-    this.viewPopupDetail = true;
     this.viewUserCategoriesName = data.issueCategoriesName;
     this.loadViewProducts(data.issueCategoriesId);
+
+    this.viewPopupDetail = true;
+
   }
 
   private loadViewProducts(categoryId: number) {
@@ -163,11 +163,14 @@ export class MasterComponent implements OnInit {
   // =================== Search & DataSource ===================
   onSearchValueChange(e: any) {
     this.searchCategoriesValue = e;
-    this.initCategoriesDataSource(this.searchCategoriesValue);
+    // this.initCategoriesDataSource(this.searchCategoriesValue);
   }
 
+
+
+
   initCategoriesDataSource(textParam: string | null = null) {
-    this.CategoriesDataSource = new DataSource({
+    this.categoriesDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
         const newLoad: DevExtremeParam<Search> = {
           searchCriteria: { text: textParam },

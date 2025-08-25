@@ -326,7 +326,7 @@ namespace Domain.Models
             return _;
         }
 
-        public virtual async Task<List<USP_Query_IssueProductResult>> USP_Query_IssueProductAsync(string searchProductName, string searchCategoriesId, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        public virtual async Task<List<USP_Query_IssueProductResult>> USP_Query_IssueProductAsync(string searchProductName, string searchCategoriesId, bool? isMap, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
             {
@@ -350,6 +350,12 @@ namespace Domain.Models
                     Size = 50,
                     Value = searchCategoriesId ?? Convert.DBNull,
                     SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "IsMap",
+                    Value = isMap ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Bit,
                 },
                 new SqlParameter
                 {
@@ -379,7 +385,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_IssueProductResult>("EXEC @returnValue = [dbo].[USP_Query_IssueProduct] @SearchProductName = @SearchProductName, @SearchCategoriesId = @SearchCategoriesId, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryAsync<USP_Query_IssueProductResult>("EXEC @returnValue = [dbo].[USP_Query_IssueProduct] @SearchProductName = @SearchProductName, @SearchCategoriesId = @SearchCategoriesId, @IsMap = @IsMap, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 

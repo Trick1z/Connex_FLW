@@ -8,15 +8,19 @@ namespace Domain.Interfaces
 {
     public interface IIssueProductService
     {
-        public Task<IEnumerable<IssueCategories>> DeleteCategoriesItems(DeleteCategories param); 
-        public Task<IEnumerable<Product>> DeleteProductItems(DeleteProduct param); 
 
-        public Task<IEnumerable<IssueCategories>> InsertCategories(InsertCategories param); 
+        public Task<IssueCategories> SaveCategories(CategoriesParam param);
 
-        public Task<IEnumerable<Product>> InsertProduct(InsertProduct param); 
+        public Task<Product> SaveProduct(ProductParam param);
 
-        public Task<IssueCategories> UpdateCategories(UpdateCategories param);
-        public Task<Product> UpdateProduct(UpdateProduct param);
+
+        public Task<IEnumerable<IssueCategories>> GetCategoriesItems();
+        
+
+
+
+
+
         public Task<CategoriesMapProductViewModel> LoadCategories(int id); 
         public Task<bool> SaveCategoriesProduct(SaveCategoriesProductParam param);
         public Task<QueryViewModel<USP_Query_CategoriesResult>> QueryCategoriesByText(DevExtremeParam<SearchCategoriesParam> param);

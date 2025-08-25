@@ -51,14 +51,14 @@ namespace MyAPI.Controllers.UserControlController
         [HttpGet("CategoriesItem")]
         public async Task<IActionResult> GetCategoriesItems()
         {
-            return Ok(await _getDropdownService.GetCategoriesItems());
+            return Ok(await _getDropdownService.GetCategoriesDropDownItems());
         }
 
         [AllowAnonymous]
         [HttpGet("ProductsItem")]
         public async Task<IActionResult> GetProductsItems()
         {
-            return Ok(await _getDropdownService.GetProductsItems()); 
+            return Ok(await _getDropdownService.GetProductsDropDownItems()); 
         }
     }
 }

@@ -17,6 +17,8 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<IssueCategories> IssueCategories { get; set; }
 
+    public virtual DbSet<IssueCategoriesAudit> IssueCategoriesAudit { get; set; }
+
     public virtual DbSet<IssueForm> IssueForm { get; set; }
 
     public virtual DbSet<IssueFormAudit> IssueFormAudit { get; set; }
@@ -78,10 +80,23 @@ public partial class MYGAMEContext : DbContext
 
             entity.Property(e => e.CreatedTime).HasColumnType("datetime");
             entity.Property(e => e.IsActive).HasDefaultValue(true);
+            entity.Property(e => e.IssueCategoriesDescription)
+                .HasMaxLength(512)
+                .IsUnicode(false);
             entity.Property(e => e.IssueCategoriesName)
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
+        });
+
+        modelBuilder.Entity<IssueCategoriesAudit>(entity =>
+        {
+            entity.HasKey(e => e.LogId);
+
+            entity.Property(e => e.Action)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ActionTime).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<IssueForm>(entity =>
@@ -110,7 +125,7 @@ public partial class MYGAMEContext : DbContext
             entity.HasKey(e => e.LogId);
 
             entity.Property(e => e.Action)
-                .HasMaxLength(50)
+                .HasMaxLength(512)
                 .IsUnicode(false);
             entity.Property(e => e.ActionTime).HasColumnType("datetime");
         });
@@ -317,6 +332,10 @@ public partial class MYGAMEContext : DbContext
             entity.Property(e => e.Prefix)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.YearMonth)
+                .HasMaxLength(6)
+                .IsUnicode(false)
+                .IsFixedLength();
         });
 
         modelBuilder.Entity<SystemConfig>(entity =>

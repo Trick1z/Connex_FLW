@@ -4,18 +4,23 @@
   <app-head-underline [title]="'Map Categories Product'"></app-head-underline>
   <div class="ml-10 groups">
 
-    <div class="max-w-sm search-box">
-      <app-text-box [value]="searchCategoriesValue" (onValueChanged)="onSearchValueChange($event)"
-        [placeHolder]="'Search By Username'"></app-text-box>
+    <div class="flex max-w-sm search-box">
+
+      <label for="searchBox" class="w-36">Category Name</label>
+
+      <div class="">
+        <app-text-box #searchBox [value]="searchCategoriesValue" (onValueChanged)="onSearchValueChange($event)"
+          [placeHolder]="'Search By Username'"></app-text-box>
+      </div>
     </div>
 
-    <div class="mt-1 app-btn">
+    <div class="mt-1 ml-36 app-btn">
       <app-button (clicked)="initCategoriesDataSource(searchCategoriesValue)" [message]="'Search'"></app-button>
     </div>
 
 
   </div>
-  <dx-data-grid class="m-10" [dataSource]="CategoriesDataSource" [showBorders]="true" [paging]="{ pageSize: 5 }"
+  <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDataSource" [showBorders]="true" [paging]="{ pageSize: 5 }"
     [columnAutoWidth]="true">
 
 
@@ -85,12 +90,12 @@
     <div class="flex justify-start" id="">
       <div class="flex justify-start text-2xl user-box">
         <span class="label">Category : </span>
-        <span class="ml-5 username"> {{ viewUserCategoriesName }}</span>
+        <span class="ml-5 username "> {{ viewUserCategoriesName }}</span>
       </div>
     </div>
     <app-head-underline [title]="'Products'"></app-head-underline>
 
-    <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewCategoriesDetail.length > 0 ;else noViewData">
+    <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewCategoriesDetail.length > 1 ;else noViewData">
 
 
       <app-button *ngFor="let item of viewCategoriesDetail" [color]="'blue'" [message]="item"></app-button>

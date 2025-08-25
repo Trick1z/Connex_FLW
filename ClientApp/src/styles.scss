@@ -28,3 +28,29 @@
 .dx-field-item:not(.dx-field-item-has-group):not(.dx-field-item-has-tabs):not(.dx-first-row):not(.dx-label-v-align) {
   padding-top: 0 !important;
 }
+
+
+/* ปรับขนาด dx-text-box ทุกตัวในโปรเจ็กต์ */
+.dx-textbox .dx-texteditor-input {
+    height: 1rem;        /* ความสูงของ input */
+    line-height: 2rem;   /* ให้ข้อความอยู่ตรงกลาง */
+    padding: 0 0.5rem;   /* ปรับ padding ซ้าย-ขวา */
+    font-size: 0.875rem; /* ปรับขนาดตัวอักษร */
+}
+
+.dx-textbox .dx-texteditor-container {
+    height: 2.1rem;        /* ความสูงของ container */
+}
+
+/* สำหรับ placeholder */
+.dx-textbox .dx-texteditor-input::placeholder {
+    font-size: 0.75rem;  /* ขนาด */
+    font-weight: 400;    /* ปกติ ไม่หนา */
+    color: #888;
+    opacity: 1;
+}
+
+/* สำหรับตัวหนังสือปกติใน input */
+.dx-textbox .dx-texteditor-input {
+    font-weight: 400;    /* ปกติ ไม่หนา */
+}

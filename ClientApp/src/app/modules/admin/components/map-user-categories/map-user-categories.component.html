@@ -14,13 +14,13 @@
         </div>
 
         <div class="mt-1 app-btn">
-            <app-button (clicked)="initUserByRoleDataSource()" [message]="'Search'"></app-button>
+            <app-button (clicked)="onSearch()" [message]="'Search'"></app-button>
         </div>
 
 
     </div>
 
-    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="userByRoleDataSource" [showBorders]="true"
+    <dx-data-grid #userGrid class="flex m-10 max-w-max " [dataSource]="userByRoleDataSource" [showBorders]="true"
         [columnAutoWidth]="true">
 
 

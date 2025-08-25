@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { categoriesMapProductViewModel } from '../models/tag-option.model';
 import { InsertCategoriesDataModel, InsertProductDataModel } from '../models/insert-categories.model';
-import { CategoriesDeleteFormData, CategoriesParam, ProductDeleteFormData } from '../models/categories.model';
+import { CategoriesDeleteFormData, CategoriesParam, ProductDeleteFormData, ProductParam } from '../models/categories.model';
 
 @Injectable({
   providedIn: 'root'
@@ -26,13 +26,6 @@ export class IssueProductService {
     return this.http.post(`${environment.apiUrl}IssueProduct/SaveIssueMapProduct`, param);
   }
 
-  onSaveCategories(param: InsertCategoriesDataModel) {
-    return this.http.post(`${environment.apiUrl}IssueProduct/SaveCategories`, param);
-  }
-
-  onSaveProduct(param: InsertProductDataModel) {
-    return this.http.post(`${environment.apiUrl}IssueProduct/SaveProduct`, param);
-  }
 
   // =================== Delete ===================
   onDeleteCategories(param: CategoriesDeleteFormData) {
@@ -43,14 +36,7 @@ export class IssueProductService {
     return this.http.post(`${environment.apiUrl}IssueProduct/DeleteProduct`, param);
   }
 
-  // =================== Update ===================
-  onUpdateProduct(param: any) {
-    return this.http.post(`${environment.apiUrl}IssueProduct/UpdateProduct`, param);
-  }
 
-  onUpdateCategories(param: any) {
-    return this.http.post(`${environment.apiUrl}IssueProduct/UpdateCategories`, param);
-  }
 
   // =================== Query ===================
   queryCategoriesByText(loadOptions: any) {
@@ -62,13 +48,15 @@ export class IssueProductService {
   }
 
   // ===== new 
-
-  categoriesManagement(data : CategoriesParam ,action :string ){
-
-    return this.http.post(`${environment.apiUrl}IssueProduct/CategoriesManageMent/${action}` ,data)
+  categoriesManagement(data: CategoriesParam) {
+    return this.http.post(`${environment.apiUrl}IssueProduct/CategoriesManagement`, data);
+  }
+  productManagement(data: ProductParam) {
+    return this.http.post(`${environment.apiUrl}IssueProduct/ProductManagement`, data);
   }
 
-  getCategoriesItems(){
+
+  getCategoriesItems() {
 
     return this.http.get(`${environment.apiUrl}IssueProduct/GetIssueCategoriesItem`)
   }

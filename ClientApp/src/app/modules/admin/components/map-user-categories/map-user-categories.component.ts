@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserMapCategoriesViewModel } from '../../models/tag-option.model';
 import { MappingCategoriesModel, UnMappingCategoriesModel } from '../../models/mapping.model';
 import Swal from 'sweetalert2';
@@ -9,6 +9,7 @@ import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
 import { DevExtremeParam, Search } from '../../models/search.Model';
 import { DropDownList } from 'src/app/models/dropDown.model';
+import { DxDataGridComponent } from 'devextreme-angular';
 
 @Component({
   selector: 'app-map-user-categories',
@@ -31,8 +32,8 @@ export class MapUserCategoriesComponent implements OnInit {
   viewUserDetail: string[] = [];
   viewUsername = '';
   viewRole = '';
-
   searchUsernameValue = '';
+  @ViewChild('userGrid', { static: false }) public userGrid!: DxDataGridComponent;
 
   constructor(
     private service: ConfigSupportService,
@@ -41,6 +42,9 @@ export class MapUserCategoriesComponent implements OnInit {
 
   ngOnInit(): void {
     this.initUserByRoleDataSource();
+
+
+
   }
 
   // ================= DataSource =================
@@ -63,8 +67,20 @@ export class MapUserCategoriesComponent implements OnInit {
 
   onSearchValueChange(text: string) {
     this.searchUsernameValue = text;
-    this.initUserByRoleDataSource(this.searchUsernameValue);
+
   }
+  refreshGrid() {
+    if (this.userGrid?.instance) {
+      this.userGrid.instance.refresh();
+    }
+  }
+
+  // ================= ตัวอย่าง search =================
+  onSearch() {
+    this.initUserByRoleDataSource(this.searchUsernameValue); // โหลด DataSource ใหม่
+    this.refreshGrid();                   // รีเฟรช DataGrid
+  }
+
 
   // ================= Map Detail =================
   onMapDetailPopupShow(data: any) {

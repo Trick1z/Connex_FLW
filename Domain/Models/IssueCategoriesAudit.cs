@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Domain.Models;
 
-public partial class IssueFormAudit
+public partial class IssueCategoriesAudit
 {
     public int LogId { get; set; }
 
@@ -15,5 +15,5 @@ public partial class IssueFormAudit
 
     public DateTime? ActionTime { get; set; }
 
-    public int? FormId { get; set; }
+    public int? IssueCategoriesId { get; set; }
 }

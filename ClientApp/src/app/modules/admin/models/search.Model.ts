@@ -7,6 +7,7 @@ export interface Search {
 export interface productSearch {
     productName: string | null
     categoriesText: string | null
+    isMap : boolean 
 }
 
 export interface DevExtremeParam<T> {

@@ -24,6 +24,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[IssueCategoriesAudit]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[IssueForm]",
          "ObjectType": 0
       },

@@ -1,0 +1,13 @@
+/* text-box.component.scss */
+
+/* ปรับขนาดตัวอักษรและ placeholder */
+.custom-text-box ::ng-deep .dx-texteditor-input {
+  font-size: 0.8rem;   /* ขนาดตัวอักษร */
+  color: #333;         /* สีข้อความ */
+}
+
+.custom-text-box ::ng-deep .dx-texteditor-input::placeholder {
+  font-size: 0.8rem;   /* ขนาด placeholder */
+  color: #aaa;
+  opacity: 1;           /* ป้องกันจางเกินไป */
+}

@@ -35,7 +35,6 @@ namespace Domain.Models
         public DateTime? DoneTime { get; set; }
         [StringLength(500)]
         public string RejectReason { get; set; }
-        public bool? CanCancel { get; set; }
         public int? TotalCount { get; set; }
     }
 }

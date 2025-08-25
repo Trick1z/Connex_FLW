@@ -7,8 +7,9 @@ using System.Security.Claims;
 namespace MyAPI.Controllers.CategoriesProducts
 {
     [ApiController]
-    //[Authorize]
     [Route("api/[controller]")]
+
+    [Authorize]
     public class IssueProductController : Controller
     {
         private readonly IIssueProductService _issueProduct;
@@ -22,43 +23,32 @@ namespace MyAPI.Controllers.CategoriesProducts
         public async Task<IActionResult> InsertMappingCategoriesProductItem(SaveCategoriesProductParam req)
         {
             return Ok(await _issueProduct.SaveCategoriesProduct(req));
+
         }
 
-        [HttpPost("DeleteCategories")]
-        public async Task<IActionResult> DeleteCategoryItem([FromBody] DeleteCategories req)
+        [HttpGet("GetIssueCategoriesItem")]
+        public async Task<IActionResult> GetIssueCategoriesItem()
         {
-            return Ok(await _issueProduct.DeleteCategoriesItems(req)); 
+            return Ok(await _issueProduct.GetCategoriesItems());
+
         }
 
-        [HttpPost("DeleteProduct")]
-        public async Task<IActionResult> DeleteProductItem([FromBody] DeleteProduct req)
+        [HttpPost("CategoriesManagement")]
+        public async Task<IActionResult> CategoriesManagement([FromBody] CategoriesParam param)
         {
-            return Ok(await _issueProduct.DeleteProductItems(req)); 
+            return Ok(await _issueProduct.SaveCategories(param ));
         }
 
-        [HttpPost("SaveCategories")]
-        public async Task<IActionResult> InsertCategories([FromBody] InsertCategories request)
+
+        [HttpPost("ProductManagement")]
+        public async Task<IActionResult> ProductManagement([FromBody] ProductParam param)
         {
-            return Ok(await _issueProduct.InsertCategories(request));
+            return Ok(await _issueProduct.SaveProduct(param ));
         }
 
-        [HttpPost("SaveProduct")]
-        public async Task<IActionResult> InsertProduct([FromBody] InsertProduct request)
-        {
-            return Ok(await _issueProduct.InsertProduct(request));
-        }
 
-        [HttpPost("UpdateCategories")]
-        public async Task<IActionResult> UpdateCategories([FromBody] UpdateCategories req)
-        {
-            return Ok(await _issueProduct.UpdateCategories(req));
-        }
 
-        [HttpPost("UpdateProduct")]
-        public async Task<IActionResult> UpdateProduct([FromBody] UpdateProduct req)
-        {
-            return Ok(await _issueProduct.UpdateProduct(req)); 
-        }
+
 
         [HttpGet("LoadCategories/{id}")]
         public async Task<IActionResult> LoadCategories(int id)

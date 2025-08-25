@@ -39,7 +39,7 @@ namespace Services.UserControl
             return allCategories;
         }
 
-        public async Task<IEnumerable<IssueCategories>> GetCategoriesItems()
+        public async Task<IEnumerable<IssueCategories>> GetCategoriesDropDownItems()
         {
             var categories = await _context.IssueCategories
                 .Where(c => c.IsActive == true)
@@ -58,7 +58,7 @@ namespace Services.UserControl
         }
 
 
-        public async Task<IEnumerable<Product>> GetProductsItems()
+        public async Task<IEnumerable<Product>> GetProductsDropDownItems()
         {
             var products = await _context.Product
                     .Where(c => c.IsActive == true)
