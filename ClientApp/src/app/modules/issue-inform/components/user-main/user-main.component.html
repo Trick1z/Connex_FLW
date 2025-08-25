@@ -35,8 +35,8 @@
       </app-check-box>
     </div>
 
-    <div  class="flex mt-10 items-start text-end check-box">
-      <label for="check-box" class="w-20 mr-2  font-bold">Status</label>
+    <div  class="flex items-start mt-10 text-end check-box">
+      <label for="check-box" class="w-20 mr-2 font-bold">Status</label>
       <app-check-box [options]="statusCheckBoxItem" (optionsChange)="onStatusCodeCheck($event)">
       </app-check-box>
     </div>
@@ -64,7 +64,10 @@
   <app-head-underline [title]="'Open Issues'"></app-head-underline>
   <div class="mx-10 my-5">
     <dx-data-grid [dataSource]="openFormsDataSource" keyExpr="formId" [showBorders]="true"
-      [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
+      [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" 
+      [paging]="{ enabled: true, pageSize: 5 }"
+      
+      >
 
       <dxo-paging [pageSize]="5"></dxo-paging>
       <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
@@ -93,7 +96,7 @@
       <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
       <div *dxTemplate="let detail of 'actionCell'">
-        <div *ngIf="detail.data.canEdit" class="flex  justify-center space-x-2">
+        <div *ngIf="detail.data.canEdit" class="flex justify-center space-x-2">
           <app-button [color]="'yellow'" [message]="'Edit'"></app-button>
           <app-button [color]="'red'" [message]="'Delete'"></app-button>
         </div>
@@ -165,7 +168,7 @@
         <!-- (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" -->
         <!-- Master-Detail Template -->
         <div *dxTemplate="let masterData of 'unsuccessDetail'">
-          <dx-data-grid (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" [showBorders]="true"
+          <dx-data-grid [showBorders]="true"
             [columnAutoWidth]="true">
             <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
             <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>

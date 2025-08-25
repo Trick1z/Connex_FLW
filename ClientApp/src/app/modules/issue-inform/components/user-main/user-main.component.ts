@@ -28,7 +28,8 @@ export class UserMainComponent implements OnInit {
   statusCodeSearchText: string | null = null;
   startDate: Date | null = null;;
   endDate: Date | null = null;;
-  taskDetailCache: { [formId: number]: USP_Query_FormTaskDetailResult[] } = {};
+  taskDetailCache:
+    { [formId: number]: USP_Query_FormTaskDetailResult[] } = {};
 
 
   categoriesCheckBoxItem: CheckboxList<number>[] = [];
@@ -183,10 +184,12 @@ export class UserMainComponent implements OnInit {
   // work
   onDetailGridContentReady(e: any, formId: number) {
     const detailGrid = e.component;
+
     if (this.taskDetailCache[formId]) {
-      detailGrid.option('dataSource', this.taskDetailCache[formId]);
       return;
     }
+
+
 
     const allTask: USP_Query_FormTaskDetailResult[] = Object.values(this.taskDetailCache).flat();
     const newLoad: DevExtremeParam<QueryUserFormDetail> = {
@@ -211,6 +214,17 @@ export class UserMainComponent implements OnInit {
         detailGrid.option('dataSource', this.taskDetailCache[formId]);
       });
   }
+
+
+  // public getDataSourceById(formId: number) {
+
+  //   // console.log(formId);
+    
+  //   var temp = this.taskDetailCache[formId] ?? []
+
+  //   return this.taskDetailCache[formId]
+  // }
+
 
   onCloseFormClicked(data: any) {
 
