@@ -74,5 +74,25 @@ namespace Domain.ViewModels
 
 
 
+    public class IssueCategoriesViewModel
+    {
+        public int IssueCategoriesId { get; set; }
+
+        public string IssueCategoriesName { get; set; }
+
+        public bool IsProgramIssue { get; set; }
+
+        public string ModifiedByUserName { get; set; }
+
+        public DateTime CreatedTime { get; set; }
+
+        public DateTime ModifiedTime { get; set; }
+
+        public string IssueCategoriesDescription { get; set; }
+
+    }
+
+
+
 
 }

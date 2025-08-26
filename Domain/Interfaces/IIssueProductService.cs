@@ -14,7 +14,8 @@ namespace Domain.Interfaces
         public Task<Product> SaveProduct(ProductParam param);
 
 
-        public Task<IEnumerable<IssueCategories>> GetCategoriesItems();
+        public Task<IEnumerable<IssueCategoriesViewModel>> GetCategoriesItems();
+        
         
 
 
