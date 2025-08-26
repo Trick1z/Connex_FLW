@@ -13,6 +13,7 @@ export class NavbarTopComponent implements OnInit {
 
   // User
   username: string = 'Unknown User';
+  myRole : number = 0;
 
   // Routes
   adminRoutes = [
@@ -42,10 +43,11 @@ export class NavbarTopComponent implements OnInit {
   constructor(
     private router: Router,
     private checkAccessService: CheckAccessService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadUsername();
+    this.getRole()
   }
 
   // Load user from session
@@ -76,7 +78,29 @@ export class NavbarTopComponent implements OnInit {
     this.isSupportDropdownOpen = false;
   }
 
-  // Navigation with access check
+  // split Token
+  decodeToken(token: string): any {
+    if (!token) return null;
+    const payload = token.split('.')[1];
+    return JSON.parse(atob(payload));
+  }
+
+  getRole() {
+
+    var jwtToken = localStorage.getItem("token")
+    if (!jwtToken) {
+      return
+    }
+
+    const decoded = this.decodeToken(jwtToken);
+    if (!decoded) return null;
+    // Role อยู่ใน claim ของ Microsoft
+
+    this.myRole = decoded['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'] || null;
+    return
+  }
+
+  // Navigat}ion with access check
   navigateTo(path: string): void {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -91,7 +115,7 @@ export class NavbarTopComponent implements OnInit {
           return of(null);
         })
       )
-      .subscribe((res  :any) => {
+      .subscribe((res: any) => {
         if (res?.allowed) {
           this.router.navigate([path]);
         } else {

@@ -24,7 +24,7 @@
                 </div>
 
                 <!-- admin dropdown -->
-                <div class="relative inline-block ml-20 text-left ">
+                <div  *ngIf="myRole == 1" class="relative inline-block ml-20 text-left ">
                     <!-- Dropdown toggle button -->
                     <button *ngIf="adminRoutes.length != 0" (click)="toggleAdminDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
@@ -44,7 +44,7 @@
                     <div *ngIf="isAdminDropdownOpen"
                         class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical">
-                        <div class="py-1" role="none">
+                        <div class="py-1" role="none" >
                             <button *ngFor="let item of adminRoutes; index as i"
                                 (click)="navigateTo(item.path); closeAllDropdowns()" type="button"
                                 class="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100"
@@ -58,7 +58,7 @@
                 </div>
 
                 <!-- user dropdown -->
-                <div class="relative inline-block ml-20 text-left ">
+                <div  *ngIf="myRole == 1 || myRole == 2"  class="relative inline-block ml-20 text-left ">
                     <!-- Dropdown toggle button -->
                     <button *ngIf="userRoutes.length != 0" (click)="toggleUserDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
@@ -91,7 +91,7 @@
 
 
 
-                <div class="relative inline-block ml-20 text-left ">
+                <div *ngIf="myRole == 1 || myRole == 3" class="relative inline-block ml-20 text-left ">
                     <!-- Dropdown toggle button -->
                     <button *ngIf="supportRoutes.length != 0" (click)="toggleSupportDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
