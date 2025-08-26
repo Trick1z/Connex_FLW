@@ -21,6 +21,10 @@ public partial class IssueCategories
 
     public string IssueCategoriesDescription { get; set; }
 
+    public int? ModifiedBy { get; set; }
+
+    public virtual User ModifiedByNavigation { get; set; }
+
     public virtual ICollection<Rel_Categories_Product> Rel_Categories_Product { get; set; } = new List<Rel_Categories_Product>();
 
     public virtual ICollection<Rel_User_Categories> Rel_User_Categories { get; set; } = new List<Rel_User_Categories>();
