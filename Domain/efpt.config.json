@@ -64,6 +64,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[ProductAudit]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Ref_FormStatus]",
          "ObjectType": 0
       },
