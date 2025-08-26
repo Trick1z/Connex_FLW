@@ -16,6 +16,7 @@ import DataSource from 'devextreme/data/data_source';
 import Swal from 'sweetalert2';
 import { Data } from '@angular/router';
 import { DxCheckBoxComponent, DxDataGridComponent } from 'devextreme-angular';
+import { CheckboxList } from 'src/app/models/checkBox.model';
 
 @Component({
   selector: 'app-add-categories-product-main',
@@ -53,7 +54,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
   // categoryTextValue: string = "";
 
-  categoryDataList: any[] = [];
+  categoryDataList: CheckboxList<number>[] = [];
   checkBoxItem: any[] = [];
   categoriesIdSearch: string = "";
   productSearch: string = "";
@@ -178,14 +179,15 @@ export class AddCategoriesProductMainComponent implements OnInit {
         })
       )
       .subscribe((res: any) => {
+
+        // console.log(res);
+
         this.categoriesDatasource = res ?? [];
       });
 
   }
 
   initProductByNameCategoriesDataSource() {
-
-
     this.productDataSource = new DataSource({
       load: (loadOptions) => {
         const newLoad: DevExtremeParam<productSearch> = {
@@ -201,152 +203,150 @@ export class AddCategoriesProductMainComponent implements OnInit {
           .toPromise();
       }
     });
+
+
   }
-
-
-
 
 
   onSearch() {
     this.productGrid?.instance?.refresh();
   }
+getCheckBoxItem() {
+  const selectedIds = this.categoryDataList
+    .filter(c => c.selected)
+    .map(c => c.value);
 
-  getCheckBoxItem() {
-    const selectedIds = this.categoryDataList
-      .filter(c => c.selected)
-      .map(c => c.issueCategoriesId);
+  this.categoriesCheckBoxDatasource = new DataSource({
+    load: () => this.dropDownService.getCategoryDropDown().toPromise()
+  });
 
-    this.categoriesCheckBoxDatasource = new DataSource({
-      load: () => this.dropDownService.getCategoryDropDown().toPromise()
-    });
-
-    this.categoriesCheckBoxDatasource.load().then((res: any) => {
-      this.categoryDataList = Array.isArray(res)
-        ? res.map((item: any) => ({
-          ...item,
-          selected: selectedIds.includes(item.issueCategoriesId)
+  this.categoriesCheckBoxDatasource.load().then((res: any) => {
+    this.categoryDataList = Array.isArray(res)
+      ? res.map((item: any) => ({
+          value: item.value,
+          text: item.showText,
+          selected: selectedIds.includes(item.value)
         }))
-        : [];
+      : [];
+  });
+}
+
+getSelectedCategories(): string {
+  return this.categoryDataList.filter(c => c.selected).map(c => c.value).join(',');
+}
+
+// categories or product
+onSave(type: string) {
+
+  if (type === "categories") {
+    this.issueProductService.categoriesManagement(this.categoryModel)
+      .pipe(catchError(err => {
+
+
+        this.categoryPopupHide()
+        Swal.fire({
+          title: 'ไม่มีอะไรเปลี่ยนแปลง',
+          text: err.error.messages.categories ||
+            err.error.messages.modifiedTime || 'มีบางอย่างผิดพลาด', // ตรวจสอบ property
+          icon: 'question',
+          showConfirmButton: false,
+          timer: 2000
+        });
+
+
+
+        return err
+      })).subscribe((res => {
+        this.categoryPopupHide()
+        this.getCategoriesItem()
+        this.getCheckBoxItem()
+        this.showSuccessPopup()
+      }))
+    return
+  } else {
+
+    this.issueProductService.productManagement(this.productModel)
+      .pipe(catchError(err => {
+
+        this.productPopupHide()
+
+        Swal.fire({
+
+          title: 'ไม่มีอะไรเปลี่ยนแปลง',
+          text: err.error.messages.product ||
+            err.error.messages.modifiedTime ||
+            'มีบางอย่างผิดพลาด', // ตรวจสอบ property
+          icon: 'question',
+          showConfirmButton: false,
+          timer: 2000
+
+
+        });
+        return err
+      })).subscribe((res: any) => {
+
+        // this.initProductByNameCategoriesDataSource()
+        this.productGrid.instance.refresh()
+        this.productPopupHide()
+        this.showSuccessPopup()
+
+      })
+  }
+}
+
+showDeleteAlert(data: any, type: string) {
+
+  if (type === "product") {
+    Swal.fire({
+      title: "ต้องการดำเนินการลบ ?",
+      text: `ยืนยันที่จะลบ ${data.productName}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ยืนยัน"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        this.productModel = { ...data }
+        this.productModel.action = "Delete";
+        this.onSave("product")
+      }
+    });
+  } else {
+
+    Swal.fire({
+      title: "ต้องการดำเนินการลบ ?",
+      text: `ยืนยันที่จะลบ ${data.issueCategoriesDescription}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ยืนยัน"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        this.categoryModel = { ...data }
+        this.categoryModel.action = "Delete"
+        this.onSave("categories")
+      }
     });
   }
 
 
-  getSelectedCategories(): string {
-    return this.categoryDataList.filter(c => c.selected).map(c => c.issueCategoriesId).join(',');
-  }
-
-  // categories or product
-  onSave(type: string) {
-
-    if (type === "categories") {
-      this.issueProductService.categoriesManagement(this.categoryModel)
-        .pipe(catchError(err => {
+}
 
 
-          this.categoryPopupHide()
-          Swal.fire({
-            title: 'ไม่มีอะไรเปลี่ยนแปลง',
-            text: err.error.messages.categories ||
-              err.error.messages.time || 'มีบางอย่างผิดพลาด', // ตรวจสอบ property
-            icon: 'question',
-            showConfirmButton: false,
-            timer: 2000
-          });
+showSuccessPopup() {
+
+  return Swal.fire({
+    title: 'สำเร็จ',
+    text: 'อัพเดทข้อมูลเรีบร้อยแล้ว', // ตรวจสอบ property
+    icon: 'success',
+    showConfirmButton: false,
+    timer: 2000
+  });
 
 
-
-          return err
-        })).subscribe((res => {
-          this.categoryPopupHide()
-          this.getCategoriesItem()
-          this.getCheckBoxItem()
-          this.showSuccessPopup()
-        }))
-      return
-    } else {
-
-      this.issueProductService.productManagement(this.productModel)
-        .pipe(catchError(err => {
-
-          this.productPopupHide()
-
-          Swal.fire({
-
-            title: 'ไม่มีอะไรเปลี่ยนแปลง',
-            text: err.error.messages.product ||
-              err.error.messages.time ||
-              'มีบางอย่างผิดพลาด', // ตรวจสอบ property
-            icon: 'question',
-            showConfirmButton: false,
-            timer: 2000
-
-
-          });
-          return err
-        })).subscribe((res: any) => {
-
-          // this.initProductByNameCategoriesDataSource()
-          this.productGrid.instance.refresh()
-          this.productPopupHide()
-          this.showSuccessPopup()
-
-        })
-    }
-  }
-
-  showDeleteAlert(data: any, type: string) {
-
-    if (type === "product") {
-      Swal.fire({
-        title: "ต้องการดำเนินการลบ ?",
-        text: `ยืนยันที่จะลบ ${data.productName}`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ยืนยัน"
-      }).then((result) => {
-        if (result.isConfirmed) {
-
-          this.productModel = { ...data }
-          this.productModel.action = "Delete";
-          this.onSave("product")
-        }
-      });
-    } else {
-
-      Swal.fire({
-        title: "ต้องการดำเนินการลบ ?",
-        text: `ยืนยันที่จะลบ ${data.issueCategoriesDescription}`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ยืนยัน"
-      }).then((result) => {
-        if (result.isConfirmed) {
-
-          this.categoryModel = { ...data }
-          this.categoryModel.action = "Delete"
-          this.onSave("categories")
-        }
-      });
-    }
-
-
-  }
-
-
-  showSuccessPopup() {
-
-    return Swal.fire({
-      title: 'สำเร็จ',
-      text: 'อัพเดทข้อมูลเรีบร้อยแล้ว', // ตรวจสอบ property
-      icon: 'success',
-      showConfirmButton: false,
-      timer: 2000
-    });
-
-
-  }
+}
 }

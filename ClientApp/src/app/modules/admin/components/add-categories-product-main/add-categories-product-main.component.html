@@ -10,8 +10,8 @@
     <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDatasource" [showBorders]="true"
         [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
         <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
-        <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
-        <dxi-column dataField="issueCategoriesDescription" caption="คำอธิบาย" minWidth="150"
+        <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="110" alignment="left"></dxi-column>
+        <dxi-column dataField="issueCategoriesDescription" caption="คำอธิบาย" minWidth="120"
             alignment="left"></dxi-column>
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
@@ -20,6 +20,9 @@
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
 
         <dxi-column dataField="isProgramIssue" caption="isProgram" width="140" alignment="center"></dxi-column>
+        <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="center"></dxi-column>
+
+
         <div *dxTemplate="let cell of 'dateCellTemplate'">
             {{ cell.value | date : "dd MMMM yyyy" : '' : 'en-EN' }}
         </div>
@@ -68,7 +71,7 @@
             <div class="grid flex-1 grid-cols-3 gap-2 max-w-96">
                 <div *ngFor="let item of categoryDataList">
                     <dx-check-box [(ngModel)]="item.selected" (onValueChanged)="onCategoriesValueCheck($event)"
-                        [name]="item.issueCategoriesName" [text]="item.issueCategoriesName">
+                        [name]="item.text" [text]="item.text">
                     </dx-check-box>
                 </div>
 
@@ -106,6 +109,9 @@
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
+
+            <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="center"
+           ></dxi-column>
 
 
 
