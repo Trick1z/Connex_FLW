@@ -242,7 +242,8 @@ export class UserAddTaskComponent implements OnInit {
       taskItems: this.dataValidatedDataSource.items()
     };
 
-    this.validateService.saveInformTask(payload, status)
+    if (status == "Draft") {
+      this.validateService.saveDraftInformTask(payload)
       .pipe(catchError(err => {
         this.createTaskErrorMessage.form = err?.error?.messages?.task?.[0];
         return of(err);
@@ -260,6 +261,30 @@ export class UserAddTaskComponent implements OnInit {
             }
           });
       });
+    }
+    else{
+this.validateService.saveSubmitInformTask(payload)
+      .pipe(catchError(err => {
+        this.createTaskErrorMessage.form = err?.error?.messages?.task?.[0];
+        return of(err);
+      }))
+      .subscribe(() => {
+        this.checkAccessService.CheckAccess( `/user/form`)
+        // this.checkAccessService.CheckAccess(UserRoute.UserFormFullPath)
+          .pipe(catchError(err => of(err)))
+          .subscribe((res: any) => {
+
+            if (res.allowed) {
+              this.router.navigate([UserRoute.UserFormFullPath]);
+            } else {
+              this.router.navigate([ViewsRoute.LandingFullPath]);
+            }
+          });
+      });
+
+    }
+
+    
   }
 
   navTo() {

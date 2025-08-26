@@ -21,9 +21,16 @@ export class InformTaskService {
   DeleteTask(data: ValidatedItem ) {
     return this.http.post<any[]>(`${environment.apiUrl}IssueInform/DeleteTask`, data)
   }
-  saveInformTask(data: TaskRequest,status :string) {
-    return this.http.post(`${environment.apiUrl}IssueInform/SaveIssueForm/${data.formId}/${status}`, data)
+  saveDraftInformTask(data: TaskRequest) {
+    return this.http.post(`${environment.apiUrl}IssueInform/SaveDraftIssueForm/${data.formId}`, data)
   }
+  saveSubmitInformTask(data: TaskRequest) {
+    return this.http.post(`${environment.apiUrl}IssueInform/SaveSubmitIssueForm/${data.formId}`, data)
+  }
+
+
+
+
   closeInformTask(data: USP_Query_IssueFormsResult) {
     return this.http.post(`${environment.apiUrl}IssueInform/CloseIssueForm`, data)
   }
