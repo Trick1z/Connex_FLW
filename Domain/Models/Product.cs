@@ -17,5 +17,7 @@ public partial class Product
 
     public DateTime ModifiedTime { get; set; }
 
+    public int? ModifiedBy { get; set; }
+
     public virtual ICollection<Rel_Categories_Product> Rel_Categories_Product { get; set; } = new List<Rel_Categories_Product>();
 }

@@ -19,6 +19,8 @@ public partial class User
 
     public DateTime ModifiedTime { get; set; }
 
+    public virtual ICollection<IssueCategories> IssueCategories { get; set; } = new List<IssueCategories>();
+
     public virtual ICollection<Rel_User_Categories> Rel_User_Categories { get; set; } = new List<Rel_User_Categories>();
 
     public virtual Role Role { get; set; }
