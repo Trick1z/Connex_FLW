@@ -37,6 +37,8 @@ public partial class MYGAMEContext : DbContext
 
     public virtual DbSet<Product> Product { get; set; }
 
+    public virtual DbSet<ProductAudit> ProductAudit { get; set; }
+
     public virtual DbSet<Ref_FormStatus> Ref_FormStatus { get; set; }
 
     public virtual DbSet<Ref_TaskStatus> Ref_TaskStatus { get; set; }
@@ -87,6 +89,10 @@ public partial class MYGAMEContext : DbContext
                 .IsRequired()
                 .HasMaxLength(50);
             entity.Property(e => e.ModifiedTime).HasColumnType("datetime");
+
+            entity.HasOne(d => d.ModifiedByNavigation).WithMany(p => p.IssueCategories)
+                .HasForeignKey(d => d.ModifiedBy)
+                .HasConstraintName("FK_User_CategoriesModifiedBy");
         });
 
         modelBuilder.Entity<IssueCategoriesAudit>(entity =>
@@ -233,6 +239,16 @@ public partial class MYGAMEContext : DbContext
             entity.Property(e => e.ProductName)
                 .IsRequired()
                 .HasMaxLength(512);
+        });
+
+        modelBuilder.Entity<ProductAudit>(entity =>
+        {
+            entity.HasKey(e => e.LogId);
+
+            entity.Property(e => e.Action)
+                .HasMaxLength(50)
+                .IsUnicode(false);
+            entity.Property(e => e.ActionTime).HasColumnType("datetime");
         });
 
         modelBuilder.Entity<Ref_FormStatus>(entity =>
