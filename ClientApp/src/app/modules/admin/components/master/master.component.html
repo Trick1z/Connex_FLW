@@ -95,10 +95,10 @@
     </div>
     <app-head-underline [title]="'Products'"></app-head-underline>
 
-    <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewCategoriesDetail.length > 1 ;else noViewData">
+    <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewCategoriesDetail.length > 0 ;else noViewData">
 
 
-      <app-button *ngFor="let item of viewCategoriesDetail" [color]="'blue'" [message]="item"></app-button>
+      <h4 class="text-xl font-bold" *ngFor="let item of viewCategoriesDetail" >{{item}}</h4>
 
 
     </div>

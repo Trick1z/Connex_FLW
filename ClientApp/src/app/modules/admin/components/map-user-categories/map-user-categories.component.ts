@@ -42,12 +42,7 @@ export class MapUserCategoriesComponent implements OnInit {
 
   ngOnInit(): void {
     this.initUserByRoleDataSource();
-
-
-
   }
-
-  // ================= DataSource =================
   initUserByRoleDataSource(text: string | null = null) {
     this.userByRoleDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
@@ -75,24 +70,17 @@ export class MapUserCategoriesComponent implements OnInit {
     }
   }
 
-  // ================= ตัวอย่าง search =================
   onSearch() {
     this.initUserByRoleDataSource(this.searchUsernameValue); // โหลด DataSource ใหม่
     this.refreshGrid();                   // รีเฟรช DataGrid
   }
 
-
-  // ================= Map Detail =================
   onMapDetailPopupShow(data: any) {
-    // โหลด categories ของ user
     this.loadUserCategories(data.id);
-
-    // โหลด dropdown categories
+    this.getCategoriesForUser(data.userId);
     this.loadCategoriesDropdown();
-    this.globalId = data.userId;
     this.labelUsername = data.username;
     this.labelRole = data.roleName;
-    this.getCategoriesForUser(data.userId);
     this.mapDetailVisible = true;
   }
 
@@ -117,32 +105,23 @@ export class MapUserCategoriesComponent implements OnInit {
         return of(null);
       }))
       .subscribe(res => {
-        if (res) {
-          this.mapDetailVisible = false;
-          this.initUserByRoleDataSource(this.searchUsernameValue);
-          Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
-        }
+        // this.initUserByRoleDataSource(this.searchUsernameValue);
+        this.userGrid.instance.refresh()
+        Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
+        this.mapDetailVisible = false;
       });
   }
 
   onChange(e: any) { this.userMapCategories.categories = e.value; }
 
-  // ================= View User Detail =================
-  // ================= View User Detail =================
   getViewUserDetail(data: any) {
     const id = data.userId;
     this.viewUsername = data.username;
     this.viewRole = data.roleName;
     this.viewPopupDetail = true;
-
-    // โหลด categories ของ user
     this.loadUserCategories(id);
-
-    // โหลด dropdown categories
     this.loadCategoriesDropdown();
   }
-
-  // แยกโหลด categories ของ user
   loadUserCategories(userId: number) {
     this.service.getCategoriesForUser(userId)
       .pipe(catchError(err => {
@@ -154,8 +133,6 @@ export class MapUserCategoriesComponent implements OnInit {
         this.viewUserDetail = res.categoriesText?.split(',').map((item: string) => item.trim()) || [];
       });
   }
-
-  // แยกโหลด dropdown categories
   loadCategoriesDropdown() {
     this.dropDownService.getUserMapCategoriesDropDown()
       .pipe(catchError(err => {
@@ -165,5 +142,5 @@ export class MapUserCategoriesComponent implements OnInit {
       .subscribe((res: any[]) => this.categoriesTagDataSource = res);
   }
 
-  onViewPopupHide() { this.viewPopupDetail = false; }
+  onViewPopupHide() { this.mapDetailVisible = false; }
 }
