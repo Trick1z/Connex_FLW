@@ -16,15 +16,16 @@
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
+                    <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="center"></dxi-column>
+
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
 
         <dxi-column dataField="isProgramIssue" caption="isProgram" width="140" alignment="center"></dxi-column>
-        <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="center"></dxi-column>
 
 
         <div *dxTemplate="let cell of 'dateCellTemplate'">
-            {{ cell.value | date : "dd MMMM yyyy" : '' : 'en-EN' }}
+            {{ cell.value |  date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
         </div>
         <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
             alignment="center">
@@ -43,9 +44,8 @@
 <!-- grid product -->
 <div class="mt-20 ml-20 mr-20 Product-box ">
     <app-head-underline [title]="'Product'"></app-head-underline>
-    <app-button (clicked)="productPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
 
-    <div class="mt-5 ml-10 space-y-4 search-box">
+    <div class="mt-5 ml-10 space-y-4 search-box ">
 
         <!-- Product Name Search -->
         <div class="flex items-center">
@@ -57,8 +57,8 @@
             </div>
         </div>
 
-        <div class="flex gap-3">
-            <label class="w-40 ml-2 font-bold" for="isMap">Already Used</label>
+        <div class="flex">
+            <label class="w-40 font-bold" for="isMap">Already Used</label>
             <dx-check-box #isMap [value]="IsMap" (onValueChanged)="onMaValueCheck($event)" text="Yes"></dx-check-box>
 
         </div>
@@ -77,13 +77,13 @@
 
             </div>
         </div>
-
-
-
     </div>
 
 
-    <div class="mt-5 ml-10 button">
+
+
+    <div class="flex mt-5 ml-10 button">
+        <app-button (clicked)="productPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
         <app-button [color]="'blue'" [message]="'Search'" (clicked)="onSearch()"></app-button>
     </div>
 
@@ -107,16 +107,17 @@
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
+              <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="center"
+           ></dxi-column>
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
 
-            <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="center"
-           ></dxi-column>
+          
 
 
 
         <div *dxTemplate="let cell of 'dateCellTemplate'">
-            {{ cell.value | date : "dd MMMM yyyy" : '' : 'en-EN' }}
+            {{ cell.value | date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
         </div>
 
         <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"

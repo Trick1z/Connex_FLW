@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanActivateChildFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthRoute, ViewsRoute } from '../constants/routes.const';
 import { catchError, map, Observable, of } from 'rxjs';
 import { CheckAccessService } from '../services/check-access.service';
@@ -7,14 +7,25 @@ import { CheckAccessService } from '../services/check-access.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AuthGuard implements CanActivate , CanActivateChild {
 
   constructor(
     private router: Router,
     private accessService: CheckAccessService
   ) {}
 
+
+  canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    
+    console.log('เข้า vc');
+    
+    return true;
+  }
+
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
+    console.log('เข้า');
+    
+    
     const token = localStorage.getItem('token');
 
     // ถ้าไม่มี token ให้ redirect ไปหน้า login

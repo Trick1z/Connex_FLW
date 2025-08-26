@@ -59,7 +59,7 @@ export class UserAddTaskComponent implements OnInit {
   // =================== Init ===================
   ngOnInit(): void {
 
-    
+
     const id = this.activeRouter.snapshot.params['id'];
     if (id) {
       this.loadTaskById(id);
@@ -127,17 +127,29 @@ export class UserAddTaskComponent implements OnInit {
   async getCategoriesDropDown() {
     try {
       const categories = await firstValueFrom(this.dropDownService.getCategoryDropDown()) as any[];
+
+      // map API field → DevExtreme expected field
+      const mappedCategories = categories.map(cat => ({
+        issueCategoriesId: Number(cat.value),        // value → issueCategoriesId
+        issueCategoriesName: cat.showText    // showText → issueCategoriesName
+      }));
+
       this.categoryDataSource = new DataSource({
-        store: new ArrayStore({ key: 'issueCategoriesId', data: categories })
+        store: new ArrayStore({ key: 'issueCategoriesId', data: mappedCategories })
       });
+
     } catch (err) {
-      this.categoryDataSource = new DataSource({ store: new ArrayStore({ key: 'issueCategoriesId', data: [] }) });
+      this.categoryDataSource = new DataSource({
+        store: new ArrayStore({ key: 'issueCategoriesId', data: [] })
+      });
     }
   }
 
+
   onCategoriesValueChange(e: any) {
-    this.informTaskData.issueCategoriesId = e.value;
-    this.getEditProductDropDown(e.value);
+
+    this.informTaskData.issueCategoriesId = Number(e.value);
+    this.getEditProductDropDown(Number(e.value));
   }
 
   async getEditProductDropDown(categoryId: number) {
@@ -168,12 +180,14 @@ export class UserAddTaskComponent implements OnInit {
 
     this.validateService.validateInformTask(newItem, this.formId)
       .pipe(catchError(err => {
-        this.createTaskErrorMessage = err?.error?.messages ?? [];
-        console.log(err);
-        return of([]);
+        this.createTaskErrorMessage = err?.error?.messages ?? {};
+        return err;
       }))
-      .subscribe((res: any[]) => {
-        this.createTaskErrorMessage = [];
+      .subscribe((res: any) => {
+
+
+        this.createTaskErrorMessage = {};
+
         this.dataValidatedDataSource = new DataSource({
           store: new ArrayStore({ data: res, key: "id" })
         });
@@ -184,7 +198,7 @@ export class UserAddTaskComponent implements OnInit {
   // =================== Delete Item ===================
   deleteTaskItem(data: any) {
 
-    
+
     Swal.fire({
       title: 'Are you sure?',
       text: `ต้องการลบรายการ ${data.issueCategoriesName}, ${data.productName} หรือไม่?`,
@@ -211,7 +225,7 @@ export class UserAddTaskComponent implements OnInit {
         }))
         .subscribe((res: any) => {
 
-                    this.createTaskErrorMessage =  [];
+          this.createTaskErrorMessage = [];
           this.dataValidatedDataSource = new DataSource({
             store: new ArrayStore({ data: res, key: 'id' })
           });
@@ -234,17 +248,21 @@ export class UserAddTaskComponent implements OnInit {
         return of(err);
       }))
       .subscribe(() => {
-        this.checkAccessService.CheckAccess(UserRoute.UserFormFullPath)
+        this.checkAccessService.CheckAccess( `/user/form`)
+        // this.checkAccessService.CheckAccess(UserRoute.UserFormFullPath)
           .pipe(catchError(err => of(err)))
           .subscribe((res: any) => {
-            const route = res.allowed ? UserRoute.UserFormFullPath : ViewsRoute.LandingFullPath;
-            this.router.navigate([route]);
+
+            if (res.allowed) {
+              this.router.navigate([UserRoute.UserFormFullPath]);
+            } else {
+              this.router.navigate([ViewsRoute.LandingFullPath]);
+            }
           });
       });
   }
 
-  navTo( ){
-
+  navTo() {
     this.router.navigate([UserRoute.UserFormFullPath])
   }
 }

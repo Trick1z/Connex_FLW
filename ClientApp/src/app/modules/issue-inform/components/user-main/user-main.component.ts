@@ -6,10 +6,12 @@ import { CheckboxService } from '../../../../services/checkbox.service';
 import { CheckboxList } from 'src/app/models/checkBox.model';
 import { LoadOptions } from 'devextreme/data';
 import { DevExtremeParam } from 'src/app/modules/admin/models/search.Model';
-import { QueryUserForm, QueryUserFormDetail, USP_Query_FormTaskDetailResult } from '../../models/inform.model';
+import { QueryUserForm, QueryUserFormDetail, USP_Query_FormTaskDetailResult, USP_Query_IssueFormsResult } from '../../models/inform.model';
 import ArrayStore from 'devextreme/data/array_store';
 import CustomStore from 'devextreme/data/custom_store';
 import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
+import { Router } from '@angular/router';
+import { UserRoute } from 'src/app/constants/routes.const';
 
 @Component({
   selector: 'app-user-main',
@@ -40,7 +42,8 @@ export class UserMainComponent implements OnInit {
   @ViewChild('openFormGrid', { static: false }) openFormGrid!: DxDataGridComponent;
   constructor(
     private informTaskService: InformTaskService,
-    private checkboxService: CheckboxService
+    private checkboxService: CheckboxService,
+    private router:Router
   ) { }
 
   // =================== Init ===================
@@ -256,6 +259,11 @@ export class UserMainComponent implements OnInit {
 
   }
   //endwork
+
+  onEditClicked(data :USP_Query_IssueFormsResult ){
+    
+    this.router.navigate([`${UserRoute.UserEditFormFullPath}/${data.formId}`])
+  }
 
 
 

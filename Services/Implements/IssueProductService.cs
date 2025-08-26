@@ -33,6 +33,57 @@ namespace Services.Implements
 
         }
 
+
+        public async Task<bool> DeletedProduct(List<int> id) {
+            var userId = _claimsService.GetCurrentUserId();
+            var validate = new ValidateException();
+            var dateNow = DateTime.Now;
+            foreach (var item in id)
+            {
+                
+
+                var dbProduct = await _context.Product.FirstOrDefaultAsync(x => x.ProductId == item && x.IsActive == true );
+
+
+
+                if (dbProduct != null)
+                {
+
+                    var dbIssueTask = await _context.IssueFormTask.Include(t=>t.Form)
+                        .FirstOrDefaultAsync(x => x.ProductId == item);
+
+                    if (dbIssueTask != null )
+                    {
+                        validate.Add("product",$"ข้อมูลถูกใช้งานอยู่ที่ Task {dbIssueTask.Form.DocNo} ,{dbIssueTask.FormId} , {dbIssueTask.TaskSeq}" );
+                    }
+
+                    dbProduct.IsActive = false;
+                    dbProduct.ModifiedBy = userId;
+                    _context.Product.Update(dbProduct);
+
+                    AddLog("product", item, userId, "Deactivated Product", dateNow);
+                }
+                else {
+
+                    validate.Add("product", "");
+                
+                }
+            }
+
+            validate.Throw();
+
+
+
+
+            await _context.SaveChangesAsync();
+            
+
+
+            return true;
+        }
+
+
+
         public async Task<IEnumerable<IssueCategoriesViewModel>> GetCategoriesItems() {
 
             var dbIssueCategories = await _context.IssueCategories
@@ -62,8 +113,8 @@ namespace Services.Implements
             var userId = _claimsService.GetCurrentUserId();
             var datenow = DateTime.Now;
             var validate = new ValidateException();
+            Product dbProduct;
 
-            var dbProduct = new Product();
 
             if (string.IsNullOrWhiteSpace(param.ProductName))
             {
@@ -72,62 +123,42 @@ namespace Services.Implements
 
             }
 
-            if (param.ProductId <= 0 || param.ProductId == null)
-            {
-                dbProduct = await _context.Product
-                          .FirstOrDefaultAsync(x => x.ProductName == param.ProductName && x.IsActive == true)!;
-                if (dbProduct != null)
-                {
-                    validate.Add("product", "มีข้อมูลในระบบแล้ว");
-                    validate.Throw();
-                }
+            await ValidateDupicated(param, validate);
 
-                dbProduct = new Product();
-                dbProduct.ProductName = param.ProductName;
-                dbProduct.CreatedTime = datenow;
-                dbProduct.ModifiedTime = datenow;
-                dbProduct.ModifiedBy = userId;
+
+
+            if (param.ProductId == null || param.ProductId <= 0)
+            {
+                 dbProduct = new Product();
+
+                UpdateDbProduct(param, userId, datenow, dbProduct);
                 dbProduct.IsActive = true;
+                dbProduct.CreatedTime = datenow;
 
                 _context.Product.Add(dbProduct);
                 await _context.SaveChangesAsync();
 
-
-                var log = new IssueCategoriesAudit();
                 AddLog("product", dbProduct.ProductId, userId, "Added Product", datenow);
-
-
 
             }
             else
             {
+
+                 dbProduct = await _context.Product
+                         .FirstOrDefaultAsync(x => x.ProductId == param.ProductId && x.IsActive == true);
+
+                if (dbProduct == null) {
+                    validate.Add("product","ไม่พบข้อมูล");
+                }
+
                 TimeValidate(param.ModifiedTime, dbProduct.ModifiedTime, validate);
+                CheckProductValueChanged(param, validate, dbProduct);
+                UpdateDbProduct(param, userId, datenow, dbProduct);
 
-                dbProduct = await _context.Product
-                           .FirstOrDefaultAsync(x => x.ProductId == param.ProductId && x.IsActive == true)!;
+                _context.Product.Update(dbProduct);
 
-                if (param.Action == "Edit")
-                {
-                    CheckProductValueChanged(param, validate, dbProduct);
+                AddLog("product", param.ProductId, userId, "Edited Product", datenow);
 
-                    dbProduct.ProductName = param.ProductName;
-                    dbProduct.ModifiedTime = datenow;
-                    _context.Product.Update(dbProduct);
-                    
-                    AddLog("product", param.ProductId, userId, "Edited Product", datenow);
-
-                }
-                else if (param.Action == "Delete")
-
-                   
-                {
-
-                    dbProduct.IsActive = false;
-                    dbProduct.ModifiedBy = userId;
-                    _context.Product.Update(dbProduct); 
-
-                    AddLog("product", param.ProductId, userId, "Deactivated Product", datenow);
-                }
             }
 
             await _context.SaveChangesAsync();
@@ -135,7 +166,28 @@ namespace Services.Implements
             return dbProduct;
         }
 
-   
+        private static void UpdateDbProduct(ProductParam param, int userId, DateTime datenow, Product dbProduct)
+        {
+            dbProduct.ProductName = param.ProductName;
+            dbProduct.ModifiedTime = datenow;
+            dbProduct.ModifiedBy = userId;
+        }
+
+        private async Task ValidateDupicated(ProductParam param, ValidateException validate)
+        {
+           var  dbProduct = await _context.Product
+                   .FirstOrDefaultAsync(x => x.ProductName == param.ProductName
+                   && x.ProductId != param.ProductId && x.IsActive == true);
+
+            if (dbProduct != null)
+            {
+                validate.Add("product", "มีข้อมูลในระบบแล้ว");
+                validate.Throw();
+            }
+
+
+        }
+
 
         private static bool CheckProductValueChanged(ProductParam param, ValidateException validate, Product? dbProduct)
         {

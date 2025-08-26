@@ -8,30 +8,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-//namespace Services.Services
-//{
-//    public class GenNumberService : IGenNumberService
 
-//    {
-//        private readonly MYGAMEContext _context;
-
-
-
-//        public GenNumberService(MYGAMEContext context)
-//        {
-//            _context = context;
-//        }
 
 //        public async Task<string> GenDocNo(string prefix, int delay = 0)
 //        {
 //            var createTime = DateTime.Now;
-
 //            try
 //            {
 
 //                using var tx = _context.Database.BeginTransaction();
 
-//                RunningNo rn = _context.RunningNo.FirstOrDefault(r => r.Prefix == prefix) ?? new RunningNo() { NextNumber = 1, Prefix = prefix ,ModifiedTime = createTime };
+//                RunningNo rn = _context.RunningNo.FirstOrDefault(r => r.Prefix == prefix) ?? new RunningNo() { NextNumber = 1, Prefix = prefix, ModifiedTime = createTime };
+
+
 //                if (rn.Id == 0)
 //                    _context.RunningNo.Add(rn);
 
@@ -48,7 +37,7 @@ using System.Threading.Tasks;
 
 //                await tx.CommitAsync();
 //                //Console.WriteLine($"Created Document {doc.DocNo}");
-//                return  docNo;
+//                return docNo;
 //            }
 //            catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 1205)
 //            {
@@ -57,11 +46,7 @@ using System.Threading.Tasks;
 //            }
 //        }
 //    }
-//}
 
-
-using System;
-using System.Threading.Tasks;
 
 namespace Services.Services
 {
@@ -77,40 +62,48 @@ namespace Services.Services
         public async Task<string> GenDocNo(string prefix, int delay = 0)
         {
             var createTime = DateTime.Now;
-            var yearMonth = createTime.ToString("yyyyMM"); // ใช้ reset เดือนใหม่
+
+            // แปลงเป็น YearMonth (ถ้าต้องการใช้ พ.ศ. = +543) เช่น 256808
+            var currentYearMonth = (createTime.Year + 543) * 100 + createTime.Month;
 
             try
             {
-                // ใช้ Serializable isolation level ป้องกัน race condition
-                using var tx = await _context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+                using var tx = await _context.Database.BeginTransactionAsync();
 
-                // หา RunningNo ของเดือนปัจจุบัน
-                var rn = await _context.RunningNo
-                    .FirstOrDefaultAsync(r => r.Prefix == prefix && r.YearMonth == yearMonth);
+                // ดึง RunningNo ของ prefix
+                var rn = await _context.RunningNo.FirstOrDefaultAsync(r => r.Prefix == prefix);
 
                 if (rn == null)
                 {
-                    // ถ้าไม่มี record เดือนนี้ → สร้างใหม่
                     rn = new RunningNo
                     {
                         Prefix = prefix,
-                        YearMonth = yearMonth,
                         NextNumber = 1,
+                        YearMonth = currentYearMonth.ToString(),
                         ModifiedTime = createTime
                     };
                     _context.RunningNo.Add(rn);
                 }
+                else
+                {
+                    // ถ้าเดือนเปลี่ยน → รีเซ็ต NextNumber
+                    if (rn.YearMonth != currentYearMonth.ToString())
+                    {
+                        rn.NextNumber = 1;
+                        rn.YearMonth = currentYearMonth.ToString();
+                    }
+                }
 
-                // สร้างเลขเอกสาร
-                var docNo = $"{prefix}{yearMonth}{rn.NextNumber:000}";
+                // สร้างเลขเอกสาร (format: PREFIX-YYYYMM-###)
+                var docNo = $"{currentYearMonth}{rn.NextNumber:000}";
 
-                // เพิ่ม next number และปรับเวลาแก้ไข
+                // อัปเดต NextNumber และ ModifiedTime
                 rn.NextNumber++;
                 rn.ModifiedTime = createTime;
 
                 await _context.SaveChangesAsync();
 
-                // จำลอง delay เพื่อทดสอบ concurrency
+                // intentional delay เพื่อทดสอบ concurrency
                 if (delay > 0)
                     await Task.Delay(delay);
 
@@ -120,10 +113,12 @@ namespace Services.Services
             }
             catch (DbUpdateException ex) when (ex.InnerException is SqlException sqlEx && sqlEx.Number == 1205)
             {
-                // Deadlock handling
-                Console.WriteLine($"Deadlock detected: {sqlEx.Message}");
-                return $"Deadlock detected: {sqlEx.Message}";
+                Console.WriteLine($"Deadlock detected in GenDocNo: {sqlEx.Message}");
+                return $"Deadlock detected in GenDocNo: {sqlEx.Message}";
             }
         }
     }
 }
+
+
+

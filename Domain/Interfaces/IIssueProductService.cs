@@ -12,6 +12,7 @@ namespace Domain.Interfaces
         public Task<IssueCategories> SaveCategories(CategoriesParam param);
 
         public Task<Product> SaveProduct(ProductParam param);
+        public Task<bool> DeletedProduct(List<int> id);
 
 
         public Task<IEnumerable<IssueCategoriesViewModel>> GetCategoriesItems();

@@ -44,10 +44,10 @@
     </div>
     <div class="pl-10 pr-10 datagrid-assignment">
 
-        <div class="my-5" id="">
+        <!-- <div class="my-5" id="">
             <app-button (clicked)="onAllTaskClicked('Assigned', false)" [color]="'blue'"
                 [message]="'Take All Task'"></app-button>
-        </div>
+        </div> -->
 
 
         <dx-data-grid [dataSource]="unassignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
@@ -95,18 +95,18 @@
 
     <app-head-underline [title]="'Process Task'"></app-head-underline>
     <div class="flex justify-end space-x-2 " id="">
-        <div class="" id="">
+        <!-- <div class="" id="">
             <app-button (clicked)="onAllTaskClicked('Done',true)" [color]="'blue'"
                 [message]="'Done All Task'"></app-button>
-        </div>
-        <div class="mx-10" id="">
+        </div> -->
+        <!-- <div class="mx-10" id="">
             <app-button (clicked)="onAllTaskClicked('Rejected',true)" [color]="'red'"
                 [message]="'Rejected All Task'"></app-button>
         </div>
         <div class="mx-10" id="">
             <app-button (clicked)="onAllTaskClicked('CancelAssigned',true)" [color]="'yellow'"
                 [message]="'Cancel All Task'"></app-button>
-        </div>
+        </div> -->
 
     </div>
 
@@ -162,11 +162,11 @@
 
 
     <div class="flex justify-end" id="">
-
+<!-- 
         <div class="mx-10" id="">
             <app-button (clicked)="onAllTaskClicked('CancelCompleted',null)" [color]="'red'"
                 [message]="'Cancel All Task'"></app-button>
-        </div>
+        </div> -->
     </div>
     <div class="flex m-10">
         <dx-data-grid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"

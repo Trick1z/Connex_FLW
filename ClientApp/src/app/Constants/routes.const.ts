@@ -20,28 +20,6 @@ export class ViewsRoute {
   static LandingFullPath: string = `${ViewsRoute.prefix}/${ViewsRoute.Landing}`;
   static LandingName: string = `landing`;
 }
-
-// ======================== Games Routes =======================
-export class GamesRoute {
-  static prefix: string = `game`;
-
-  static Word: string = `word-scoring`;
-  static WordFullPath: string = `${GamesRoute.prefix}/${GamesRoute.Word}`;
-}
-
-// ======================== Customer Routes ====================
-export class CustomerRoute {
-  static prefix: string = `customer`;
-
-  static CustomerForm: string = `form`;
-  static CustomerFormFullPath: string = `${CustomerRoute.prefix}/${CustomerRoute.CustomerForm}`;
-  static CustomerFormName: string = `customer-form`;
-
-  static CustomerAddForm: string = `add-form`;
-  static CustomerAddFormFullPath: string = `${CustomerRoute.prefix}/${CustomerRoute.CustomerAddForm}`;
-  static CustomerAddFormName: string = `customer-add-form`;
-}
-
 // ======================== User Routes ========================
 export class UserRoute {
   static prefix: string = `user`;

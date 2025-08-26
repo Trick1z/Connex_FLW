@@ -30,11 +30,21 @@ namespace MyAPI.Controllers.IssueForm
             return Ok(await _issueInformService.DeleteTask(param)); 
         }
 
-        [HttpPost("SaveIssueForm/{formId}/{status}")]
-        public async Task<IActionResult> SaveIssueForm(IssueFormParam param, int formId, string status)
+        [HttpPost("SaveDraftIssueForm/{formId}")]
+        public async Task<IActionResult> SaveDraftIssueForm(IssueFormParam param, int formId, string status)
         {
-            return Ok(await _issueInformService.SaveIssueForm(param, formId, status));
+            return Ok(await _issueInformService.SaveIssueForm(param, formId, "Draft"));
         }
+
+
+        [HttpPost("SaveSubmitIssueForm/{formId}")]
+        public async Task<IActionResult> SaveSubmitIssueForm(IssueFormParam param, int formId, string status)
+        {
+            return Ok(await _issueInformService.SaveIssueForm(param, formId, "Submit"));
+        }
+
+
+
 
 
         [HttpPost("CloseIssueForm")]
@@ -50,9 +60,9 @@ namespace MyAPI.Controllers.IssueForm
         }
 
         [HttpPost("queryIssueforms/unsuccess/{formStatus}")]
-        public async Task<IActionResult> GetForms(DevExtremeParam<QueryUserForm> param , string formStatus)
+        public async Task<IActionResult> QueryForms(DevExtremeParam<QueryUserForm> param , string formStatus)
         {
-            return Ok(await _issueInformService.GetForms( param , formStatus)); 
+            return Ok(await _issueInformService.QueryForms( param , formStatus)); 
         }
 
         [HttpPost("queryIssueforms/unsuccessTaskDetail")]
@@ -68,11 +78,11 @@ namespace MyAPI.Controllers.IssueForm
         }
 
 
-        [HttpPost("ListTaskManagement/{status}")]
-        public async Task<IActionResult> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
-        {
-            return Ok(await _issueInformService.ListTaskManagement(param, status));
-        }
+        //[HttpPost("ListTaskManagement/{status}")]
+        //public async Task<IActionResult> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
+        //{
+        //    return Ok(await _issueInformService.ListTaskManagement(param, status));
+        //}
         [HttpPost("TaskManagement/{status}")]
         public async Task<IActionResult> TaskManagement(USP_Query_FormTasksByStatusResult param, string status)
         {

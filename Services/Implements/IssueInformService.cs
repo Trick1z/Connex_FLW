@@ -40,7 +40,7 @@ namespace Services.Implements
         }
 
 
-        public async Task<QueryViewModel<USP_Query_IssueFormsResult>> GetForms(DevExtremeParam<QueryUserForm> param ,string formStatus )
+        public async Task<QueryViewModel<USP_Query_IssueFormsResult>> QueryForms(DevExtremeParam<QueryUserForm> param ,string formStatus )
         {
 
             var result = await _context.Procedures.USP_Query_IssueFormsAsync(param.SearchCriteria.DocNo, formStatus, param.SearchCriteria.ProductName ,
@@ -213,9 +213,13 @@ namespace Services.Implements
                 dbIssueForm.ModifiedTime = dateNow;
                 dbIssueForm.ModifiedBy = userId;
 
+
+
                 // -----------------
                 // DELETE tasks not in DataSource
                 // -----------------
+
+
                 var dsTaskSeqs = param.TaskItems.Select(t => t.TaskSeq).ToList();
                 var toDelete = dbIssueForm.IssueFormTask
                     .Where(dbTask => !dsTaskSeqs.Contains(dbTask.TaskSeq))
@@ -560,9 +564,7 @@ namespace Services.Implements
 
 
             CheckCategoriesNullOrBrlowZero(param, validate);
-            CheckProductIsNullOrBeLowZero(param, validate);
-
-            validate.Throw();
+            CheckProductNullOrBelowZero(param, validate);
 
 
             if (param.IssueCategoriesId == 1)
@@ -587,14 +589,6 @@ namespace Services.Implements
 
             validate.Throw();
             return validate;
-        }
-
-        private static void CheckProductIsNullOrBeLowZero(TaskParamViewModel param, ValidateException validate)
-        {
-            if (param.ProductId <= 0 || param.ProductId == null)
-            {
-                validate.Add("product", "กรุณากรอกชื่อ");
-            }
         }
 
 
@@ -623,14 +617,18 @@ namespace Services.Implements
 
         private static void CheckProductNullOrBelowZero(TaskParamViewModel param, ValidateException validate)
         {
-            if (param.ProductId <= 0 || param.IssueCategoriesId == null)
-                validate.Add("product", "กรุณากรอกชื่อ");
+            if (param.ProductId <= 0 || param.ProductId == null)
+                validate.Add("product", "กรุณเลือก product");
+            validate.Throw();
+
         }
 
         private static void CheckCategoriesNullOrBrlowZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.IssueCategoriesId <= 0 || param.IssueCategoriesId == null)
-                validate.Add("categories", "กรุณากรอกชื่อ");
+                validate.Add("categories", "กรุณเลือก category");
+            validate.Throw();
+
         }
 
         public int GetCurrentUserId()
@@ -663,14 +661,14 @@ namespace Services.Implements
 
         }
 
-        public async Task<bool> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
-        {
-            foreach (var item in param)
-            {
-                await TaskManagement(item, status);
-            }
-            return true;
-        }
+        //public async Task<bool> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
+        //{
+        //    foreach (var item in param)
+        //    {
+        //        await TaskManagement(item, status);
+        //    }
+        //    return true;
+        //}
 
 
         public async Task<bool> TaskManagement(USP_Query_FormTasksByStatusResult param, string status)
@@ -688,8 +686,8 @@ namespace Services.Implements
 
             IsLatestData(param, validate, userTaskSeq);
             await UpdateTask(param, userTaskSeq, dateNow, status, userId);
-            await UpdateFormStatusCode(validate, userTaskSeq, dateNow, userId);
-             AddLog(userId, userTaskSeq, dateNow, status);
+            await UpdateFormStatusCode(validate, userTaskSeq, dateNow, userId, param.FormId?? 0);
+            AddLog(userId, userTaskSeq, dateNow, status);
 
             await _context.SaveChangesAsync();
 
@@ -699,7 +697,7 @@ namespace Services.Implements
             return true;
         }
 
-        private async Task UpdateFormStatusCode(ValidateException validate, IssueFormTask? userTaskSeq, DateTime dateNow, int userId)
+        private async Task UpdateFormStatusCode(ValidateException validate, IssueFormTask? userTaskSeq, DateTime dateNow, int userId,int formId)
         {
             if (userTaskSeq == null)
             {
@@ -723,15 +721,29 @@ namespace Services.Implements
                 .Where(t => t.FormId == issueForm.FormId)
                 .AllAsync(t => t.SystemStatusCode == "Done" || t.SystemStatusCode == "Rejected");
 
+
+            //var statusList = new[] { "Assigned", "Done", "Rejected" };
+            //var AnyTaskAssigned = await _context.IssueFormTask
+            //    .FirstOrDefaultAsync(x => statusList.Contains(x.SystemStatusCode)
+            //                              && x.FormId == formId);
+
+            //if (AnyTaskAssigned != null)
+            //{
+            //    issueForm.SystemStatusCode = "Assigned";
+            //    issueForm.DoneTime = null;
+            //}
+
             if (areAllTaskDone)
             {
+
                 issueForm.SystemStatusCode = "Done";
                 issueForm.DoneTime = dateNow;
-
-                _context.IssueForm.Update(issueForm);
-
-                await AddLog(userId, userTaskSeq, dateNow, "Form Updated All Task Done Or Rejected");
+                issueForm.ClosedBy = userId;
+                issueForm.ClosedTime = dateNow;
             }
+
+
+
         }
 
 
@@ -805,7 +817,6 @@ namespace Services.Implements
             _context.IssueFormTaskAudit.Add(log);
 
             // Save Log
-            //await _context.SaveChangesAsync();
         }
 
         private static bool IsLatestData(USP_Query_FormTasksByStatusResult param, ValidateException validate, IssueFormTask? userTaskSeq)

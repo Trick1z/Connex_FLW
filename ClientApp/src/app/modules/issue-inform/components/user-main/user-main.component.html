@@ -52,7 +52,7 @@
         type="date" placeholder="Start Date" width="200">
       </dx-date-box>
 
-      <dx-date-box [value]="startDate!" (onValueChanged)="onEndDateChange($event)" displayFormat="dd/MM/yyyy"
+      <dx-date-box [value]="endDate!" (onValueChanged)="onEndDateChange($event)" displayFormat="dd/MM/yyyy"
         type="date" placeholder="End Date" width="200">
       </dx-date-box>
     </div>
@@ -97,7 +97,7 @@
 
       <div *dxTemplate="let detail of 'actionCell'">
         <div *ngIf="detail.data.canEdit" class="flex justify-center space-x-2">
-          <app-button [color]="'yellow'" [message]="'Edit'"></app-button>
+          <app-button (clicked)="onEditClicked(detail.data)" [color]="'yellow'" [message]="'Edit'"></app-button>
           <app-button [color]="'red'" [message]="'Delete'"></app-button>
         </div>
 

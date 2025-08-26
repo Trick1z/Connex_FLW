@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AdminRoute, AuthRoute, CustomerRoute, GamesRoute, SupportRoute, UserRoute, ViewsRoute } from './constants/routes.const';
+import { AdminRoute, AuthRoute, SupportRoute, UserRoute, ViewsRoute } from './constants/routes.const';
 import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [

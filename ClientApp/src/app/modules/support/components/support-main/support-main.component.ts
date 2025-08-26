@@ -182,12 +182,12 @@ export class SupportMainComponent implements OnInit {
     if (status === "Done" && this.prepareData.issueCategoriesId == 1) {
 
       const { value: quantity } = await Swal.fire({
-        title: "Enter borrow quantity",
+        title: "กรอกจำนวน",
         input: "number",
-        inputPlaceholder: "Type borrow quantity here...",
+        inputPlaceholder: "กรูณาใส่จำนวน",
         inputValue: this.prepareData.br_Qty,
         inputValidator: (quantity) => {
-          if (parseInt(quantity) <= 0) return "This field can not be 0";
+          if (parseInt(quantity) <= 0) return "ใส่จำนวนให้ถูกต้อง";
           return;
         },
 
@@ -243,60 +243,60 @@ export class SupportMainComponent implements OnInit {
       });
   }
 
-  onAllTaskClicked(status: string, IsAssigned: boolean | null = null) {
-    // 
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Task All Task",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes"
-    }).then((result) => {
-      if (result.isConfirmed) {
-        var allTask!: Array<USP_Query_FormTasksByStatusResult>;
+  // onAllTaskClicked(status: string, IsAssigned: boolean | null = null) {
+  //   // 
+  //   Swal.fire({
+  //     title: "Are you sure?",
+  //     text: "Task All Task",
+  //     icon: "warning",
+  //     showCancelButton: true,
+  //     confirmButtonColor: "#3085d6",
+  //     cancelButtonColor: "#d33",
+  //     confirmButtonText: "Yes"
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       var allTask!: Array<USP_Query_FormTasksByStatusResult>;
 
-        if (IsAssigned) {
-          allTask = this.assignedTaskDataSource.items()
-        } else if (IsAssigned == null) {
-          allTask = this.doneTaskDataSource.items().filter(item => item.canCancel);
-        } else {
-          allTask = this.unassignedTaskDataSource.items()
-        }
+  //       if (IsAssigned) {
+  //         allTask = this.assignedTaskDataSource.items()
+  //       } else if (IsAssigned == null) {
+  //         allTask = this.doneTaskDataSource.items().filter(item => item.canCancel);
+  //       } else {
+  //         allTask = this.unassignedTaskDataSource.items()
+  //       }
 
-        this.taskService.listTaskManagement(allTask, status).pipe(catchError(err => {
+  //       this.taskService.listTaskManagement(allTask, status).pipe(catchError(err => {
 
-          console.log(err);
+  //         console.log(err);
           
-          Swal.fire({
-            title: "Somthing when wrong",
-            text: "Trying to reload in 1 second",
-            icon: "success",
-            timer: 1200
-          });
-          setTimeout(() => {
-            window.location.reload();
-          }, 1200);
+  //         Swal.fire({
+  //           title: "Somthing when wrong",
+  //           text: "Trying to reload in 1 second",
+  //           icon: "success",
+  //           timer: 1200
+  //         });
+  //         setTimeout(() => {
+  //           window.location.reload();
+  //         }, 1200);
 
-          return err
+  //         return err
 
-        })).subscribe((res: any) => {
-          this.getTaskDataGrid()
-          return Swal.fire({
-            title: "Done",
-            text: "Your task are taken.",
-            icon: "success",
-            timer: 1200
-          });
-        })
-
-
+  //       })).subscribe((res: any) => {
+  //         this.getTaskDataGrid()
+  //         return Swal.fire({
+  //           title: "Done",
+  //           text: "Your task are taken.",
+  //           icon: "success",
+  //           timer: 1200
+  //         });
+  //       })
 
 
-      }
-    });
 
 
-  }
+  //     }
+  //   });
+
+
+  // }
 }
