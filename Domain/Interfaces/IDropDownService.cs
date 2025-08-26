@@ -14,7 +14,8 @@ namespace Domain.Interfaces
 
         public Task<IEnumerable<Role>> GetRoleItem();
 
-        public Task<IEnumerable<IssueCategories>> GetCategoriesDropDownItems(); 
-        public Task<IEnumerable<Product>> GetProductsDropDownItems();
+
+        public Task<IEnumerable<DropDownViewModel>> GetCategoriesDropDownItems(); 
+        public Task<IEnumerable<DropDownViewModel>> GetProductsDropDownItems();
     }
 }

@@ -39,18 +39,14 @@ namespace Services.UserControl
             return allCategories;
         }
 
-        public async Task<IEnumerable<IssueCategories>> GetCategoriesDropDownItems()
+        public async Task<IEnumerable<DropDownViewModel>> GetCategoriesDropDownItems()
         {
             var categories = await _context.IssueCategories
                 .Where(c => c.IsActive == true)
-                        .Select(c => new IssueCategories
+                        .Select(c => new DropDownViewModel
                         {
-                            IssueCategoriesId = c.IssueCategoriesId,
-                            IssueCategoriesName = c.IssueCategoriesName,
-                            IsProgramIssue = c.IsProgramIssue,
-                            IsActive = c.IsActive,
-                            CreatedTime = c.CreatedTime,
-                            ModifiedTime = c.ModifiedTime
+                            ShowText = c.IssueCategoriesName,
+                            Value = c.IssueCategoriesId.ToString()
                         })
                         .ToListAsync();
 
@@ -58,17 +54,14 @@ namespace Services.UserControl
         }
 
 
-        public async Task<IEnumerable<Product>> GetProductsDropDownItems()
+        public async Task<IEnumerable<DropDownViewModel>> GetProductsDropDownItems()
         {
             var products = await _context.Product
                     .Where(c => c.IsActive == true)
-                        .Select(p => new Product
+                        .Select(p => new DropDownViewModel
                         {
-                            ProductId = p.ProductId,
-                            ProductName = p.ProductName,
-                            IsActive = p.IsActive,
-                            CreatedTime = p.CreatedTime,
-                            ModifiedTime = p.ModifiedTime
+                            ShowText = p.ProductName,
+                            Value = p.ProductId.ToString()
                         })
                         .ToListAsync();
 
