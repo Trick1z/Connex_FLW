@@ -20,9 +20,9 @@ namespace MyAPI.Controllers.CategoriesProducts
         }
 
         [HttpPost("SaveIssueMapProduct")]
-        public async Task<IActionResult> InsertMappingCategoriesProductItem(SaveCategoriesProductParam req)
+        public async Task<IActionResult> InsertMappingCategoriesProductItem(SaveCategoriesProductParam param)
         {
-            return Ok(await _issueProduct.SaveCategoriesProduct(req));
+            return Ok(await _issueProduct.SaveCategoriesProduct(param));
 
         }
 
