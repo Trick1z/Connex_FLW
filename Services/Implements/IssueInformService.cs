@@ -137,7 +137,7 @@ namespace Services.Implements
             // Validate TaskItems
             if (param.TaskItems.Count == 0)
             {
-                validate.Add("Task", "No Task Added");
+                validate.Add("task", "กรุณาเพิ่มปัญหาที่ต้องการแจ้ง");
                 validate.Throw();
             }
 
@@ -406,13 +406,13 @@ namespace Services.Implements
         {
             if (dbForm == null)
             {
-                validate.Add("Form", "Form Not Found");
+                validate.Add("form", "ไม่เจอฟอร์ม");
                 validate.Throw();
             }
 
             if (param.ModifiedTime != dbForm.ModifiedTime)
             {
-                validate.Add("Form", "Please refresh this page before continue");
+                validate.Add("time", "กรุณารีเฟรชหน้านีแล้วลองใหม่");
                 validate.Throw();
 
             }
@@ -424,7 +424,7 @@ namespace Services.Implements
 
             if (dbIssueForm == null)
             {
-                validate.Add("Form", "Form Not Found");
+                validate.Add("form", "ไม่เจอฟอร์ม");
             }
 
             validate.Throw();
@@ -434,15 +434,24 @@ namespace Services.Implements
 
         public async Task<List<TaskParamViewModel>> DeleteTask(ValidateTaskParam param)
         {
-            var dbIssueFormTasks = await _context.IssueFormTask
-                .Where(x => x.FormId == param.Data.FormId && x.TaskSeq == param.Data.TaskSeq).FirstOrDefaultAsync();
+
+            if (param.Data.FormId == 0 || param.Data.FormId == null)
+            {
+                param.DataSource.RemoveAll(x => x.Id == param.Data.Id);
+            }
+            else {
+                var dbIssueFormTasks = await _context.IssueFormTask
+                        .Where(x => x.FormId == param.Data.FormId && x.TaskSeq == param.Data.TaskSeq).FirstOrDefaultAsync();
 
 
-            var validate = new ValidateException();
-            ValidateTask(param, dbIssueFormTasks, validate);
+                var validate = new ValidateException();
+                ValidateTask(param, dbIssueFormTasks, validate);
 
-            // ลบรายการที่ Id ตรงกับ Data.Id
-            param.DataSource.RemoveAll(x => x.Id == param.Data.Id);
+                // ลบรายการที่ Id ตรงกับ Data.Id
+                param.DataSource.RemoveAll(x => x.Id == param.Data.Id);
+
+            }
+                
 
             return param.DataSource;
 
@@ -452,14 +461,14 @@ namespace Services.Implements
         {
             if (dbIssueFormTasks.SystemStatusCode != "Draft")
             {
-                validate.Add("Task", "Task Already Assigned");
+                validate.Add("task", "มีคนรับงานนี้เรียบร้อยแล้ว");
             }
 
 
             if (param?.DataSource == null || param.Data?.Id == null)
             {
 
-                validate.Add("Task", "No Data");
+                validate.Add("task", "ไม่พบข้อมูล");
 
             }
 
@@ -475,14 +484,14 @@ namespace Services.Implements
             ValidateException validate = ValidateTaskItem(param.Data, new ValidateException());
 
 
-            var singleData = await _context.Rel_Categories_Product
+            var dbRCP = await _context.Rel_Categories_Product
                     .Include(c => c.IssueCategories)
                     .Include(p => p.Product)
                     .FirstOrDefaultAsync(r => r.IssueCategoriesId == param.Data.IssueCategoriesId && r.ProductId == param.Data.ProductId);  // หรือเงื่อนไขอื่น
 
-            if (singleData == null)
+            if (dbRCP == null)
             {
-                validate.Add("CategoriesProduct", "Invalid Categories");
+                validate.Add("categories", "ไม่พบข้อมูล");
                 validate.Throw();
             }
 
@@ -494,10 +503,10 @@ namespace Services.Implements
 
                 var item = new TaskParamViewModel
                 {
-                    ProductId = singleData.ProductId,
-                    ProductName = singleData.Product.ProductName,
-                    IssueCategoriesId = singleData.IssueCategoriesId,
-                    IssueCategoriesName = singleData.IssueCategories.IssueCategoriesName,
+                    ProductId = dbRCP.ProductId,
+                    ProductName = dbRCP.Product.ProductName,
+                    IssueCategoriesId = dbRCP.IssueCategoriesId,
+                    IssueCategoriesName = dbRCP.IssueCategories.IssueCategoriesName,
                     Quantity = param.Data.Quantity,
                     Location = param.Data.Location,
                     DetectedTime = param.Data.DetectedTime
@@ -521,10 +530,10 @@ namespace Services.Implements
 
 
 
-                item.ProductId = singleData.ProductId;
-                item.ProductName = singleData.Product.ProductName;
-                item.IssueCategoriesId = singleData.IssueCategoriesId;
-                item.IssueCategoriesName = singleData.IssueCategories.IssueCategoriesName;
+                item.ProductId = dbRCP.ProductId;
+                item.ProductName = dbRCP.Product.ProductName;
+                item.IssueCategoriesId = dbRCP.IssueCategoriesId;
+                item.IssueCategoriesName = dbRCP.IssueCategories.IssueCategoriesName;
                 item.Quantity = param.Data.Quantity;
                 item.Location = param.Data.Location;
                 item.DetectedTime = param.Data.DetectedTime;
@@ -584,7 +593,7 @@ namespace Services.Implements
         {
             if (param.ProductId <= 0 || param.ProductId == null)
             {
-                validate.Add("Product", "Product Is Requierd");
+                validate.Add("product", "กรุณากรอกชื่อ");
             }
         }
 
@@ -594,7 +603,7 @@ namespace Services.Implements
         {
             if (param.DetectedTime == null)
             {
-                validate.Add("Date", "Date is Requird");
+                validate.Add("date", "กรุณากรอกวันที่");
             }
         }
 
@@ -602,26 +611,26 @@ namespace Services.Implements
         {
             if (string.IsNullOrWhiteSpace(param.Location))
             {
-                validate.Add("Location", "Locations Is Required");
+                validate.Add("location", "กรุณากรอกสถานที่");
             }
         }
 
         private static void CheckiQuantityBelowOrZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.Quantity <= 0 || param.Quantity == null)
-                validate.Add("Quantity", "Quantity Is Required");
+                validate.Add("quantity", "กรูณากรอกจำนวน");
         }
 
         private static void CheckProductNullOrBelowZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.ProductId <= 0 || param.IssueCategoriesId == null)
-                validate.Add("Product", "Product Is Required");
+                validate.Add("product", "กรุณากรอกชื่อ");
         }
 
         private static void CheckCategoriesNullOrBrlowZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.IssueCategoriesId <= 0 || param.IssueCategoriesId == null)
-                validate.Add("Categories", "Categories Is Required ");
+                validate.Add("categories", "กรุณากรอกชื่อ");
         }
 
         public int GetCurrentUserId()
@@ -680,7 +689,7 @@ namespace Services.Implements
             IsLatestData(param, validate, userTaskSeq);
             await UpdateTask(param, userTaskSeq, dateNow, status, userId);
             await UpdateFormStatusCode(validate, userTaskSeq, dateNow, userId);
-            await AddLog(userId, userTaskSeq, dateNow, status);
+             AddLog(userId, userTaskSeq, dateNow, status);
 
             await _context.SaveChangesAsync();
 
@@ -694,7 +703,7 @@ namespace Services.Implements
         {
             if (userTaskSeq == null)
             {
-                validate.Add("Task", "Task is null!");
+                validate.Add("task", "ไม่พบข้อมูล");
                 validate.Throw();
                 return;
             }
@@ -704,7 +713,7 @@ namespace Services.Implements
 
             if (issueForm == null)
             {
-                validate.Add("Form", "Form not found!");
+                validate.Add("form", "ไม่พอมฟอร์ม");
                 validate.Throw();
                 return;
             }
@@ -721,7 +730,7 @@ namespace Services.Implements
 
                 _context.IssueForm.Update(issueForm);
 
-                await AddLog(userId, userTaskSeq, dateNow, "Form Update All Task Done Or Rejected");
+                await AddLog(userId, userTaskSeq, dateNow, "Form Updated All Task Done Or Rejected");
             }
         }
 
@@ -755,7 +764,7 @@ namespace Services.Implements
             }
             if (status == "CancelAssigned")
             {
-                userTaskSeq.AssignedTo = null;
+                userTaskSeq.AssignedTo = userId;
                 userTaskSeq.AssignedTime = null;
 
             }
@@ -805,7 +814,7 @@ namespace Services.Implements
             //ไม่เจอโยน validate
             if (param.ModifiedTime != userTaskSeq.ModifiedTime)
             {
-                validate.Add("update", "Please f5 before do the procress");
+                validate.Add("update", "กรุณารีเฟรชหน้านีแล้วลองใหม่");
                 validate.Throw();
 
             }
@@ -818,7 +827,7 @@ namespace Services.Implements
             //ไม่เจอโยน validate
             if (userTaskSeq == null)
             {
-                validate.Add("task", "Task Not Found !");
+                validate.Add("task", "ไม่พบข้อมูล");
                 validate.Throw();
             }
 
