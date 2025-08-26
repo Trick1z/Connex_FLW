@@ -116,7 +116,6 @@ export class UserMainComponent implements OnInit {
       );
       this.categoriesCheckBoxItem = res as CheckboxList<number>[];
     } catch (error) {
-      console.error('Error loading categories:', error);
       this.categoriesCheckBoxItem = [];
     }
   }
@@ -126,7 +125,6 @@ export class UserMainComponent implements OnInit {
       const res = await firstValueFrom(this.checkboxService.getStatusCodeCheckBoxItem()) as CheckboxList<string>[];
       this.statusCheckBoxItem = res;
     } catch (err) {
-      console.error('Error loading status code', err);
       this.statusCheckBoxItem = [];
     }
   }

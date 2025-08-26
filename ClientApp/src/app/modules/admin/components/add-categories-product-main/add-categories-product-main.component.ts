@@ -174,7 +174,6 @@ export class AddCategoriesProductMainComponent implements OnInit {
     this.issueProductService.getCategoriesItems()
       .pipe(
         catchError(err => {
-          console.error('Error while loading category dropdown:', err);
           return of([]); // ถ้า error ให้ return array ว่าง
         })
       )

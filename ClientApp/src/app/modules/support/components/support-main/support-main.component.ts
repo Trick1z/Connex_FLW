@@ -76,7 +76,6 @@ export class SupportMainComponent implements OnInit {
   getCategoriesCheckBoxItem() {
     this.checkBoxService.getCategoriesCheckBoxItem()
       .pipe(catchError(err => {
-        console.error('Error loading checkbox items:', err);
         return err;
       }))
       .subscribe((res: any) => {

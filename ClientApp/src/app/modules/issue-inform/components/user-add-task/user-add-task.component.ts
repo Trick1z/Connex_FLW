@@ -73,7 +73,6 @@ export class UserAddTaskComponent implements OnInit {
   private loadTaskById(id: number) {
     this.validateService.getInformTaskById(id)
       .pipe(catchError(err => {
-        console.error('Error loading task:', err);
         return of([]);
       }))
       .subscribe((res: any) => {
@@ -132,7 +131,6 @@ export class UserAddTaskComponent implements OnInit {
         store: new ArrayStore({ key: 'issueCategoriesId', data: categories })
       });
     } catch (err) {
-      console.error('Error loading categories:', err);
       this.categoryDataSource = new DataSource({ store: new ArrayStore({ key: 'issueCategoriesId', data: [] }) });
     }
   }
@@ -209,7 +207,6 @@ export class UserAddTaskComponent implements OnInit {
 
 
           this.createTaskErrorMessage = err?.error?.messages ?? [];
-          console.error(err);
           return err;
         }))
         .subscribe((res: any) => {

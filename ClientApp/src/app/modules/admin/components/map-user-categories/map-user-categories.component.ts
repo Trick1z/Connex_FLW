@@ -52,7 +52,6 @@ export class MapUserCategoriesComponent implements OnInit {
         };
         return this.service.queryUserByText(newLoad)
           .pipe(catchError(err => {
-            console.error(err);
             return of([]);
           }))
           .toPromise();
@@ -89,7 +88,6 @@ export class MapUserCategoriesComponent implements OnInit {
   getCategoriesForUser(id: number) {
     this.service.getCategoriesForUser(id)
       .pipe(catchError(err => {
-        console.error(err);
         this.userMapCategories = { userId: id, categories: [], categoriesText: '', modifiedTime: null };
         return of(this.userMapCategories);
       }))
@@ -99,7 +97,6 @@ export class MapUserCategoriesComponent implements OnInit {
   onSaveSubmit() {
     this.service.insertMappingUserCategories(this.userMapCategories)
       .pipe(catchError(err => {
-        console.error(err);
         this.mapDetailVisible = false;
         Swal.fire('ไม่สามารถบันทึกข้อมูลได้', 'กรุณาลองรีเฟรชหน้าเว็บและลองอีกครั้ง', 'error');
         return of(null);
@@ -125,7 +122,6 @@ export class MapUserCategoriesComponent implements OnInit {
   loadUserCategories(userId: number) {
     this.service.getCategoriesForUser(userId)
       .pipe(catchError(err => {
-        console.error(err);
         this.viewUserDetail = [];
         return of({ categoriesText: '' });
       }))
@@ -136,7 +132,6 @@ export class MapUserCategoriesComponent implements OnInit {
   loadCategoriesDropdown() {
     this.dropDownService.getUserMapCategoriesDropDown()
       .pipe(catchError(err => {
-        console.error(err);
         return of([]);
       }))
       .subscribe((res: any[]) => this.categoriesTagDataSource = res);

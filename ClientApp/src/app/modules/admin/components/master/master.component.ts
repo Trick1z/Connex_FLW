@@ -91,12 +91,10 @@ export class MasterComponent implements OnInit {
         try {
           const res = await lastValueFrom(this.dropDownService.getCategoriesMapProductDropDown()
             .pipe(catchError(err => {
-              console.error(err);
               return of([]); // return empty array แทน
             })));
           return res;
         } catch (error) {
-          console.error(error);
           return [];
         }
       }
@@ -162,7 +160,6 @@ export class MasterComponent implements OnInit {
   private loadViewProducts(categoryId: number) {
     this.issueProductService.getViewProductDetail(categoryId)
       .pipe(catchError(err => {
-        console.error(err);
         this.viewCategoriesDetail = [];
         return of({ productText: '' });
       }))
@@ -193,7 +190,6 @@ export class MasterComponent implements OnInit {
         };
         return this.issueProductService.queryCategoriesByText(newLoad)
           .pipe(catchError(err => {
-            console.error(err);
             return of([]);
           }))
           .toPromise();
@@ -205,7 +201,6 @@ export class MasterComponent implements OnInit {
   loadCategoryProducts(categoryId: number) {
     this.issueProductService.getProductsForCategory(categoryId)
       .pipe(catchError(err => {
-        console.error(err);
         this.categoriesMapProduct = {
           categoriesId: categoryId,
           product: [],
