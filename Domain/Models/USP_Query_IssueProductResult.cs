@@ -13,6 +13,8 @@ namespace Domain.Models
         public string ProductName { get; set; }
         public DateTime CreatedTime { get; set; }
         public DateTime ModifiedTime { get; set; }
+        [StringLength(50)]
+        public string Username { get; set; }
         public int? TotalCount { get; set; }
     }
 }
