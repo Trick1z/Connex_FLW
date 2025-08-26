@@ -244,7 +244,7 @@ export class SupportMainComponent implements OnInit {
       });
   }
 
-  onAllTaskCliked(status: string, IsAssigned: boolean | null = null) {
+  onAllTaskClicked(status: string, IsAssigned: boolean | null = null) {
     // 
     Swal.fire({
       title: "Are you sure?",
@@ -257,6 +257,7 @@ export class SupportMainComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         var allTask!: Array<USP_Query_FormTasksByStatusResult>;
+
         if (IsAssigned) {
           allTask = this.assignedTaskDataSource.items()
         } else if (IsAssigned == null) {
@@ -266,6 +267,9 @@ export class SupportMainComponent implements OnInit {
         }
 
         this.taskService.listTaskManagement(allTask, status).pipe(catchError(err => {
+
+          console.log(err);
+          
           Swal.fire({
             title: "Somthing when wrong",
             text: "Trying to reload in 1 second",

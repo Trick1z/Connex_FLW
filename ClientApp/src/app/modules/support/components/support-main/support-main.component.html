@@ -45,7 +45,7 @@
     <div class="pl-10 pr-10 datagrid-assignment">
 
         <div class="my-5" id="">
-            <app-button (clicked)="onAllTaskCliked('Assigned', false)" [color]="'blue'"
+            <app-button (clicked)="onAllTaskClicked('Assigned', false)" [color]="'blue'"
                 [message]="'Take All Task'"></app-button>
         </div>
 
@@ -79,10 +79,10 @@
 
 
 
-            <div *dxTemplate="let cellData of 'wrapCell'" class="break-words whitespace-normal text-center">
+            <div *dxTemplate="let cellData of 'wrapCell'" class="text-center break-words whitespace-normal">
                 {{ cellData.value }}
             </div>
-            <div *dxTemplate="let headerData of 'wrapHeader'" class="break-words whitespace-normal text-center">
+            <div *dxTemplate="let headerData of 'wrapHeader'" class="text-center break-words whitespace-normal">
                 {{ headerData.column.caption }}
             </div>
 
@@ -94,17 +94,17 @@
 <div class="m-10 my-36">
 
     <app-head-underline [title]="'Process Task'"></app-head-underline>
-    <div class=" flex justify-end space-x-2" id="">
+    <div class="flex justify-end space-x-2 " id="">
         <div class="" id="">
-            <app-button (clicked)="onAllTaskCliked('Done',true)" [color]="'blue'"
+            <app-button (clicked)="onAllTaskClicked('Done',true)" [color]="'blue'"
                 [message]="'Done All Task'"></app-button>
         </div>
         <div class="mx-10" id="">
-            <app-button (clicked)="onAllTaskCliked('Rejected',true)" [color]="'red'"
+            <app-button (clicked)="onAllTaskClicked('Rejected',true)" [color]="'red'"
                 [message]="'Rejected All Task'"></app-button>
         </div>
         <div class="mx-10" id="">
-            <app-button (clicked)="onAllTaskCliked('CancelAssigned',true)" [color]="'yellow'"
+            <app-button (clicked)="onAllTaskClicked('CancelAssigned',true)" [color]="'yellow'"
                 [message]="'Cancel All Task'"></app-button>
         </div>
 
@@ -142,10 +142,10 @@
             </div>
 
 
-            <div *dxTemplate="let cellData of 'wrapCell'" class="break-words whitespace-normal text-center">
+            <div *dxTemplate="let cellData of 'wrapCell'" class="text-center break-words whitespace-normal">
                 {{ cellData.value }}
             </div>
-            <div *dxTemplate="let headerData of 'wrapHeader'" class="break-words whitespace-normal text-center">
+            <div *dxTemplate="let headerData of 'wrapHeader'" class="text-center break-words whitespace-normal">
                 {{ headerData.column.caption }}
             </div>
         </dx-data-grid>
@@ -164,7 +164,7 @@
     <div class="flex justify-end" id="">
 
         <div class="mx-10" id="">
-            <app-button (clicked)="onAllTaskCliked('CancelCompleted',null)" [color]="'red'"
+            <app-button (clicked)="onAllTaskClicked('CancelCompleted',null)" [color]="'red'"
                 [message]="'Cancel All Task'"></app-button>
         </div>
     </div>
@@ -206,10 +206,10 @@
 
 
 
-            <div *dxTemplate="let cellData of 'wrapCell'" class="break-words whitespace-normal text-center">
+            <div *dxTemplate="let cellData of 'wrapCell'" class="text-center break-words whitespace-normal">
                 {{ cellData.value }}
             </div>
-            <div *dxTemplate="let headerData of 'wrapHeader'" class="break-words whitespace-normal text-center">
+            <div *dxTemplate="let headerData of 'wrapHeader'" class="text-center break-words whitespace-normal">
                 {{ headerData.column.caption }}
             </div>
         </dx-data-grid>
