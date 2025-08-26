@@ -63,7 +63,7 @@
 <div class="gap-y-8 p-14">
   <app-head-underline [title]="'Open Issues'"></app-head-underline>
   <div class="mx-10 my-5">
-    <dx-data-grid [dataSource]="openFormsDataSource" keyExpr="formId" [showBorders]="true"
+    <dx-data-grid #openFormGrid [dataSource]="openFormsDataSource" keyExpr="formId" [showBorders]="true"
       [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" 
       [paging]="{ enabled: true, pageSize: 5 }"
       

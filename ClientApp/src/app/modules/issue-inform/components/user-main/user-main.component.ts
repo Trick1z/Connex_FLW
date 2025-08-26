@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import DataSource from 'devextreme/data/data_source';
 import { catchError, firstValueFrom, of, throwError } from 'rxjs';
 import { InformTaskService } from '../../services/inform-task.service';
@@ -9,6 +9,7 @@ import { DevExtremeParam } from 'src/app/modules/admin/models/search.Model';
 import { QueryUserForm, QueryUserFormDetail, USP_Query_FormTaskDetailResult } from '../../models/inform.model';
 import ArrayStore from 'devextreme/data/array_store';
 import CustomStore from 'devextreme/data/custom_store';
+import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
 
 @Component({
   selector: 'app-user-main',
@@ -35,6 +36,8 @@ export class UserMainComponent implements OnInit {
   categoriesCheckBoxItem: CheckboxList<number>[] = [];
   statusCheckBoxItem: CheckboxList<string>[] = [];
 
+
+  @ViewChild('openFormGrid', { static: false }) openFormGrid!: DxDataGridComponent;
   constructor(
     private informTaskService: InformTaskService,
     private checkboxService: CheckboxService
@@ -52,12 +55,15 @@ export class UserMainComponent implements OnInit {
 
   onDocumentChange(e: any) {
     this.documentNumberSearch = e
-    this.initOpenFormsDataSource()
+    // this.initOpenFormsDataSource()
+    this.openFormGrid.instance.refresh()
 
   }
   onProductNameChange(e: any) {
     this.productName = e
-    this.initOpenFormsDataSource()
+    // this.initOpenFormsDataSource()
+        this.openFormGrid.instance.refresh()
+
 
 
   }
@@ -68,7 +74,9 @@ export class UserMainComponent implements OnInit {
       .map((item: any) => item.value);
 
     this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    this.initOpenFormsDataSource()
+    // this.initOpenFormsDataSource()
+        this.openFormGrid.instance.refresh()
+
 
   }
 
@@ -78,19 +86,25 @@ export class UserMainComponent implements OnInit {
       .map((item: any) => item.value);
 
     this.statusCodeSearchText = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    this.initOpenFormsDataSource()
+    // this.initOpenFormsDataSource()
+        this.openFormGrid.instance.refresh()
+
 
 
   }
 
   onStartDateChange(e: any) {
     this.startDate = e.value
-    this.initOpenFormsDataSource()
+    // this.initOpenFormsDataSource()
+        this.openFormGrid.instance.refresh()
+
 
   }
   onEndDateChange(e: any) {
     this.endDate = e.value
-    this.initOpenFormsDataSource()
+    // this.initOpenFormsDataSource()
+        this.openFormGrid.instance.refresh()
+
   }
 
 
@@ -236,7 +250,9 @@ export class UserMainComponent implements OnInit {
       return err
     })).subscribe((res: any) => {
 
-      this.initOpenFormsDataSource()
+      // this.initOpenFormsDataSource()
+          this.openFormGrid.instance.refresh()
+
       this.initClosedFormsDataSource()
     })
 

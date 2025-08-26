@@ -6,10 +6,11 @@ import { IssueProductService } from '../../services/issue-product.service';
 import { DropDownService } from 'src/app/services/drop-down.service';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
-import { catchError, of } from 'rxjs';
+import { catchError, lastValueFrom, of } from 'rxjs';
 import { DevExtremeParam, Search } from '../../models/search.Model';
 import { DropDownList } from 'src/app/models/dropDown.model';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { ConfigSupportService } from '../../services/config-support.service';
 
 @Component({
   selector: 'app-master',
@@ -21,42 +22,49 @@ export class MasterComponent implements OnInit {
   // =================== Variables ===================
   categoryVisible = false;
   productVisible = false;
+
   CategoriesName: string = '';
 
-  categoriesDataList: DropDownList[] = [];
+  categoriesDropdown!: DataSource;
   ProductTagOptions: ProductsDataModel[] = [];
   searchCategoriesValue: string = "";
 
   viewPopupDetail: boolean = false;
   viewUserCategoriesName: string = '';
   viewCategoriesDetail: Array<string> = []
-  ;
+    ;
   categoriesDataSource!: DataSource; // <-- ใช้ DataSource แทน array
   categoriesMapProduct!: categoriesMapProductViewModel;
 
-  // @ViewChild('categoriesGrid', { static: false }) public categoriesGrid!: DxDataGridComponent;
+  @ViewChild('categoriesGrid', { static: false }) public categoriesGrid!: DxDataGridComponent;
+  @ViewChild('checkBoxMap', { static: false }) public checkBoxMap!: DxDataGridComponent;
 
   constructor(
     private dropDownService: DropDownService,
-    private issueProductService: IssueProductService
+    private issueProductService: IssueProductService,
+    private configService: ConfigSupportService
   ) { }
 
   ngOnInit(): void {
-    this.getCategoryProductItemDetail();
+    // this.getCategoryProductItemDetail();
     this.initCategoriesDataSource();
+    
   }
 
+
   // =================== Load Categories ===================
-  getCategoryProductItemDetail() {
-    this.dropDownService.getCategoryDropDown()
-      .pipe(catchError(err => {
-        console.error(err);
-        return of([]);
-      }))
-      .subscribe((res: any) => {
-        this.categoriesDataList = res as DropDownList[];
-      });
-  }
+  // getCategoryProductItemDetail() {
+  //   this.dropDownService.getCategoryDropDown()
+  //     .pipe(catchError(err => {
+  //       console.error(err);
+  //       return of([]);
+  //     }))
+  //     .subscribe((res: any) => {
+  //       console.log(res);
+        
+  //       this.categoriesDropdown = res ?? [];
+  //     });
+  // }
 
   // =================== Product Popup ===================
   productPopupShow(data: any) {
@@ -64,8 +72,10 @@ export class MasterComponent implements OnInit {
     this.loadCategoryProducts(data.issueCategoriesId);
     this.loadCategoriesMapProductDropdown();
 
-    this.categoriesDataSource.reload()
+    this,this.categoriesDataSource.reload()
+    // this.checkBoxMap.instance.refresh()
     this.productVisible = true;
+
   }
 
   productPopupHide() {
@@ -73,35 +83,40 @@ export class MasterComponent implements OnInit {
   }
 
   // =================== Load Products ===================
-  private loadCategoryProducts(categoryId: number) {
-    this.issueProductService.getProductsForCategory(categoryId)
-      .pipe(catchError(err => {
-        console.error(err);
-        this.categoriesMapProduct = {
-          categoriesId: categoryId,
-          product: [],
-          productText: '',
-          modifiedTime: null
-        };
-        return of(this.categoriesMapProduct);
-      }))
-      .subscribe((res: any) => {
-        this.categoriesMapProduct = res;
-      });
-  }
 
-  private loadCategoriesMapProductDropdown() {
+
+  loadCategoriesMapProductDropdown() {
     this.categoriesDataSource = new DataSource({
-      load: (loadOptions: LoadOptions) => {
-        return this.dropDownService.getCategoriesMapProductDropDown()
-          .pipe(catchError(err => {
-            console.error(err);
-            return of([]);
-          }))
-          .toPromise();
+      load: async (loadOptions: LoadOptions) => {
+        try {
+          const res = await lastValueFrom(this.dropDownService.getCategoriesMapProductDropDown()
+            .pipe(catchError(err => {
+              console.error(err);
+              return of([]); // return empty array แทน
+            })));
+          return res;
+        } catch (error) {
+          console.error(error);
+          return [];
+        }
       }
     });
   }
+
+  // loadCategoriesProduct(userId: number) {
+  //   this.configService.getCategoriesForUser(userId)
+  //     .pipe(catchError(err => {
+  //       console.error(err);
+  //       this.viewUserDetail = [];
+  //       return of({ categoriesText: '' });
+  //     }))
+  //     .subscribe((res: any) => {
+  //       this.viewUserDetail = res.categoriesText?.split(',').map((item: string) => item.trim()) || [];
+  //     });
+  // }
+
+
+
 
   // =================== Change Handler ===================
   onChange(e: any) {
@@ -184,5 +199,23 @@ export class MasterComponent implements OnInit {
           .toPromise();
       }
     });
+  }
+
+
+  loadCategoryProducts(categoryId: number) {
+    this.issueProductService.getProductsForCategory(categoryId)
+      .pipe(catchError(err => {
+        console.error(err);
+        this.categoriesMapProduct = {
+          categoriesId: categoryId,
+          product: [],
+          productText: '',
+          modifiedTime: null
+        };
+        return of(this.categoriesMapProduct);
+      }))
+      .subscribe((res: any) => {
+        this.categoriesMapProduct = res;
+      });
   }
 }
