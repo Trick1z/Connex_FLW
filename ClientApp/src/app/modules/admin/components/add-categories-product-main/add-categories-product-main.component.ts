@@ -33,9 +33,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
   isMap: boolean = true;
   categoriesPopupTitle: string = 'Add Categories'
   productPopupTitle: string = 'Add Product'
-  popupButtonText : string = "Create"
+  popupButtonText: string = "Create"
   categoriesError: string = "";
-
   categoryModel: CategoriesParam = {
     issueCategoriesId: 0,
     issueCategoriesName: '',
@@ -51,20 +50,13 @@ export class AddCategoriesProductMainComponent implements OnInit {
     modifiedTime: new Date,
     action: "Add"
   }
-
-
-  // categoryTextValue: string = "";
-
   categoryDataList: CheckboxList<number>[] = [];
   checkBoxItem: any[] = [];
   categoriesIdSearch: string = "";
   productSearch: string = "";
-
-
   categoriesDatasource!: DataSource;
   categoriesCheckBoxDatasource!: DataSource;
   productDataSource!: DataSource;
-
   editProductFormData: ProductUpdateFormData = {
     productId: 0,
     productName: ""
@@ -84,15 +76,21 @@ export class AddCategoriesProductMainComponent implements OnInit {
   ngOnInit(): void {
 
     this.initProductDataSource()
-    this.initCategoriesDataSource() 
+    this.initCategoriesDataSource()
     this.initCategoriesCheckBoxDataSource()
-
-    // this.getCategoriesProductDataList();
-    // this.getCheckBoxItem();
-    // this.initCheckBoxDataSource()
   }
 
-  // ================= Popup add Show/Hide =================
+  onIsProgramValueChanged(e: any) {
+    this.categoryModel.isProgramIssue = e.value;
+  }
+  onChangeTest(e: string) { this.productSearch = e; }
+  onCategoriesValueCheck(e: any) {
+    this.categoriesIdSearch = this.getSelectedCategories();
+  }
+  onMaValueCheck(e: any) {
+    this.isMap = e.value
+  }
+
   categoryPopupShow() {
     this.categoriesPopupTitle = "Add Categories"
     this.categoryVisible = true;
@@ -150,26 +148,6 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
 
   }
-
-
-  // ================= Text Change Handlers =================
-
-  onIsProgramValueChanged(e: any) {
-    this.categoryModel.isProgramIssue = e.value;
-  }
-
-  onChangeTest(e: string) { this.productSearch = e; }
-
-  onCategoriesValueCheck(e: any) {
-    this.categoriesIdSearch = this.getSelectedCategories();
-  }
-
-  onMaValueCheck(e: any) {
-    this.isMap = e.value
-  }
-
-
-  // ================= CRUD / API Calls =================
   initCategoriesDataSource() {
 
     this.issueProductService.getCategoriesItems()
@@ -181,7 +159,6 @@ export class AddCategoriesProductMainComponent implements OnInit {
       .subscribe((res: any) => {
         this.categoriesDatasource = res ?? [];
       });
-
   }
 
   initProductDataSource() {
@@ -200,15 +177,12 @@ export class AddCategoriesProductMainComponent implements OnInit {
           .toPromise();
       }
     });
-
-
   }
 
 
   onSearch() {
     this.productGrid?.instance?.refresh();
   }
-
 
   initCategoriesCheckBoxDataSource() {
     const selectedIds = this.categoryDataList
@@ -229,19 +203,13 @@ export class AddCategoriesProductMainComponent implements OnInit {
         : [];
     });
   }
-
   getSelectedCategories(): string {
     return this.categoryDataList.filter(c => c.selected).map(c => c.value).join(',');
   }
-
-  // categories or product
   onSave(type: string) {
-
     if (type === "categories") {
       this.issueProductService.categoriesManagement(this.categoryModel)
         .pipe(catchError(err => {
-
-
           this.categoryPopupHide()
           Swal.fire({
             title: 'ไม่มีอะไรเปลี่ยนแปลง',
@@ -251,13 +219,12 @@ export class AddCategoriesProductMainComponent implements OnInit {
             showConfirmButton: false,
             timer: 2000
           });
-
-
-
           return err
         })).subscribe((res => {
           this.categoryPopupHide()
-          this.initCategoriesDataSource()
+          // this.initCategoriesDataSource()
+          this.categoriesGrid.instance.refresh();
+
           this.initCategoriesCheckBoxDataSource()
           this.showSuccessPopup()
         }))

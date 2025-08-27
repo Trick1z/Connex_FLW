@@ -11,7 +11,7 @@
 
     <app-head-underline [title]="'Waiting Task'"></app-head-underline>
 
-    <div class="flex items-center justify-between max-w-full my-5 ml-10 mr-10 search-box">
+    <div class="flex items-start max-w-full my-5 ml-10 mr-10 search-box">
         <div class="gap-4 space-y-4 text-end text-box">
 
             <div class="flex items-center">
@@ -22,35 +22,38 @@
                     </app-text-box>
                 </div>
             </div>
-        </div>
-        <div class="flex flex-col items-start">
-            <div class="flex items-center text-end check-box">
 
+
+            <div class="flex">
+                <label class="w-40 mr-2 font-bold">Start Date</label>
+
+                <dx-date-box [value]="startDate!" (onValueChanged)="onStartDateChange($event.value)"
+                    displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date" width="200">
+                </dx-date-box>
+            </div>
+            <div class="flex">
+                <label class="w-40 mr-2 font-bold">End Date</label>
+                <dx-date-box [value]="endDate!" (onValueChanged)="onEndDateChange($event.value)"
+                    displayFormat="dd/MM/yyyy" type="date" placeholder="End Date" width="200">
+                </dx-date-box>
+            </div>
+
+
+
+        </div>
+
+        <div class="flex ml-10 ">
+            <div class="items-center">
                 <label for="check-box" class="w-40 font-bold">Categories</label>
                 <app-check-box [options]="categoriesCheckBoxItem" (optionsChange)="onCategoriesChanged($event)">
                 </app-check-box>
             </div>
         </div>
-        <div class="flex items-center gap-3">
-            <dx-date-box [value]="startDate!" (onValueChanged)="onStartDateChange($event.value)"
-                displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date" width="200">
-            </dx-date-box>
 
-            <dx-date-box [value]="endDate!" (onValueChanged)="onEndDateChange($event.value)" displayFormat="dd/MM/yyyy"
-                type="date" placeholder="End Date" width="200">
-            </dx-date-box>
-        </div>
 
     </div>
     <div class="pl-10 pr-10 datagrid-assignment">
-
-        <!-- <div class="my-5" id="">
-            <app-button (clicked)="onAllTaskClicked('Assigned', false)" [color]="'blue'"
-                [message]="'Take All Task'"></app-button>
-        </div> -->
-
-
-        <dx-data-grid [dataSource]="unassignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
+        <dx-data-grid #unassignedGrid [dataSource]="unassignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
 
             <dxo-paging [pageSize]="5"></dxo-paging>
@@ -71,9 +74,8 @@
                 [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2 " *dxTemplate="let cell of 'actionCell'">
                 <app-button [color]="'blue'" [message]="'Take'"
-                    (clicked)="onSubmit(cell.data , 'Assigned')"></app-button>
-                <!-- <app-button [color]="'red'" [message]="'Reject'"
-                    (clicked)=" onSubmit(cell.data , 'Rejected')"></app-button> -->
+                    (clicked)="onSubmit(cell.data , 'Assigned')">
+                </app-button>
             </div>
 
 
@@ -95,23 +97,10 @@
 
     <app-head-underline [title]="'Process Task'"></app-head-underline>
     <div class="flex justify-end space-x-2 " id="">
-        <!-- <div class="" id="">
-            <app-button (clicked)="onAllTaskClicked('Done',true)" [color]="'blue'"
-                [message]="'Done All Task'"></app-button>
-        </div> -->
-        <!-- <div class="mx-10" id="">
-            <app-button (clicked)="onAllTaskClicked('Rejected',true)" [color]="'red'"
-                [message]="'Rejected All Task'"></app-button>
-        </div>
-        <div class="mx-10" id="">
-            <app-button (clicked)="onAllTaskClicked('CancelAssigned',true)" [color]="'yellow'"
-                [message]="'Cancel All Task'"></app-button>
-        </div> -->
-
     </div>
 
     <div class="m-10">
-        <dx-data-grid [dataSource]="assignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
+        <dx-data-grid #assignedGrid [dataSource]="assignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
 
             <dxo-paging [pageSize]="5"></dxo-paging>
@@ -162,14 +151,9 @@
 
 
     <div class="flex justify-end" id="">
-<!-- 
-        <div class="mx-10" id="">
-            <app-button (clicked)="onAllTaskClicked('CancelCompleted',null)" [color]="'red'"
-                [message]="'Cancel All Task'"></app-button>
-        </div> -->
     </div>
     <div class="flex m-10">
-        <dx-data-grid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
+        <dx-data-grid #doneeGrid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
 
             <dxo-paging [pageSize]="5"></dxo-paging>

@@ -51,10 +51,12 @@ export class DashboardComponent implements OnInit {
           searchCriteria: { text: this.searchUsernameValue },
           loadOption: loadOptions
         };
+
         return this.dashBoardService.queryWorkLoad(newLoad)
           .pipe(catchError(err => {
             return err;
           })).toPromise();
+
       }
     });
 

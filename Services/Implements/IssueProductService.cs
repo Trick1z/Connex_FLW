@@ -355,6 +355,24 @@ namespace Services.Implements
             if (categories == null)
                 validate.Add("categories", "ไม่พบหมวดหมู่");
 
+            //foreach (var item in param.product)
+            //{
+            //    var IsUserUsed = await _context.IssueFormTask.FirstOrDefaultAsync(x => x.IssueCategoriesId == item);
+
+            //    if (IsUserUsed != null)
+            //    { }
+
+            //}
+
+            bool IsUserUsed = await _context.IssueFormTask.AnyAsync(x => param.product.Contains(x.IssueCategoriesId.Value));
+            if (IsUserUsed)
+            {
+                validate.Add("product", "ไม่สามารถลบได้ ข้อมูลถูกใช้งานอยู่");
+                validate.Throw();
+            }
+
+
+
             var productList = await _context.Rel_Categories_Product
                 .Where(r => r.IssueCategoriesId == param.CategoriesId)
                 .ToListAsync();
@@ -369,6 +387,7 @@ namespace Services.Implements
                 }
             }
             validate.Throw();
+
             var products = await _context.Product
                 .Where(p => p.IsActive && param.product.Contains(p.ProductId))
                 .ToListAsync();

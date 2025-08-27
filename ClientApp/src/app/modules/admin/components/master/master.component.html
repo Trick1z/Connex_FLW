@@ -15,13 +15,13 @@
     </div>
 
     <div class="mt-1 ml-36 app-btn">
-      <app-button (clicked)="initCategoriesDataSource(searchCategoriesValue)" [message]="'Search'"></app-button>
+      <app-button (clicked)="onSearchClicked()" [message]="'Search'"></app-button>
     </div>
 
 
   </div>
-  <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDataSource" [showBorders]="true" [paging]="{ pageSize: 5 }"
-    [columnAutoWidth]="true">
+  <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDataSource" [showBorders]="true"
+    [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
 
 
     <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
@@ -54,22 +54,22 @@
 
 </div>
 <!-- *ngIf="categoriesMapProduct" -->
-<div class="products-popup">
+<div >
   <dx-popup [width]="400" [height]="400" [(visible)]="productVisible" [showTitle]="true" [dragEnabled]="true"
     [closeOnOutsideClick]="true" title="Map Categories Product" (onHiding)="productPopupHide()">
 
     <div class="popup-content" *ngIf="categoriesMapProduct ">
       <div class="flex justify-start mb-5 text-2xl user-box">
         <span class="label">Categories :</span>
-        <span class="ml-5 username">{{ CategoriesName }}</span>
+        <span class="ml-5 username">{{ categoriesName }}</span>
       </div>
 
-      <dx-tag-box [dataSource]="categoriesDataSource" displayExpr="showText" valueExpr="value"
+      <dx-tag-box  [dataSource]="productTagDataSource" displayExpr="showText" valueExpr="value"
         (onValueChanged)="onChange($event)" [value]="categoriesMapProduct.product" [showSelectionControls]="true">
       </dx-tag-box>
 
       <div class="flex justify-center gap-2 mt-4">
-        <app-button (clicked)="onProductSaveData()" [message]="'Save'"></app-button>
+        <app-button (clicked)="onProductSave()" [message]="'Save'"></app-button>
         <app-button color="red" (clicked)="productPopupHide()" [message]="'Close'"></app-button>
       </div>
     </div>
@@ -98,7 +98,7 @@
     <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewCategoriesDetail.length > 0 ;else noViewData">
 
 
-      <h4 class="text-xl font-bold" *ngFor="let item of viewCategoriesDetail" >{{item}}</h4>
+      <h4 class="text-xl font-bold" *ngFor="let item of viewCategoriesDetail">{{item}}</h4>
 
 
     </div>

@@ -64,18 +64,19 @@
         </dxo-paging>
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
         </dxo-pager>
-        <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
+        <dxo-remote-operations
+         [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
             [groupPaging]="false">
         </dxo-remote-operations>
 
 
         <dxi-column dataField="username" caption="User"></dxi-column>
-        <dxi-column dataField="canAssigned" caption="Can Assigned"></dxi-column>
+        <dxi-column alignment="right" dataField="canAssigned" caption="Can Assigned"></dxi-column>
         <dxi-column dataField="totalAssigned" caption="Total Assigned"></dxi-column>
 
         <dxi-column  caption="Borrow">
-            <dxi-column dataField="borrowSubmit" caption="Submit"></dxi-column>
-            <dxi-column dataField="borrowAssigned" caption="Assigned"></dxi-column>
+            <dxi-column  dataField="borrowSubmit" caption="Submit"></dxi-column>
+            <dxi-column  dataField="borrowAssigned" caption="Assigned"></dxi-column>
         </dxi-column>
 
         <dxi-column caption="Repair">

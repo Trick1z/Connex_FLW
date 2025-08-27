@@ -180,9 +180,19 @@ namespace FMS.Server.Handlers
 
                             error.Add(exception.Message);
 
+                           
                             result.Messages.Add("System", error );
+                            if (exception.InnerException != null)
+                            {
+                                error.Add(exception.InnerException.Message);
+                            }
+
+
 
                             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+
+                           
 
                             //var error = new ExceptionViewModel
                             //{

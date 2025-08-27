@@ -17,22 +17,23 @@ import { DxDataGridComponent } from 'devextreme-angular';
   styleUrls: ['./map-user-categories.component.scss']
 })
 export class MapUserCategoriesComponent implements OnInit {
+  viewPopupDetail = false;
+  mapDetailVisible = false;
 
   userByRoleDataSource!: DataSource;
-  categoriesTagDataSource: DropDownList[] = [];
-
-  labelUsername = 'unknown';
-  labelRole = 'unknown';
-  mapDetailVisible = false;
-  globalId = 0;
-
   userMapCategories!: UserMapCategoriesViewModel;
 
-  viewPopupDetail = false;
+  categoriesTagDataSource: DropDownList[] = [];
   viewUserDetail: string[] = [];
+
   viewUsername = '';
   viewRole = '';
   searchUsernameValue = '';
+  labelUsername = 'unknown';
+  labelRole = 'unknown';
+  globalId = 0;
+
+
   @ViewChild('userGrid', { static: false }) public userGrid!: DxDataGridComponent;
 
   constructor(
@@ -43,6 +44,8 @@ export class MapUserCategoriesComponent implements OnInit {
   ngOnInit(): void {
     this.initUserByRoleDataSource();
   }
+  onChange(e: any) { this.userMapCategories.categories = e.value; }
+
   initUserByRoleDataSource(text: string | null = null) {
     this.userByRoleDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
@@ -70,8 +73,8 @@ export class MapUserCategoriesComponent implements OnInit {
   }
 
   onSearch() {
-    this.initUserByRoleDataSource(this.searchUsernameValue); // โหลด DataSource ใหม่
-    this.refreshGrid();                   // รีเฟรช DataGrid
+    this.initUserByRoleDataSource(this.searchUsernameValue); 
+    this.refreshGrid();                   
   }
 
   onMapDetailPopupShow(data: any) {
@@ -109,7 +112,6 @@ export class MapUserCategoriesComponent implements OnInit {
       });
   }
 
-  onChange(e: any) { this.userMapCategories.categories = e.value; }
 
   getViewUserDetail(data: any) {
     const id = data.userId;
@@ -119,6 +121,7 @@ export class MapUserCategoriesComponent implements OnInit {
     this.loadUserCategories(id);
     this.loadCategoriesDropdown();
   }
+
   loadUserCategories(userId: number) {
     this.service.getCategoriesForUser(userId)
       .pipe(catchError(err => {
@@ -129,6 +132,7 @@ export class MapUserCategoriesComponent implements OnInit {
         this.viewUserDetail = res.categoriesText?.split(',').map((item: string) => item.trim()) || [];
       });
   }
+
   loadCategoriesDropdown() {
     this.dropDownService.getUserMapCategoriesDropDown()
       .pipe(catchError(err => {

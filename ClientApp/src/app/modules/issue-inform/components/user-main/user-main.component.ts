@@ -21,95 +21,71 @@ import Swal from 'sweetalert2';
 })
 export class UserMainComponent implements OnInit {
 
-  // =================== DataSources ===================
   openFormsDataSource!: DataSource;
   closedFormsDataSource!: DataSource;
 
-  // =================== Search / Filters ===================
+
   documentNumberSearch: string | null = null;
   productName: string | null = null;
   categoriesSearchId: string | null = null;
   statusCodeSearchText: string | null = null;
   startDate: Date | null = null;;
   endDate: Date | null = null;;
-  taskDetailCache:
-    { [formId: number]: USP_Query_FormTaskDetailResult[] } = {};
-
-
+  taskDetailCache: { [formId: number]: USP_Query_FormTaskDetailResult[] } = {};
   categoriesCheckBoxItem: CheckboxList<number>[] = [];
   statusCheckBoxItem: CheckboxList<string>[] = [];
 
-
   @ViewChild('openFormGrid', { static: false }) openFormGrid!: DxDataGridComponent;
   @ViewChild('closedFormGrid', { static: false }) closedFormGrid!: DxDataGridComponent;
+  
   constructor(
     private informTaskService: InformTaskService,
     private checkboxService: CheckboxService,
     private router: Router
   ) { }
 
-  // =================== Init ===================
   ngOnInit(): void {
-
     this.initOpenFormsDataSource()
     this.initClosedFormsDataSource()
-    this.loadCategories();
-
-    this.loadStatusCode();
+    this.initCategoriesCheckBox();
+    this.initStatusCheckBox();
   }
 
   onDocumentChange(e: any) {
     this.documentNumberSearch = e
     this.refreshGrid()
-
   }
   onProductNameChange(e: any) {
     this.productName = e
     this.refreshGrid()
-
-
-
   }
 
   onCategoriesCheck(e: any) {
     const selectedItems = e
       .filter((item: any) => item.selected)
       .map((item: any) => item.value);
-
     this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
     this.refreshGrid()
-
-
   }
 
   onStatusCodeCheck(e: any) {
     const selectedItems = e
       .filter((item: any) => item.selected)
       .map((item: any) => item.value);
-
     this.statusCodeSearchText = selectedItems.length > 0 ? selectedItems.join(',') : null;
     this.refreshGrid()
-
-
-
   }
 
   onStartDateChange(e: any) {
     this.startDate = e.value;
     this.refreshGrid()
-
-
-
   }
   onEndDateChange(e: any) {
     this.endDate = e.value
     this.refreshGrid()
-
   }
 
-
-  // =================== Load CheckBox ===================
-  async loadCategories(): Promise<void> {
+  async initCategoriesCheckBox(): Promise<void> {
     try {
       const res = await firstValueFrom(
         this.checkboxService.getCategoriesCheckBoxItem()
@@ -120,7 +96,7 @@ export class UserMainComponent implements OnInit {
     }
   }
 
-  async loadStatusCode() {
+  async initStatusCheckBox() {
     try {
       const res = await firstValueFrom(this.checkboxService.getStatusCodeCheckBoxItem()) as CheckboxList<string>[];
       this.statusCheckBoxItem = res;
@@ -129,9 +105,6 @@ export class UserMainComponent implements OnInit {
     }
   }
 
-
-
-  // =================== Load Status ===================
   getStatusClass(status: string): string {
     switch (status) {
       case 'Draft': return 'text-gray-500 font-bold';
@@ -144,12 +117,9 @@ export class UserMainComponent implements OnInit {
     }
   }
 
-  // =================== Load Data ===================
   initOpenFormsDataSource() {
     this.openFormsDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
-
-
         const newLoad: DevExtremeParam<QueryUserForm> = {
           searchCriteria: {
             docNo: this.documentNumberSearch,
@@ -161,7 +131,6 @@ export class UserMainComponent implements OnInit {
           },
           loadOption: loadOptions
         };
-
 
         return this.informTaskService.getUnsuccessInform(newLoad, 'Open')
           .pipe(catchError(err => { return err }))
@@ -173,8 +142,6 @@ export class UserMainComponent implements OnInit {
   initClosedFormsDataSource() {
     this.closedFormsDataSource = new DataSource({
       load: (loadOptions: LoadOptions) => {
-
-
         const newLoad: DevExtremeParam<QueryUserForm> = {
           searchCriteria: {
             docNo: this.documentNumberSearch,
@@ -187,23 +154,18 @@ export class UserMainComponent implements OnInit {
           loadOption: loadOptions
         };
 
-
         return this.informTaskService.getUnsuccessInform(newLoad, 'Closed')
           .pipe(catchError(err => { return err }))
           .toPromise()
       }
     });
   }
-  // work
+
   onDetailGridContentReady(e: any, formId: number) {
     const detailGrid = e.component;
-
     if (this.taskDetailCache[formId]) {
       return;
     }
-
-
-
     const allTask: USP_Query_FormTaskDetailResult[] = Object.values(this.taskDetailCache).flat();
     const newLoad: DevExtremeParam<QueryUserFormDetail> = {
       searchCriteria: {
@@ -219,11 +181,7 @@ export class UserMainComponent implements OnInit {
         })
       )
       .subscribe((res: any) => {
-
         this.taskDetailCache[formId] = res?.data ?? [];
-
-
-        // กำหนด DataSource ให้ detail grid
         detailGrid.option('dataSource', this.taskDetailCache[formId]);
       });
   }
@@ -257,29 +215,19 @@ export class UserMainComponent implements OnInit {
             text: `ปิดงาน ${data.docNo} เสำเร็จแล้ว`,
             icon: "success"
           });
-          // this.initClosedFormsDataSource()
         })
-
-
-
-
       }
-
       return
     });
   }
-  //endwork
 
   onEditClicked(data: USP_Query_IssueFormsResult) {
-
     this.router.navigate([`${UserRoute.UserEditFormFullPath}/${data.formId}`])
   }
 
   refreshGrid() {
     this.openFormGrid.instance.refresh()
-
     this.closedFormGrid.instance.refresh()
-
   }
 
   onFormDeleteClicked(data: any) {
@@ -292,8 +240,8 @@ export class UserMainComponent implements OnInit {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes"
     }).then((result) => {
-      if (result.isConfirmed) {
 
+      if (result.isConfirmed) {
         this.informTaskService.deleteInformTask(data).pipe(catchError(err => {
           Swal.fire({
             position: "center",
@@ -303,8 +251,8 @@ export class UserMainComponent implements OnInit {
             timer: 2000
           });
           return err
-        })).subscribe((res: any) => {
 
+        })).subscribe((res: any) => {
           Swal.fire({
             position: "center",
             icon: "success",
@@ -312,21 +260,10 @@ export class UserMainComponent implements OnInit {
             showConfirmButton: false,
             timer: 2000
           });
-
-
           this.refreshGrid()
-
         })
       }
-
       return
     });
-
   }
-
-
-  // =================== Method ===================
-
-
-
 }
