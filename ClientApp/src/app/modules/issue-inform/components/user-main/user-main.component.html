@@ -1,5 +1,5 @@
 <app-head-underline [title]="'User Form'"></app-head-underline>
-<div class="flex justify-between max-w-full ml-10 mr-10 items- search-box">
+<div class="flex justify-start max-w-full ml-10 mr-10 items- search-box">
   <div class="gap-4 space-y-4 text-end text-box">
 
     <div class="flex items-center">
@@ -9,6 +9,7 @@
           [placeHolder]="'Document Number'">
         </app-text-box>
       </div>
+
     </div>
 
     <div class="flex items-center">
@@ -20,54 +21,49 @@
       </div>
     </div>
 
+    <div class="flex items-center">
+      <label class="w-40 mr-2 font-bold">Start Date</label>
+      <dx-date-box [value]="startDate!" (onValueChanged)="onStartDateChange($event)" displayFormat="dd/MM/yyyy"
+        type="date" placeholder="Start Date" width="200">
+      </dx-date-box>
+    </div>
+
+    <div class="flex items-center">
+      <label class="w-40 mr-2 font-bold">End Date</label>
+
+      <dx-date-box [value]="endDate!" (onValueChanged)="onEndDateChange($event)" displayFormat="dd/MM/yyyy" type="date"
+        placeholder="End Date" width="200">
+      </dx-date-box>
+    </div>
+
   </div>
 
-  <div class="flex flex-col ">
-    <!-- <div class="grid grid-col-2 text-end check-box">
-      <label for="check-box" class="w-40 font-bold">Categories</label>
-      <app-check-box [options]="categoriesCheckBoxItem" (optionsChange)="onCategoriesCheck($event)">
-      </app-check-box>
-    </div> -->
-
-    <div  class="flex items-center text-start text-end check-box">
+  <div class="ml-10">
+    <div class="flex items-center text-start text-end check-box">
       <label for="check-box" class="w-20 mr-2 font-bold">Categories</label>
       <app-check-box [options]="categoriesCheckBoxItem" (optionsChange)="onCategoriesCheck($event)">
       </app-check-box>
     </div>
 
-    <div  class="flex items-start mt-10 text-end check-box">
+    <div class="flex items-start mt-10 text-end check-box">
       <label for="check-box" class="w-20 mr-2 font-bold">Status</label>
       <app-check-box [options]="statusCheckBoxItem" (optionsChange)="onStatusCodeCheck($event)">
       </app-check-box>
     </div>
-
   </div>
 
 
 
 
-  <div class="flex items-start gap-3 btns">
-    <div class="flex items-center gap-3">
-      <dx-date-box [value]="startDate!" (onValueChanged)="onStartDateChange($event)" displayFormat="dd/MM/yyyy"
-        type="date" placeholder="Start Date" width="200">
-      </dx-date-box>
-
-      <dx-date-box [value]="endDate!" (onValueChanged)="onEndDateChange($event)" displayFormat="dd/MM/yyyy"
-        type="date" placeholder="End Date" width="200">
-      </dx-date-box>
-    </div>
-
-  </div>
 </div>
+
+
 <!-- (onRowExpanding)="onMasterDetailRowExpanding($event.key.formId)"  -->
 <div class="gap-y-8 p-14">
   <app-head-underline [title]="'Open Issues'"></app-head-underline>
   <div class="mx-10 my-5">
     <dx-data-grid #openFormGrid [dataSource]="openFormsDataSource" keyExpr="formId" [showBorders]="true"
-      [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" 
-      [paging]="{ enabled: true, pageSize: 5 }"
-      
-      >
+      [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
 
       <dxo-paging [pageSize]="5"></dxo-paging>
       <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
@@ -87,18 +83,12 @@
 
       <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"></dxi-column>
 
-      <!-- Action Buttons Master Grid -->
-      <!-- <dxi-column dataField="canEditDelete" type="buttons" *ngIf="'canEditDelete'">
-        <dxi-button text="Edit" icon="edit"></dxi-button>
-        <dxi-button text="Delete" icon="trash"></dxi-button>
-      </dxi-column> -->
-
       <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
       <div *dxTemplate="let detail of 'actionCell'">
-        <div *ngIf="detail.data.canEdit" class="flex justify-center space-x-2">
+        <div *ngIf="!detail.data.canClose" class="flex justify-center space-x-2">
           <app-button (clicked)="onEditClicked(detail.data)" [color]="'yellow'" [message]="'Edit'"></app-button>
-          <app-button [color]="'red'" [message]="'Delete'"></app-button>
+          <app-button (clicked)="onFormDeleteClicked(detail.data)" [color]="'red'" [message]="'Delete'"></app-button>
         </div>
 
         <div *ngIf="detail.data.canClose">
@@ -108,9 +98,6 @@
 
       </div>
 
-      <!-- [dataSource]="getDetailDataSource(masterData.data.formId)" -->
-      <!-- (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" -->
-      <!-- Master-Detail Template -->
       <div *dxTemplate="let masterData of 'unsuccessDetail'">
         <dx-data-grid (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" [showBorders]="true"
           [columnAutoWidth]="true">
@@ -127,66 +114,61 @@
               {{ cell.data.status }}
             </span>
           </div>
-
-
         </dx-data-grid>
       </div>
     </dx-data-grid>
   </div>
 
 
-
-  <div class="my-8">
+  <div class="my-24">
 
     <app-head-underline [title]="'Closed Issues'"></app-head-underline>
 
-    <div class="mx-10 my-5">
-      <dx-data-grid [dataSource]="closedFormsDataSource" keyExpr="formId" [showBorders]="true"
-        [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
+    <dx-data-grid #openFormGrid [dataSource]="closedFormsDataSource" keyExpr="formId" [showBorders]="true"
+      [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
 
-        <dxo-paging [pageSize]="5"></dxo-paging>
-        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
+      <dxo-paging [pageSize]="5"></dxo-paging>
+      <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5,10,20]" [showInfo]="true"></dxo-pager>
 
-        <dxi-column alignment="center" dataField="docNo" caption="Document Number"></dxi-column>
+      <dxi-column alignment="center" dataField="docNo" caption="Document Number"></dxi-column>
 
-        <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
-        <div *dxTemplate="let cell of 'statusCell'">
-          <span [ngClass]="getStatusClass(cell.data.status)">
-            {{ cell.data.status }}
-          </span>
-        </div>
+      <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
+      <div *dxTemplate="let cell of 'statusCell'">
+        <span [ngClass]="getStatusClass(cell.data.status)">
+          {{ cell.data.status }}
+        </span>
+      </div>
 
-        <dxi-column alignment="center" dataField="progressing" caption="Progressing"></dxi-column>
+      <dxi-column alignment="center" dataField="progressing" caption="Progressing"></dxi-column>
 
-        <dxi-column alignment="center" dataField="modifiedBy" caption="Modified By"></dxi-column>
+      <dxi-column alignment="center" dataField="modifiedBy" caption="Modified By"></dxi-column>
 
-        <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"></dxi-column>
+      <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"></dxi-column>
 
-
-
-        <!-- [dataSource]="getDetailDataSource(masterData.data.formId)" -->
-        <!-- (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" -->
-        <!-- Master-Detail Template -->
-        <div *dxTemplate="let masterData of 'unsuccessDetail'">
-          <dx-data-grid [showBorders]="true"
-            [columnAutoWidth]="true">
-            <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
-            <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
-            <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
-            <dxi-column alignment="center" dataField="location" caption="Location"></dxi-column>
-            <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"></dxi-column>
+      <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
 
-            <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
-            <div *dxTemplate="let cell of 'statusCell'">
-              <span [ngClass]="getStatusClass(cell.data.status)">
-                {{ cell.data.status }}
-              </span>
-            </div>
+
+      <div *dxTemplate="let masterData of 'unsuccessDetail'">
+        <dx-data-grid (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" [showBorders]="true"
+          [columnAutoWidth]="true">
+          <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
+          <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
+          <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
+          <dxi-column alignment="center" dataField="location" caption="Location"></dxi-column>
+          <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"></dxi-column>
 
 
-          </dx-data-grid>
-        </div>
-      </dx-data-grid>
-    </div>
+          <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
+          <div *dxTemplate="let cell of 'statusCell'">
+            <span [ngClass]="getStatusClass(cell.data.status)">
+              {{ cell.data.status }}
+            </span>
+          </div>
+        </dx-data-grid>
+      </div>
+    </dx-data-grid>
   </div>
+
+
+</div>

@@ -12,6 +12,7 @@ import CustomStore from 'devextreme/data/custom_store';
 import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
 import { Router } from '@angular/router';
 import { UserRoute } from 'src/app/constants/routes.const';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-main',
@@ -40,10 +41,11 @@ export class UserMainComponent implements OnInit {
 
 
   @ViewChild('openFormGrid', { static: false }) openFormGrid!: DxDataGridComponent;
+  @ViewChild('closedFormGrid', { static: false }) closedFormGrid!: DxDataGridComponent;
   constructor(
     private informTaskService: InformTaskService,
     private checkboxService: CheckboxService,
-    private router:Router
+    private router: Router
   ) { }
 
   // =================== Init ===================
@@ -58,14 +60,12 @@ export class UserMainComponent implements OnInit {
 
   onDocumentChange(e: any) {
     this.documentNumberSearch = e
-    // this.initOpenFormsDataSource()
-    this.openFormGrid.instance.refresh()
+    this.refreshGrid()
 
   }
   onProductNameChange(e: any) {
     this.productName = e
-    // this.initOpenFormsDataSource()
-        this.openFormGrid.instance.refresh()
+    this.refreshGrid()
 
 
 
@@ -77,8 +77,7 @@ export class UserMainComponent implements OnInit {
       .map((item: any) => item.value);
 
     this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    // this.initOpenFormsDataSource()
-        this.openFormGrid.instance.refresh()
+    this.refreshGrid()
 
 
   }
@@ -89,24 +88,22 @@ export class UserMainComponent implements OnInit {
       .map((item: any) => item.value);
 
     this.statusCodeSearchText = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    // this.initOpenFormsDataSource()
-        this.openFormGrid.instance.refresh()
+    this.refreshGrid()
 
 
 
   }
 
   onStartDateChange(e: any) {
-    this.startDate = e.value
-    // this.initOpenFormsDataSource()
-        this.openFormGrid.instance.refresh()
+    this.startDate = e.value;
+    this.refreshGrid()
+
 
 
   }
   onEndDateChange(e: any) {
     this.endDate = e.value
-    // this.initOpenFormsDataSource()
-        this.openFormGrid.instance.refresh()
+    this.refreshGrid()
 
   }
 
@@ -139,9 +136,10 @@ export class UserMainComponent implements OnInit {
     switch (status) {
       case 'Draft': return 'text-gray-500 font-bold';
       case 'Rejected': return 'text-red-600 font-bold';
-      case 'Submit': return 'text-yellow-600 font-bold';
+      case 'Submit': return 'text-blue-600 font-bold';
       case 'InProgress': return 'text-yellow-600 font-bold';
       case 'Done': return 'text-green-600 font-bold';
+      case 'Closed': return 'text-green-600 font-bold';
       default: return 'text-gray-600';
     }
   }
@@ -230,41 +228,101 @@ export class UserMainComponent implements OnInit {
       });
   }
 
-
-  // public getDataSourceById(formId: number) {
-
-  //   // console.log(formId);
-    
-  //   var temp = this.taskDetailCache[formId] ?? []
-
-  //   return this.taskDetailCache[formId]
-  // }
-
-
   onCloseFormClicked(data: any) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `ต้องการปิดงาน ${data.docNo} ใช่หรือไม่`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.informTaskService.closeInformTask(data).pipe(catchError(err => {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: `${err?.error?.messages.time ?? "มีบางอย่างผิดพลาด"} "`,
+            showConfirmButton: false,
+            timer: 2000
+          });
+
+          return err
+        })).subscribe((res: any) => {
+          this.refreshGrid()
+
+          return Swal.fire({
+            title: "สำเร็จ !",
+            text: `ปิดงาน ${data.docNo} เสำเร็จแล้ว`,
+            icon: "success"
+          });
+          // this.initClosedFormsDataSource()
+        })
 
 
-    console.log("data", data);
 
-    return this.informTaskService.closeInformTask(data).pipe(catchError(err => {
 
-      return err
-    })).subscribe((res: any) => {
+      }
 
-      // this.initOpenFormsDataSource()
-          this.openFormGrid.instance.refresh()
-
-      this.initClosedFormsDataSource()
-    })
-
+      return
+    });
   }
   //endwork
 
-  onEditClicked(data :USP_Query_IssueFormsResult ){
-    
+  onEditClicked(data: USP_Query_IssueFormsResult) {
+
     this.router.navigate([`${UserRoute.UserEditFormFullPath}/${data.formId}`])
   }
 
+  refreshGrid() {
+    this.openFormGrid.instance.refresh()
+
+    this.closedFormGrid.instance.refresh()
+
+  }
+
+  onFormDeleteClicked(data: any) {
+    Swal.fire({
+      title: "Are you sure?",
+      text: `ต้องการลบงาน ${data.docNo} ใช่หรือไม่`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes"
+    }).then((result) => {
+      if (result.isConfirmed) {
+
+        this.informTaskService.deleteInformTask(data).pipe(catchError(err => {
+          Swal.fire({
+            position: "center",
+            icon: "warning",
+            title: err?.error?.messages?.item ?? "มีบางอย่างผิดพลาด",
+            showConfirmButton: false,
+            timer: 2000
+          });
+          return err
+        })).subscribe((res: any) => {
+
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "ลบงานสำเร็จ",
+            showConfirmButton: false,
+            timer: 2000
+          });
+
+
+          this.refreshGrid()
+
+        })
+      }
+
+      return
+    });
+
+  }
 
 
   // =================== Method ===================
