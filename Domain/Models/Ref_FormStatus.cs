@@ -12,6 +12,4 @@ public partial class Ref_FormStatus
     public string Descriptions { get; set; }
 
     public string UserStatusCode { get; set; }
-
-    public virtual ICollection<IssueForm> IssueForm { get; set; } = new List<IssueForm>();
 }

@@ -12,9 +12,10 @@ namespace Domain.Interfaces
 
         public Task<List<TaskParamViewModel>> ValidateTaskItemsAsync(ValidateTaskParam param);
 
-        public Task<List<TaskParamViewModel>> DeleteTask(ValidateTaskParam param); 
+        public Task<List<TaskParamViewModel>> DeleteTask(ValidateTaskParam param);
 
-       
+        public Task<bool> DeleteForm(USP_Query_IssueFormsResult param);
+
         public Task<IssueFormParam> SaveIssueForm(IssueFormParam param, int formId, string status);
         public Task<bool> CloseForms(USP_Query_IssueFormsResult param);
 

@@ -27,15 +27,26 @@ namespace Domain.Enums
         public const string Done = "Done";
         public const string InProgress = "InProgress";
     }
-    public class TaskStatus
+    public class FormTaskStatus
     {
         public const string Assigned = "Assigned";
-        public const string CancelAssigned = "Submit";
-        public const string CancelCompleted = "Assigned";
-        public const string CancelRejected = "Assigned";
+        public const string CancelAssigned = "CancelAssigned";
+        public const string CancelCompleted = "CancelCompleted";
+        public const string CancelRejected = "CancelRejected";
         public const string Done = "Done";
         public const string Draft = "Draft";
-        public const string Rejected = "Done";
+        public const string Rejected = "Rejected";
         public const string Submit = "Submit";
     }
+    //public class FormTaskStatus
+    //{
+    //    public const string Assigned = "Assigned";
+    //    public const string CancelAssigned = "Submit";
+    //    public const string CancelCompleted = "Assigned";
+    //    public const string CancelRejected = "Assigned";
+    //    public const string Done = "Done";
+    //    public const string Draft = "Draft";
+    //    public const string Rejected = "Done";
+    //    public const string Submit = "Submit";
+    //}
 }

@@ -30,6 +30,4 @@ public partial class IssueForm
     public DateTime? ClosedTime { get; set; }
 
     public virtual ICollection<IssueFormTask> IssueFormTask { get; set; } = new List<IssueFormTask>();
-
-    public virtual Ref_FormStatus SystemStatusCodeNavigation { get; set; }
 }

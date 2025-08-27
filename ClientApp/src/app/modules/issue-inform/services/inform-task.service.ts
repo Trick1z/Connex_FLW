@@ -29,7 +29,9 @@ export class InformTaskService {
   }
 
 
-
+  deleteInformTask(data: USP_Query_IssueFormsResult) {
+    return this.http.post(`${environment.apiUrl}IssueInform/DeleteForm`, data)
+  }
 
   closeInformTask(data: USP_Query_IssueFormsResult) {
     return this.http.post(`${environment.apiUrl}IssueInform/CloseIssueForm`, data)

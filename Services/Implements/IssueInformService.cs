@@ -107,8 +107,8 @@ namespace Services.Implements
                     Quantity = t.Br_Qty,
                     Location = t.Rp_Location,
                     DetectedTime = t.DetectedTime,
-                    CanEdit = t.SystemStatusCode == Domain.Enums.TaskStatus.Draft
-                             || t.SystemStatusCode == Domain.Enums.TaskStatus.Submit,
+                    CanEdit = t.SystemStatusCode == Domain.Enums.FormTaskStatus.Draft
+                             || t.SystemStatusCode == Domain.Enums.FormTaskStatus.Submit,
 
                 }).ToList()
             };
@@ -138,6 +138,7 @@ namespace Services.Implements
             var userId = _claimsService.GetCurrentUserId();
             var dateNow = DateTime.Now;
             var validate = new ValidateException();
+            var genDocNumber = await _genNumberService.GenDocNo("yymmm");
 
             // Validate TaskItems
             if (param.TaskItems.Count == 0)
@@ -160,17 +161,18 @@ namespace Services.Implements
                 // -----------------
                 // CREATE
                 // -----------------
-                var genDocNumber = await _genNumberService.GenDocNo("yymmm");
                 var dbIssueForm = new IssueForm
                 {
                     DocNo = genDocNumber,
                     SystemStatusCode = status,
                     CreatedBy = userId,
                     CreatedTime = dateNow,
-                    ModifiedTime = dateNow
+                    ModifiedTime = dateNow,
+                    SubmitedTime = status == "Submit" ? dateNow : null,
                 };
 
                 int taskSeq = 1;
+
                 foreach (var taskItem in param.TaskItems)
                 {
                     dbIssueForm.IssueFormTask.Add(new IssueFormTask
@@ -189,22 +191,12 @@ namespace Services.Implements
 
                     taskSeq++;
                 }
-
                 _context.IssueForm.Add(dbIssueForm);
-
-
-
                 await _context.SaveChangesAsync();
-                param.FormId = dbIssueForm.FormId;
 
+                param.FormId = dbIssueForm.FormId;
                 CreatedFormAddFormLog(param, userId, dateNow);
                 CreatedFormAddTaskLog(param, userId, dateNow, dbIssueForm);
-
-                await _context.SaveChangesAsync();
-
-
-
-
             }
             else
             {
@@ -216,11 +208,9 @@ namespace Services.Implements
                     .FirstOrDefaultAsync(f => f.FormId == param.FormId);
 
                 CheckDbIssueFormFound(validate, dbIssueForm);
-
                 dbIssueForm.SystemStatusCode = status;
                 dbIssueForm.ModifiedTime = dateNow;
                 dbIssueForm.ModifiedBy = userId;
-
 
 
                 // -----------------
@@ -254,11 +244,12 @@ namespace Services.Implements
                         _context.IssueFormTaskAudit.Add(log);
                     }
 
-                    await _context.SaveChangesAsync();
+                    //await _context.SaveChangesAsync();
 
 
 
                 }
+
 
 
                 // -----------------
@@ -266,10 +257,15 @@ namespace Services.Implements
                 // -----------------
                 foreach (var dsTask in param.TaskItems)
                 {
+
+
                     var logAction = "Edited Task";
+
                     var dbTask = dbIssueForm.IssueFormTask
                         .FirstOrDefault(t => t.TaskSeq == dsTask.TaskSeq);
+
                     int maxTaskSeq = dbIssueForm.IssueFormTask.Any() ? dbIssueForm.IssueFormTask.Max(t => t.TaskSeq) : 0;
+
                     if (dbTask == null)
                     {
                         dbTask = new IssueFormTask
@@ -281,6 +277,12 @@ namespace Services.Implements
                         dbIssueForm.IssueFormTask.Add(dbTask);
 
                         logAction = "Added Task";
+                    }
+
+                    if (dbTask.SystemStatusCode == FormTaskStatus.Assigned)
+                    {
+                        dbIssueForm.SystemStatusCode = DocumentStatus.InProgress;
+                        continue;
                     }
 
                     dbTask.IssueCategoriesId = dsTask.IssueCategoriesId;
@@ -295,10 +297,14 @@ namespace Services.Implements
                     CreatedTaskAddLog(param, userId, dateNow, dsTask, logAction, maxTaskSeq);
                 }
 
-                EdtiedTaskFormAddLog(formId, userId, dateNow);
+
+                _context.IssueForm.Update(dbIssueForm);
+                EditedTaskFormAddLog(formId, userId, dateNow);
 
                 await _context.SaveChangesAsync();
             }
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
 
 
             return param;
@@ -322,7 +328,7 @@ namespace Services.Implements
             _context.IssueFormTaskAudit.Add(log);
         }
 
-        private void EdtiedTaskFormAddLog(int formId, int userId, DateTime dateNow)
+        private void EditedTaskFormAddLog(int formId, int userId, DateTime dateNow)
         {
             var formLog = new IssueFormAudit();
 
@@ -367,32 +373,33 @@ namespace Services.Implements
             }
         }
 
+
+
         public async Task<bool> CloseForms(USP_Query_IssueFormsResult param)
         {
             var validate = new ValidateException();
             var userId = _claimsService.GetCurrentUserId();
             var dateNow = DateTime.Now;
+
             var dbForm = await _context.IssueForm.FirstOrDefaultAsync(x => x.FormId == param.FormId);
 
             CloseFormValidate(param, validate, dbForm);
             ClosedFormUpdated(userId, dateNow, dbForm);
             ClosedFormAddLog(param, userId, dateNow);
 
-            //await _context.SaveChangesAsync();
+
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-                if (ex.InnerException != null)
-                    Console.WriteLine(ex.InnerException.Message);
-                throw; // หรือจัดการ error ตามต้องการ
+                Console.WriteLine(ex.InnerException?.Message);
+                throw;
             }
 
 
-
+            //await _context.SaveChangesAsync();
             return true;
 
         }
@@ -411,8 +418,8 @@ namespace Services.Implements
         {
             dbForm.SystemStatusCode = "Closed";
             dbForm.ModifiedBy = userId;
-            dbForm.ClosedBy = userId;
             dbForm.ModifiedTime = dateNow;
+            dbForm.ClosedBy = userId;
             dbForm.ClosedTime = dateNow;
 
             _context.IssueForm.Update(dbForm);
@@ -446,6 +453,7 @@ namespace Services.Implements
 
             validate.Throw();
         }
+
 
 
 
@@ -730,64 +738,15 @@ namespace Services.Implements
 
             IsLatestData(param, validate, userTaskSeq);
             await UpdateTask(param, userTaskSeq, dateNow, status, userId);
-            await UpdateFormStatusCode(validate, userTaskSeq, dateNow, userId, param.FormId ?? 0);
             AddLog(userId, userTaskSeq, dateNow, status);
 
+            await UpdateFormStatus(param, dateNow,userId);
             await _context.SaveChangesAsync();
 
             //Updateform 
 
 
             return true;
-        }
-
-        private async Task UpdateFormStatusCode(ValidateException validate, IssueFormTask? userTaskSeq, DateTime dateNow, int userId, int formId)
-        {
-            if (userTaskSeq == null)
-            {
-                validate.Add("task", "ไม่พบข้อมูล");
-                validate.Throw();
-                return;
-            }
-
-            var issueForm = await _context.IssueForm
-                .FirstOrDefaultAsync(x => x.FormId == userTaskSeq.FormId);
-
-            if (issueForm == null)
-            {
-                validate.Add("form", "ไม่พอมฟอร์ม");
-                validate.Throw();
-                return;
-            }
-
-            // เช็คว่า Form ลูกทั้งหมด Done หรือ Rejected
-            bool areAllTaskDone = await _context.IssueFormTask
-                .Where(t => t.FormId == issueForm.FormId)
-                .AllAsync(t => t.SystemStatusCode == "Done" || t.SystemStatusCode == "Rejected");
-
-
-            //var statusList = new[] { "Assigned", "Done", "Rejected" };
-            //var AnyTaskAssigned = await _context.IssueFormTask
-            //    .FirstOrDefaultAsync(x => statusList.Contains(x.SystemStatusCode)
-            //                              && x.FormId == formId);
-
-            //if (AnyTaskAssigned != null)
-            //{
-            //    issueForm.SystemStatusCode = "Assigned";
-            //    issueForm.DoneTime = null;
-            //}
-
-            if (areAllTaskDone)
-            {
-
-                issueForm.SystemStatusCode = "Done";
-                issueForm.DoneTime = dateNow;
-                issueForm.ClosedBy = userId;
-                issueForm.ClosedTime = dateNow;
-            }
-
-
-
         }
 
 
@@ -801,44 +760,75 @@ namespace Services.Implements
 
             if (!string.IsNullOrWhiteSpace(param.RejectReason))
                 userTaskSeq.RejectReason = param.RejectReason;
-
             userTaskSeq.SystemStatusCode = userStatusCode;
             userTaskSeq.ModifiedTime = dateNow;
 
-            if (status == "Done" || status == "Rejected")
+            if (status == FormTaskStatus.Done || status == FormTaskStatus.Rejected)
             {
+                await UpdateFormStatus(param, dateNow, userId);
                 userTaskSeq.DoneTime = dateNow;
                 userTaskSeq.Br_Qty = param.Br_Qty;
-
             }
 
-            if (status == "Assigned")
+            if (status == FormTaskStatus.Assigned)
             {
+                await UpdateFormStatus(param, dateNow, userId);
                 userTaskSeq.AssignedTime = dateNow;
                 userTaskSeq.AssignedTo = userId;
-
             }
-            if (status == "CancelAssigned")
+            if (status == FormTaskStatus.CancelAssigned)
             {
+                await UpdateFormStatus(param, dateNow, userId);
+
                 userTaskSeq.AssignedTo = userId;
                 userTaskSeq.AssignedTime = null;
-
             }
 
-            if (status == "CancelCompleted")
+            if (status == FormTaskStatus.CancelCompleted)
             {
+                await UpdateFormStatus(param, dateNow, userId);
                 userTaskSeq.DoneTime = null;
                 userTaskSeq.AssignedTo = userId;
                 userTaskSeq.AssignedTime = dateNow;
 
             }
 
-
-
-
-
             _context.IssueFormTask.Update(userTaskSeq);
             await _context.SaveChangesAsync();
+        }
+
+        private async Task UpdateFormStatus(USP_Query_FormTasksByStatusResult param, DateTime dateNow,int userId)
+        {
+            var tasks = await _context.IssueFormTask
+                                      .Where(w => w.FormId == param.FormId)
+                                      .Select(s => s.SystemStatusCode)
+                                      .ToListAsync();
+
+            if (!tasks.Any())
+                return; // ไม่มี Task ไม่ต้องอัพเดตสถานะ
+
+            var dbIssueForm = await _context.IssueForm.FirstOrDefaultAsync(x => x.FormId == param.FormId);
+            if (dbIssueForm == null)
+                return;
+
+            if (tasks.All(x => x == FormTaskStatus.Done  || x == FormTaskStatus.Done))
+            {
+                dbIssueForm.SystemStatusCode = DocumentStatus.Done;
+                dbIssueForm.DoneTime = dateNow;
+            }
+            else if (tasks.All(x => x == FormTaskStatus.Submit))
+            {
+                dbIssueForm.SystemStatusCode = DocumentStatus.Submit;
+            }
+            else if (tasks.Any(x => x == FormTaskStatus.Assigned
+                                 || x == FormTaskStatus.Done
+                                 || x == FormTaskStatus.Rejected))
+            {
+                dbIssueForm.SystemStatusCode = DocumentStatus.InProgress;
+            }
+
+            dbIssueForm.ModifiedTime = dateNow;
+            dbIssueForm.ModifiedBy = userId;
         }
 
         private async Task AddLog(int userId, IssueFormTask? userTaskSeq, DateTime dateNow, string status)
@@ -888,6 +878,39 @@ namespace Services.Implements
 
             return true;
         }
+
+        public async Task<bool> DeleteForm(USP_Query_IssueFormsResult param)
+        {
+            var validate = new ValidateException();
+
+            bool canNotDelete = await _context.IssueFormTask.AnyAsync(x => x.FormId == param.FormId
+            && (x.SystemStatusCode == FormTaskStatus.Done || x.SystemStatusCode == FormTaskStatus.Rejected || x.SystemStatusCode == FormTaskStatus.Assigned));
+
+            if (canNotDelete)
+            {
+                validate.Add("item", "มีคนกำลังทำงานไม่สามารถลบได้");
+                validate.Throw();
+            }
+
+            var form = await _context.IssueForm
+                .Include(f => f.IssueFormTask)
+                .FirstOrDefaultAsync(x => x.FormId == param.FormId);
+
+            if (form != null)
+            {
+                _context.IssueFormTask.RemoveRange(form.IssueFormTask);
+                _context.IssueForm.Remove(form);
+                await _context.SaveChangesAsync();
+            }
+            else {
+                validate.Add("form", "ไม่พบข้อมูล");
+                validate.Throw();
+            }
+
+                return true;
+        }
+
+
     }
 
 

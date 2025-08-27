@@ -31,14 +31,14 @@ namespace MyAPI.Controllers.IssueForm
         }
 
         [HttpPost("SaveDraftIssueForm/{formId}")]
-        public async Task<IActionResult> SaveDraftIssueForm(IssueFormParam param, int formId, string status)
+        public async Task<IActionResult> SaveDraftIssueForm(IssueFormParam param, int formId)
         {
             return Ok(await _issueInformService.SaveIssueForm(param, formId, "Draft"));
         }
 
 
         [HttpPost("SaveSubmitIssueForm/{formId}")]
-        public async Task<IActionResult> SaveSubmitIssueForm(IssueFormParam param, int formId, string status)
+        public async Task<IActionResult> SaveSubmitIssueForm(IssueFormParam param, int formId)
         {
             return Ok(await _issueInformService.SaveIssueForm(param, formId, "Submit"));
         }
@@ -51,6 +51,11 @@ namespace MyAPI.Controllers.IssueForm
         public async Task<IActionResult> CloseIssueForm(USP_Query_IssueFormsResult param)
         {
             return Ok(await _issueInformService.CloseForms(param));
+        }
+        [HttpPost("DeleteForm")]
+        public async Task<IActionResult> DeleteIssueForm(USP_Query_IssueFormsResult param)
+        {
+            return Ok(await _issueInformService.DeleteForm(param));
         }
 
         [HttpGet("GetIssueForm/{formId}")]

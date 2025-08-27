@@ -120,10 +120,6 @@ public partial class MYGAMEContext : DbContext
             entity.Property(e => e.SystemStatusCode)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-
-            entity.HasOne(d => d.SystemStatusCodeNavigation).WithMany(p => p.IssueForm)
-                .HasForeignKey(d => d.SystemStatusCode)
-                .HasConstraintName("FK_Form_Status");
         });
 
         modelBuilder.Entity<IssueFormAudit>(entity =>
