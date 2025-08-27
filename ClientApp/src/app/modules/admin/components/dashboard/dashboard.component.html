@@ -10,19 +10,21 @@
     <dx-data-grid class="flex m-10 max-w-max " [dataSource]="assignment" [showBorders]="true" [columnAutoWidth]="true">
 
 
+        <dxo-paging [pageSize]="5" [pageIndex]="0">
+        </dxo-paging>
+
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
+        </dxo-pager>
+
         <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
         </dxo-paging>
 
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
         </dxo-pager>
 
-
         <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
             [groupPaging]="false">
         </dxo-remote-operations>
-
-        <!-- <dxo-search-panel [visible]="true" [width]="240" placeholder="Search..."></dxo-search-panel> -->
-
 
         <dxi-column dataField="docNo" caption="docNo" width="80" alignment="center"></dxi-column>
         <dxi-column dataField="issueCategoriesName" caption="issueCategoriesName" minWidth="150"
@@ -40,47 +42,51 @@
     </dx-data-grid>
 
 
+
+
 </div>
 
 
 
-<div class="mx-10 mt-10">
+<div class="m-10 my-10">
     <app-head-underline [title]="'Work Load'"></app-head-underline>
-    <dx-data-grid class="flex m-10 max-w-max " [dataSource]="assignment" [showBorders]="true" [columnAutoWidth]="true">
 
+    <div class="flex max-w-sm my-6 search-box">
+        <label class="mr-4 font-bold" for="searchBox">Search Username</label>
+        <app-text-box #searchBox (onValueChanged)="onSearchBoxValueChange($event)" [value]="searchUsernameValue"
+            [placeHolder]="'Search...'"></app-text-box>
+    </div>
+
+    <dx-data-grid #workLoadGrid [dataSource]="workLoadDataSource" [showBorders]="true" [columnAutoWidth]="true"
+        [rowAlternationEnabled]="true">
 
         <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
         </dxo-paging>
-
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
         </dxo-pager>
-
-
         <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
             [groupPaging]="false">
         </dxo-remote-operations>
 
-        <!-- <dxo-search-panel [visible]="true" [width]="240" placeholder="Search..."></dxo-search-panel> -->
 
+        <dxi-column dataField="username" caption="User"></dxi-column>
+        <dxi-column dataField="canAssigned" caption="Can Assigned"></dxi-column>
+        <dxi-column dataField="totalAssigned" caption="Total Assigned"></dxi-column>
 
-        <dxi-column dataField="docNo" caption="docNo" width="80" alignment="center"></dxi-column>
-        <dxi-column dataField="issueCategoriesName" caption="issueCategoriesName" minWidth="150"
-            alignment="left"></dxi-column>
-        <dxi-column dataField="productName" caption="productName" minWidth="150" alignment="center"></dxi-column>
-        <dxi-column dataField="qty" caption="qty" minWidth="150" alignment="center"></dxi-column>
-        <dxi-column dataField="location" caption="location" minWidth="150" alignment="center"></dxi-column>
-        <dxi-column dataField="timeToFound" caption="timeToFound" minWidth="150" alignment="center"></dxi-column>
-        <dxi-column dataField="img" caption="img" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column  caption="Borrow">
+            <dxi-column dataField="borrowSubmit" caption="Submit"></dxi-column>
+            <dxi-column dataField="borrowAssigned" caption="Assigned"></dxi-column>
+        </dxi-column>
 
-        <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
-            alignment="center">
+        <dxi-column caption="Repair">
+            <dxi-column dataField="repairSubmit" caption="Submit"></dxi-column>
+            <dxi-column dataField="repairAssigned" caption="Assigned"></dxi-column>
+        </dxi-column>
+
+        <dxi-column caption="Program">
+            <dxi-column dataField="programSubmit" caption="Submit"></dxi-column>
+            <dxi-column dataField="programAssigned" caption="Assigned"></dxi-column>
         </dxi-column>
 
     </dx-data-grid>
-</div>
-
-
-<div class="mx-10 mt-10">
-
-    <h1>some graph</h1>
 </div>
