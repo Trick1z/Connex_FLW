@@ -27,6 +27,8 @@ export class UserAddTaskComponent implements OnInit {
   originalData: InformTask | null = null;
   selectedEditIssueType: string | null = null;
 
+  popupButtonText : string = "Create";
+
   createTaskErrorMessage: any = {
     form: '',
     categories: '',
@@ -106,6 +108,7 @@ export class UserAddTaskComponent implements OnInit {
   }
 
   async onClickEditItem(item: any) {
+    this.popupButtonText = item.id == null ? 'Create' : 'Save'
     this.titlePopup = item.id == null ? 'Create New Task' : 'Edit Task';
     await this.getCategoriesDropDown();
     await this.getEditProductDropDown(item.issueCategoriesId);

@@ -17,13 +17,13 @@
   <div class="error">
     <div *ngIf="createTaskErrorMessage.form"
       class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
-      <p >⚠ {{ createTaskErrorMessage.form }}</p>
+      <p>⚠ {{ createTaskErrorMessage.form }}</p>
       <!-- *ngFor="let errorItem of   createTaskErrorMessage.form " -->
     </div>
 
     <div *ngIf="createTaskErrorMessage.task"
       class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
-      <p >⚠ {{ createTaskErrorMessage.task }}</p>
+      <p>⚠ {{ createTaskErrorMessage.task }}</p>
     </div>
   </div>
   <dx-data-grid [dataSource]="dataValidatedDataSource" keyExpr="id" [showBorders]="true"
@@ -126,11 +126,18 @@
     </div>
 
     <!-- Button -->
-    <div class="flex justify-start pt-4 ml-40">
-      <dx-button text="Create" type="success" (onClick)="onValidateData()">
-      </dx-button>
+    <div class="">
+
+
+      <div *ngIf="createTaskErrorMessage.item"
+        class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg ">
+        ⚠ {{ createTaskErrorMessage.item }}
+      </div>
+      <div class="flex justify-start pt-4 ml-40">
+        <dx-button [text]="popupButtonText" type="success" (onClick)="onValidateData()">
+        </dx-button>
+      </div>
     </div>
 
   </div>
 </dx-popup>
-
