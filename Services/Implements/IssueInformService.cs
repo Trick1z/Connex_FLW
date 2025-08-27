@@ -1,4 +1,5 @@
 ﻿using Braintree;
+using Domain.Enums;
 using Domain.Exceptions;
 using Domain.Exceptions;
 using Domain.Interfaces;
@@ -40,12 +41,12 @@ namespace Services.Implements
         }
 
 
-        public async Task<QueryViewModel<USP_Query_IssueFormsResult>> QueryForms(DevExtremeParam<QueryUserForm> param ,string formStatus )
+        public async Task<QueryViewModel<USP_Query_IssueFormsResult>> QueryForms(DevExtremeParam<QueryUserForm> param, string formStatus)
         {
 
-            var result = await _context.Procedures.USP_Query_IssueFormsAsync(param.SearchCriteria.DocNo, formStatus, param.SearchCriteria.ProductName ,
-                param.SearchCriteria.Categories,param.SearchCriteria.StatusCode,param.SearchCriteria.StartDate,param.SearchCriteria.EndDate ,
-                param.LoadOption.Skip,param.LoadOption.Take,param.SortField, param.SortBy);
+            var result = await _context.Procedures.USP_Query_IssueFormsAsync(param.SearchCriteria.DocNo, formStatus, param.SearchCriteria.ProductName,
+                param.SearchCriteria.Categories, param.SearchCriteria.StatusCode, param.SearchCriteria.StartDate, param.SearchCriteria.EndDate,
+                param.LoadOption.Skip, param.LoadOption.Take, param.SortField, param.SortBy);
 
 
             var data = new QueryViewModel<USP_Query_IssueFormsResult>();
@@ -54,10 +55,10 @@ namespace Services.Implements
             return data;
         }
 
-        public async Task<QueryViewModel<USP_Query_FormTaskDetailResult>> GetFormsDetail(DevExtremeParam<QueryUserFormDetail>  param)
+        public async Task<QueryViewModel<USP_Query_FormTaskDetailResult>> GetFormsDetail(DevExtremeParam<QueryUserFormDetail> param)
         {
 
-            var result = await _context.Procedures.USP_Query_FormTaskDetailAsync(param.SearchCriteria.FormId , param.LoadOption.Skip
+            var result = await _context.Procedures.USP_Query_FormTaskDetailAsync(param.SearchCriteria.FormId, param.LoadOption.Skip
                 , param.LoadOption.Take, param.SortField, param.SortBy);
 
             if (param.SearchCriteria.DataSource == null)
@@ -73,7 +74,7 @@ namespace Services.Implements
 
 
 
-        
+
         public async Task<IssueFormParam> GetIssueFormById(int formId)
         {
             var dbIssueForm = await _context.IssueForm
@@ -443,7 +444,8 @@ namespace Services.Implements
             {
                 param.DataSource.RemoveAll(x => x.Id == param.Data.Id);
             }
-            else {
+            else
+            {
                 var dbIssueFormTasks = await _context.IssueFormTask
                         .Where(x => x.FormId == param.Data.FormId && x.TaskSeq == param.Data.TaskSeq).FirstOrDefaultAsync();
 
@@ -455,7 +457,7 @@ namespace Services.Implements
                 param.DataSource.RemoveAll(x => x.Id == param.Data.Id);
 
             }
-                
+
 
             return param.DataSource;
 
@@ -482,10 +484,39 @@ namespace Services.Implements
 
         public async Task<List<TaskParamViewModel>> ValidateTaskItemsAsync(ValidateTaskParam param)
         {
+            ValidateException validate = new ValidateException();
 
-            //if (formId <= 0 || formId == null)
-            //{
-            ValidateException validate = ValidateTaskItem(param.Data, new ValidateException());
+
+            foreach (var item in param.DataSource)
+            {
+
+                if ((param.Data.IssueCategoriesId == IssueCategoriesId.Borrow ) && (param.Data.ProductId == item.ProductId))
+                {
+                    validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
+                    validate.Throw();
+                }
+
+
+                if ((param.Data.IssueCategoriesId == IssueCategoriesId.Repair) && (param.Data.ProductId == item.ProductId) && (param.Data.Location == item.Location))
+                {
+                    validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
+                    validate.Throw();
+                }
+
+                if ((param.Data.IssueCategoriesId == IssueCategoriesId.Progream ) && (param.Data.DetectedTime == item.DetectedTime) )
+                {
+                    validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
+                    validate.Throw();
+
+                }
+
+
+
+            }
+
+            ValidateTaskItem(param.Data, validate);
+
+
 
 
             var dbRCP = await _context.Rel_Categories_Product
@@ -560,6 +591,7 @@ namespace Services.Implements
 
         private static ValidateException ValidateTaskItem(TaskParamViewModel param, ValidateException validate)
         {
+
 
 
 
@@ -686,7 +718,7 @@ namespace Services.Implements
 
             IsLatestData(param, validate, userTaskSeq);
             await UpdateTask(param, userTaskSeq, dateNow, status, userId);
-            await UpdateFormStatusCode(validate, userTaskSeq, dateNow, userId, param.FormId?? 0);
+            await UpdateFormStatusCode(validate, userTaskSeq, dateNow, userId, param.FormId ?? 0);
             AddLog(userId, userTaskSeq, dateNow, status);
 
             await _context.SaveChangesAsync();
@@ -697,7 +729,7 @@ namespace Services.Implements
             return true;
         }
 
-        private async Task UpdateFormStatusCode(ValidateException validate, IssueFormTask? userTaskSeq, DateTime dateNow, int userId,int formId)
+        private async Task UpdateFormStatusCode(ValidateException validate, IssueFormTask? userTaskSeq, DateTime dateNow, int userId, int formId)
         {
             if (userTaskSeq == null)
             {
