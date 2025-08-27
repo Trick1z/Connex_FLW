@@ -16,8 +16,8 @@ namespace Domain.Enums
     public class IssueCategoriesId 
     { 
         public const int Borrow = 1;
-        public const int Repair = 1;
-        public const int Progream = 1;
+        public const int Repair = 2;
+        public const int Progream = 3;
     }
 
     public class DocumentStatus
