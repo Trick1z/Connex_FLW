@@ -30,9 +30,10 @@ export class AddCategoriesProductMainComponent implements OnInit {
   productVisible: boolean = false;
   editProductVisible: boolean = false;
   editCategoriesVisible: boolean = false;
-  IsMap: boolean = true;
+  isMap: boolean = true;
   categoriesPopupTitle: string = 'Add Categories'
   productPopupTitle: string = 'Add Product'
+  popupButtonText : string = "Create"
   categoriesError: string = "";
 
   categoryModel: CategoriesParam = {
@@ -164,7 +165,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
   }
 
   onMaValueCheck(e: any) {
-    this.IsMap = e.value
+    this.isMap = e.value
   }
 
 
@@ -190,7 +191,7 @@ export class AddCategoriesProductMainComponent implements OnInit {
           searchCriteria: {
             productName: this.productSearch || null,
             categoriesText: this.categoriesIdSearch || null,
-            isMap: this.IsMap
+            isMap: this.isMap
           },
           loadOption: loadOptions
         };

@@ -16,7 +16,7 @@
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
-                    <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="center"></dxi-column>
+        <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="center"></dxi-column>
 
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
@@ -25,7 +25,7 @@
 
 
         <div *dxTemplate="let cell of 'dateCellTemplate'">
-            {{ cell.value |  date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
+            {{ cell.value | date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
         </div>
         <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
             alignment="center">
@@ -59,14 +59,14 @@
 
         <div class="flex">
             <label class="w-40 font-bold" for="isMap">Already Used</label>
-            <dx-check-box #isMap [value]="IsMap" (onValueChanged)="onMaValueCheck($event)" text="Yes"></dx-check-box>
+            <dx-check-box [value]="isMap" (onValueChanged)="onMaValueCheck($event)" text="Yes"></dx-check-box>
 
         </div>
 
 
 
         <!-- Categories -->
-        <div *ngIf="IsMap" class="flex items-start">
+        <div *ngIf="isMap" class="flex items-start">
             <label class="w-40 font-bold">Categories</label>
             <div class="grid flex-1 grid-cols-3 gap-2 max-w-96">
                 <div *ngFor="let item of categoryDataList">
@@ -107,12 +107,11 @@
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
-              <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="center"
-           ></dxi-column>
+        <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="center"></dxi-column>
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'"></dxi-column>
 
-          
+
 
 
 
@@ -153,9 +152,14 @@
             </div>
             <div class="items-center checkbox text-start">
 
-                <label for="textBox" class="mr-2 font-bold">Category Name</label>
 
-                <dx-text-box id="textBox" [(value)]="categoryModel.issueCategoriesName!" placeholder="กรอกข้อความ"
+                <div class="" >
+                    <label for="textBox" class="mr-2 font-bold">Category Name</label>
+                    <label for="textBox" class="font-bold text-green-700 underline">{{categoryModel.issueCategoriesName}}</label>
+                </div>
+
+                
+                <dx-text-box *ngIf="categoriesPopupTitle === 'Add Categories'" id="textBox" [(value)]="categoryModel.issueCategoriesName!" placeholder="กรอกข้อความ"
                     stylingMode="outlined">
                 </dx-text-box>
 
