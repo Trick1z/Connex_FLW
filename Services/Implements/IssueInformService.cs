@@ -71,19 +71,17 @@ namespace Services.Implements
             };
         }
 
-
-
-
-
         public async Task<IssueFormParam> GetIssueFormById(int formId)
         {
             var dbIssueForm = await _context.IssueForm
                 .Include(f => f.IssueFormTask)
                     .ThenInclude(t => t.Rel_Categories_Product).ThenInclude(p => p.Product)
-                    .ThenInclude(t => t.Rel_Categories_Product).ThenInclude(c => c.IssueCategories)  // join table Product + Category
+                    .ThenInclude(t => t.Rel_Categories_Product).ThenInclude(c => c.IssueCategories)
                 .FirstOrDefaultAsync(f => f.FormId == formId);
 
             if (dbIssueForm == null) return null;
+
+
 
             var result = new IssueFormParam
             {
@@ -96,6 +94,9 @@ namespace Services.Implements
                 ModifiedTime = dbIssueForm.ModifiedTime,
                 TaskItems = dbIssueForm.IssueFormTask.Select(t => new TaskParamViewModel
                 {
+
+
+
                     Id = Guid.NewGuid(),
                     FormId = t.FormId,
                     TaskSeq = t.TaskSeq,
@@ -105,7 +106,10 @@ namespace Services.Implements
                     ProductName = t.Rel_Categories_Product?.Product?.ProductName ?? "",
                     Quantity = t.Br_Qty,
                     Location = t.Rp_Location,
-                    DetectedTime = t.DetectedTime
+                    DetectedTime = t.DetectedTime,
+                    CanEdit = t.SystemStatusCode == Domain.Enums.TaskStatus.Draft
+                             || t.SystemStatusCode == Domain.Enums.TaskStatus.Submit,
+
                 }).ToList()
             };
 
@@ -147,6 +151,9 @@ namespace Services.Implements
                 validate = ValidateTaskItem(item, validate);
             }
             validate.Throw();
+
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
             if (param.FormId == 0)
             {
@@ -248,6 +255,9 @@ namespace Services.Implements
                     }
 
                     await _context.SaveChangesAsync();
+
+
+
                 }
 
 
@@ -289,6 +299,8 @@ namespace Services.Implements
 
                 await _context.SaveChangesAsync();
             }
+
+
             return param;
         }
 
@@ -490,7 +502,7 @@ namespace Services.Implements
             foreach (var item in param.DataSource)
             {
 
-                if ((param.Data.IssueCategoriesId == IssueCategoriesId.Borrow ) && (param.Data.ProductId == item.ProductId))
+                if ((param.Data.IssueCategoriesId == IssueCategoriesId.Borrow) && (param.Data.ProductId == item.ProductId))
                 {
                     validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
                     validate.Throw();
@@ -503,7 +515,7 @@ namespace Services.Implements
                     validate.Throw();
                 }
 
-                if ((param.Data.IssueCategoriesId == IssueCategoriesId.Progream ) && (param.Data.DetectedTime == item.DetectedTime) )
+                if ((param.Data.IssueCategoriesId == IssueCategoriesId.Progream) && (param.Data.DetectedTime == item.DetectedTime))
                 {
                     validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
                     validate.Throw();

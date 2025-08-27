@@ -42,7 +42,7 @@
 
 
 <!-- grid product -->
-<div class="mt-20 ml-20 mr-20 Product-box ">
+<div class="mt-24 ml-20 mr-20 Product-box ">
     <app-head-underline [title]="'Product'"></app-head-underline>
 
     <div class="mt-5 ml-10 space-y-4 search-box ">
@@ -86,6 +86,9 @@
         <app-button (clicked)="productPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
         <app-button [color]="'blue'" [message]="'Search'" (clicked)="onSearch()"></app-button>
     </div>
+
+    <app-head-underline></app-head-underline>
+
 
     <dx-data-grid #productGrid class="flex m-10 mt-8 max-w-max " [dataSource]="productDataSource" [showBorders]="true"
         [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
@@ -153,14 +156,15 @@
             <div class="items-center checkbox text-start">
 
 
-                <div class="" >
+                <div class="">
                     <label for="textBox" class="mr-2 font-bold">Category Name</label>
-                    <label for="textBox" class="font-bold text-green-700 underline">{{categoryModel.issueCategoriesName}}</label>
+                    <label for="textBox"
+                        class="font-bold text-green-700 underline">{{categoryModel.issueCategoriesName}}</label>
                 </div>
 
-                
-                <dx-text-box *ngIf="categoriesPopupTitle === 'Add Categories'" id="textBox" [(value)]="categoryModel.issueCategoriesName!" placeholder="กรอกข้อความ"
-                    stylingMode="outlined">
+
+                <dx-text-box *ngIf="categoriesPopupTitle === 'Add Categories'" id="textBox"
+                    [(value)]="categoryModel.issueCategoriesName!" placeholder="กรอกข้อความ" stylingMode="outlined">
                 </dx-text-box>
 
 

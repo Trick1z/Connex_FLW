@@ -247,9 +247,9 @@ namespace Domain.Models
                 new SqlParameter
                 {
                     ParameterName = "DocNo",
-                    Size = 100,
+                    Size = 50,
                     Value = docNo ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.NVarChar,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
                 },
                 new SqlParameter
                 {
@@ -261,23 +261,23 @@ namespace Domain.Models
                 new SqlParameter
                 {
                     ParameterName = "ProductName",
-                    Size = 100,
+                    Size = 50,
                     Value = productName ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.NVarChar,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
                 },
                 new SqlParameter
                 {
                     ParameterName = "Categories",
                     Size = -1,
                     Value = categories ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.NVarChar,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
                 },
                 new SqlParameter
                 {
                     ParameterName = "StatusCode",
                     Size = -1,
                     Value = statusCode ?? Convert.DBNull,
-                    SqlDbType = System.Data.SqlDbType.NVarChar,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
                 },
                 new SqlParameter
                 {

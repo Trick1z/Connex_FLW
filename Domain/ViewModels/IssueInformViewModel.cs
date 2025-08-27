@@ -38,6 +38,7 @@ namespace Domain.ViewModels
         public string ProductName { get; set; }
         public int? Quantity { get; set; }
         public string Location { get; set; }
+        public bool CanEdit { get; set; }
         public DateTime? DetectedTime { get; set; }
     }
 

@@ -33,11 +33,16 @@
     <dxi-column dataField="issueCategoriesName" caption="Categories"></dxi-column>
     <dxi-column dataField="productName" caption="Product"></dxi-column>
     <dxi-column caption="Actions" width="150" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+
+
     <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
-      <app-button [color]="'blue'" [message]="'Edit'" (clicked)="onClickEditItem(cell.data)"></app-button>
-      <app-button [color]="'red'" [message]="'Delete'" (clicked)="deleteTaskItem(cell.data)"></app-button>
-      <!-- <app-button [color]="'red'" [message]="'Delete'" (clicked)="deleteItem(cell.data)"></app-button> -->
+      <div *ngIf="cell.data.canEdit">
+        <app-button [color]="'blue'" [message]="'Edit'" (clicked)="onClickEditItem(cell.data)"></app-button>
+        <app-button [color]="'red'" [message]="'Delete'" (clicked)="deleteTaskItem(cell.data)"></app-button>
+        <!-- <app-button [color]="'red'" [message]="'Delete'" (clicked)="deleteItem(cell.data)"></app-button> -->
+      </div>
     </div>
+
   </dx-data-grid>
 </div>
 
@@ -113,15 +118,14 @@
       <label class="mt-2 font-semibold w-36">Detected Time</label>
       <div class="flex-1">
 
-
-
-        <dx-date-box [value]="informTaskData.detectedTime!"
+        <dx-date-box type="datetime" displayFormat="dd/MM/yyyy HH:mm" [value]="informTaskData.detectedTime!"
           (onValueChanged)="informTaskData.detectedTime = $event.value">
         </dx-date-box>
         <div *ngIf="createTaskErrorMessage.detectedTime"
           class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg ">
           ⚠ {{ createTaskErrorMessage.detectedTime }}
         </div>
+
       </div>
     </div>
 

@@ -21,6 +21,7 @@ namespace Domain.Models
         [StringLength(50)]
         public string Status { get; set; }
         public bool? IsProgramIssue { get; set; }
+        public bool? CanEdit { get; set; }
         public int? TotalCount { get; set; }
     }
 }
