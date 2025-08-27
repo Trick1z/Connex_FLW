@@ -41,6 +41,9 @@ namespace Services.Implements
         }
 
 
+
+
+
         public async Task<QueryViewModel<USP_Query_IssueFormsResult>> QueryForms(DevExtremeParam<QueryUserForm> param, string formStatus)
         {
 
@@ -696,21 +699,14 @@ namespace Services.Implements
             var userId = _claimsService.GetCurrentUserId();
 
             var result = await _context.Procedures.USP_Query_FormTasksByStatusAsync(userId,
-                   param.SearchCriteria.Status, param.SearchCriteria.DocNo, param.SearchCriteria.Categories
-                   , param.SearchCriteria.StartDate, param.SearchCriteria.EndDate, param.LoadOption.Skip
-                   , param.LoadOption.Take, param.SortField, param.SortBy);
+               param.SearchCriteria.Status, param.SearchCriteria.DocNo, param.SearchCriteria.Categories
+               , param.SearchCriteria.StartDate, param.SearchCriteria.EndDate, param.LoadOption.Skip
+               , param.LoadOption.Take, param.SortField, param.SortBy);
 
             var data = new QueryViewModel<USP_Query_FormTasksByStatusResult>();
-
-
             data.Data = result;
             data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
-
-
-
             return data;
-
-
         }
 
         //public async Task<bool> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
@@ -740,7 +736,7 @@ namespace Services.Implements
             await UpdateTask(param, userTaskSeq, dateNow, status, userId);
             AddLog(userId, userTaskSeq, dateNow, status);
 
-            await UpdateFormStatus(param, dateNow,userId);
+            await UpdateFormStatus(param, dateNow, userId);
             await _context.SaveChangesAsync();
 
             //Updateform 
@@ -797,7 +793,7 @@ namespace Services.Implements
             await _context.SaveChangesAsync();
         }
 
-        private async Task UpdateFormStatus(USP_Query_FormTasksByStatusResult param, DateTime dateNow,int userId)
+        private async Task UpdateFormStatus(USP_Query_FormTasksByStatusResult param, DateTime dateNow, int userId)
         {
             var tasks = await _context.IssueFormTask
                                       .Where(w => w.FormId == param.FormId)
@@ -811,7 +807,7 @@ namespace Services.Implements
             if (dbIssueForm == null)
                 return;
 
-            if (tasks.All(x => x == FormTaskStatus.Done  || x == FormTaskStatus.Done))
+            if (tasks.All(x => x == FormTaskStatus.Done || x == FormTaskStatus.Done))
             {
                 dbIssueForm.SystemStatusCode = DocumentStatus.Done;
                 dbIssueForm.DoneTime = dateNow;
@@ -902,12 +898,13 @@ namespace Services.Implements
                 _context.IssueForm.Remove(form);
                 await _context.SaveChangesAsync();
             }
-            else {
+            else
+            {
                 validate.Add("form", "ไม่พบข้อมูล");
                 validate.Throw();
             }
 
-                return true;
+            return true;
         }
 
 
