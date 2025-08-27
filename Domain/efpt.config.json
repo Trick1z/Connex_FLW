@@ -130,6 +130,10 @@
       {
          "Name": "[dbo].[USP_Query_Name]",
          "ObjectType": 1
+      },
+      {
+         "Name": "[dbo].[USP_Query_WorkloadSummary]",
+         "ObjectType": 1
       }
    ],
    "UiHint": null,

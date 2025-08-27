@@ -444,5 +444,58 @@ namespace Domain.Models
 
             return _;
         }
+
+        public virtual async Task<List<USP_Query_WorkloadSummaryResult>> USP_Query_WorkloadSummaryAsync(string searchText, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "SearchText",
+                    Size = 50,
+                    Value = searchText ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Skip",
+                    Value = skip ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Take",
+                    Value = take ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortBy",
+                    Size = 50,
+                    Value = sortBy ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortDirection",
+                    Size = 4,
+                    Value = sortDirection ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_WorkloadSummaryResult>("EXEC @returnValue = [dbo].[USP_Query_WorkloadSummary] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
     }
 }

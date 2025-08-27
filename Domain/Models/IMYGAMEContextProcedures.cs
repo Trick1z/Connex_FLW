@@ -19,5 +19,6 @@ namespace Domain.Models
         Task<List<USP_Query_IssueFormsResult>> USP_Query_IssueFormsAsync(string docNo, string formStatus, string productName, string categories, string statusCode, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_IssueProductResult>> USP_Query_IssueProductAsync(string searchProductName, string searchCategoriesId, bool? isMap, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_NameResult>> USP_Query_NameAsync(string searchText, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<List<USP_Query_WorkloadSummaryResult>> USP_Query_WorkloadSummaryAsync(string searchText, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
     }
 }
