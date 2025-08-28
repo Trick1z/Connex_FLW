@@ -9,14 +9,12 @@ import { RegisterData } from '../models/register.model';
 export class RegisterService {
 
   constructor(
-    private http : HttpClient
+    private http: HttpClient
   ) { }
 
 
-onRegisterSubmit(param :RegisterData ){
-
-  return this.http.post(`${environment.apiUrl}Authentication/register`,param)
-
-}
+  onRegisterSubmit(param: RegisterData) {
+    return this.http.post(`${environment.apiUrl}Authentication/register`, param)
+  }
 
 }

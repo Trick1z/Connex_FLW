@@ -3,7 +3,7 @@ import { DashboardService } from '../../services/dashboard.service';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
 import { DevExtremeParam, OverallDetailParam, Search } from '../../models/search.Model';
-import { catchError, firstValueFrom, of } from 'rxjs';
+import { catchError } from 'rxjs';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { QueryLogEnquiryParam } from 'src/app/modules/issue-inform/models/inform.model';
 
@@ -42,6 +42,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.initSetupDataSource()
   }
+
   initSetupDataSource() {
     this.initWorkLoad()
     this.initOverallFormStatus()
@@ -69,12 +70,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-
-  onWorkloadSearchClicked() {
-    this.workLoadGrid.instance.refresh();
-  }
-
-
+  onWorkloadSearchClicked() { this.workLoadGrid.instance.refresh(); }
 
   initWorkLoad() {
     this.workLoadDataSource = new DataSource({
@@ -83,7 +79,6 @@ export class DashboardComponent implements OnInit {
           searchCriteria: { text: this.searchUsernameValue },
           loadOption: loadOptions
         };
-
         return this.dashBoardService.queryWorkLoad(newLoad)
           .pipe(catchError(err => {
             return err;
@@ -97,19 +92,15 @@ export class DashboardComponent implements OnInit {
       .pipe(
         catchError(err => {
           console.error(err);
-          return []; // คืนค่าเป็น array ว่างเมื่อเกิด error
+          return [];
         })
       )
       .subscribe((res: any) => {
         this.overallFormStatusDataSource = res.data[0];
-
       });
   }
 
-  onLogEnquirySearchClicked() {
-    this.logEnquiryGrid.instance.refresh()
-
-  }
+  onLogEnquirySearchClicked() { this.logEnquiryGrid.instance.refresh(); }
 
   onOverallPopupClicked(status: string, header: string) {
     this.overallPopupHeader = header
@@ -118,9 +109,7 @@ export class DashboardComponent implements OnInit {
     this.overallDetailGrid.instance.refresh();
   }
 
-  onOverallPopupHide() {
-    this.overallPopupVisible = false;
-  }
+  onOverallPopupHide() { this.overallPopupVisible = false; }
 
   initOverallDetail() {
     this.overallDetailDataSource = new DataSource({
@@ -147,7 +136,6 @@ export class DashboardComponent implements OnInit {
           searchCriteria: this.logEnquirySearchParam,
           loadOption: loadOptions
         };
-
         return this.dashBoardService.queryLogEnquiry(newLoad)
           .pipe(catchError(err => {
             return err;
@@ -156,6 +144,3 @@ export class DashboardComponent implements OnInit {
     });
   }
 }
-
-
-

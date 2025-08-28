@@ -16,7 +16,6 @@ import { DxDataGridComponent } from 'devextreme-angular';
 })
 export class MasterComponent implements OnInit {
 
-  // =================== Variables ===================
   productVisible: boolean = false;
   viewPopupDetail: boolean = false;
   categoriesName: string = '';
@@ -39,9 +38,10 @@ export class MasterComponent implements OnInit {
     this.initCategoriesDataSource();
     this.initProductDropdown()
   }
-  onChange(e: any) { this.categoriesMapProduct.product = e.value;  }
-  onSearchValueChange(e: any) {this.searchCategoriesValue = e;  }
-  
+
+  onChange(e: any) { this.categoriesMapProduct.product = e.value; }
+  onSearchValueChange(e: any) { this.searchCategoriesValue = e; }
+
   productPopupShow(data: any) {
     this.categoriesName = data.issueCategoriesName;
     this.loadCategoryProducts(data.issueCategoriesId);
@@ -49,9 +49,7 @@ export class MasterComponent implements OnInit {
     this.productVisible = true;
   }
 
-  productPopupHide() {
-    this.productVisible = false;
-  }
+  productPopupHide() { this.productVisible = false; }
 
   loadCategoriesMapProductDropdown() {
     this.categoriesDataSource = new DataSource({
@@ -69,7 +67,6 @@ export class MasterComponent implements OnInit {
     });
   }
 
-
   onProductSave() {
     this.issueProductService.onProductSaveData(this.categoriesMapProduct)
       .pipe(catchError(err => {
@@ -82,10 +79,7 @@ export class MasterComponent implements OnInit {
           timer: 1000
         });
         return of(null);
-
-      }))
-
-      .subscribe((res: any) => {
+      })).subscribe((res: any) => {
         if (res) {
           this.productVisible = false;
           Swal.fire({
@@ -96,7 +90,6 @@ export class MasterComponent implements OnInit {
             timer: 1000
           });
         }
-
       });
   }
 
@@ -111,20 +104,13 @@ export class MasterComponent implements OnInit {
       .pipe(catchError(err => {
         this.viewCategoriesDetail = [];
         return of({ productText: '' });
-      }))
-
-      .subscribe((res: any) => {
+      })).subscribe((res: any) => {
         this.viewCategoriesDetail = res.productText?.split(',') || [];
       });
   }
 
-  onViewPopupHide() {
-    this.viewPopupDetail = false;
-  }
-
-  onSearchClicked() {
-    this.categoriesGrid.instance.refresh();
-  }
+  onViewPopupHide() { this.viewPopupDetail = false; }
+  onSearchClicked() { this.categoriesGrid.instance.refresh(); }
 
   initCategoriesDataSource() {
     this.categoriesDataSource = new DataSource({
@@ -133,13 +119,11 @@ export class MasterComponent implements OnInit {
           searchCriteria: { text: this.searchCategoriesValue },
           loadOption: loadOptions
         };
-
         return this.issueProductService.queryCategoriesByText(newLoad)
           .pipe(catchError(err => {
             return of([]);
           }))
           .toPromise();
-
       }
     });
   }
@@ -148,9 +132,7 @@ export class MasterComponent implements OnInit {
     this.dropDownService.getCategoriesMapProductDropDown()
       .pipe(catchError(err => {
         return of([]);
-      }))
-
-      .subscribe((res: any[]) => {
+      })).subscribe((res: any[]) => {
         this.productTagDataSource = res;
       });
   }
@@ -165,9 +147,7 @@ export class MasterComponent implements OnInit {
           modifiedTime: null
         };
         return of(this.categoriesMapProduct);
-      }))
-
-      .subscribe((res: any) => {
+      })).subscribe((res: any) => {
         this.categoriesMapProduct = res;
       });
   }

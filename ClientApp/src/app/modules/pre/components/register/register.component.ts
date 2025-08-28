@@ -14,9 +14,8 @@ import { DropDownService } from 'src/app/services/drop-down.service';
 })
 export class RegisterComponent implements OnInit {
 
-  // =================== Variables ===================
   customerRole: Role[] = [];
-  
+
   registerData: RegisterData = {
     username: "",
     password: "",
@@ -26,23 +25,21 @@ export class RegisterComponent implements OnInit {
 
   error: string[] = [];
 
-  // =================== Constructor ===================
   constructor(
     private navigator: Router,
     private registerService: RegisterService,
     private dropDownService: DropDownService
   ) { }
 
-  // =================== Lifecycle ===================
   ngOnInit(): void {
-    this.getRoleItem();
+    this.initRoleItem();
   }
 
-  // =================== Form Submission ===================
-  onSubmit(event: Event) {
-    event.preventDefault(); // ป้องกัน reload page
-    this.error = [];
+  NavigateToLoginPage() { this.navigator.navigate([AuthRoute.LoginFullPath]); }
 
+  onSubmit(event: Event) {
+    event.preventDefault();
+    this.error = [];
     this.registerService.onRegisterSubmit(this.registerData)
       .pipe(catchError(err => {
         this.error = [];
@@ -50,9 +47,9 @@ export class RegisterComponent implements OnInit {
           Object.keys(err.error.messages).forEach((key) => {
             const val = err.error.messages[key];
             if (Array.isArray(val)) {
-              this.error.push(...val); // push array ทั้งหมด
+              this.error.push(...val);
             } else {
-              this.error.push(val);    // push string เดียว
+              this.error.push(val);
             }
           });
         }
@@ -69,18 +66,11 @@ export class RegisterComponent implements OnInit {
       });
   }
 
-  // =================== Load Role Items ===================
-  getRoleItem() {
+  initRoleItem() {
     this.dropDownService.getRoleDropDownItem()
       .pipe(catchError(err => { return err; }))
       .subscribe((res: any) => {
         this.customerRole = res;
       });
   }
-
-  // =================== Navigation ===================
-  NavigateToLoginPage() {
-    this.navigator.navigate([AuthRoute.LoginFullPath]);
-  }
-
 }

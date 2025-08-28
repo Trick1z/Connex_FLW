@@ -40,9 +40,13 @@ export class SupportMainComponent implements OnInit {
   @ViewChild('doneGrid', { static: false }) doneGrid!: DxDataGridComponent;
 
   ngOnInit(): void {
-    this.initUnassignedTaskDataSource()
-    this.initAssignedTaskDataSource()
-    this.initDoneTaskDataSource()
+     this.initSetUpDataSource();
+  }
+
+  initSetUpDataSource() {
+    this.initUnassignedTaskDataSource();
+    this.initAssignedTaskDataSource();
+    this.initDoneTaskDataSource();
     this.initCategoriesCheckBox();
   }
 
@@ -50,7 +54,6 @@ export class SupportMainComponent implements OnInit {
     const selectedItems = e
       .filter((item: any) => item.selected)
       .map((item: any) => item.value);
-
     this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
     this.getTaskDataGrid();
   }
@@ -144,22 +147,17 @@ export class SupportMainComponent implements OnInit {
       return this.doneTaskDataSource.items()
         .find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
     }
-
     if (jobType) {
       return this.assignedTaskDataSource.items()
         .find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
     }
-
     return this.unassignedTaskDataSource.items()
       .find(item => item.taskSeq === data.taskSeq && item.formId === data.formId);
   }
 
-
   async onSubmit(data: any, status: string, jobType: string | null = null, requiredCategoryId: number | null = null) {
     this.prepareData = this.getPreparedData(data, status, jobType);
-
     if (status === "Rejected") {
-
       const { value: reason } = await Swal.fire({
         title: "Enter reject reason",
         input: "textarea",
@@ -169,13 +167,10 @@ export class SupportMainComponent implements OnInit {
         },
         showCancelButton: true
       });
-
-      // if (!reason) return;
       this.prepareData.rejectReason = reason;
     }
 
     if (status === "Done" && this.prepareData.issueCategoriesId == 1) {
-
       const { value: quantity } = await Swal.fire({
         title: "กรอกจำนวน",
         input: "number",
@@ -185,10 +180,8 @@ export class SupportMainComponent implements OnInit {
           if (parseInt(quantity) <= 0) return "ใส่จำนวนให้ถูกต้อง";
           return;
         },
-
         showCancelButton: true
       });
-
       this.prepareData.br_Qty = parseInt(quantity);
     }
 
@@ -202,9 +195,8 @@ export class SupportMainComponent implements OnInit {
     });
 
     if (!result.isConfirmed) return;
-
+    
     const newItem: USP_Query_FormTasksByStatusResult = { ...this.prepareData };
-
     this.taskService.taskManagement(newItem, status)
       .pipe(catchError(err => {
         Swal.fire({

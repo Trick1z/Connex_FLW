@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserMapCategoriesViewModel } from '../../models/tag-option.model';
-import { MappingCategoriesModel, UnMappingCategoriesModel } from '../../models/mapping.model';
 import Swal from 'sweetalert2';
 import { ConfigSupportService } from '../../services/config-support.service';
 import { catchError, of } from 'rxjs';
@@ -17,22 +16,19 @@ import { DxDataGridComponent } from 'devextreme-angular';
   styleUrls: ['./map-user-categories.component.scss']
 })
 export class MapUserCategoriesComponent implements OnInit {
+
   viewPopupDetail = false;
   mapDetailVisible = false;
-
   userByRoleDataSource!: DataSource;
   userMapCategories!: UserMapCategoriesViewModel;
-
   categoriesTagDataSource: DropDownList[] = [];
   viewUserDetail: string[] = [];
-
   viewUsername = '';
   viewRole = '';
   searchUsernameValue = '';
   labelUsername = 'unknown';
   labelRole = 'unknown';
   globalId = 0;
-
 
   @ViewChild('userGrid', { static: false }) public userGrid!: DxDataGridComponent;
 
@@ -44,6 +40,7 @@ export class MapUserCategoriesComponent implements OnInit {
   ngOnInit(): void {
     this.initUserByRoleDataSource();
   }
+
   onChange(e: any) { this.userMapCategories.categories = e.value; }
 
   initUserByRoleDataSource(text: string | null = null) {
@@ -62,10 +59,8 @@ export class MapUserCategoriesComponent implements OnInit {
     });
   }
 
-  onSearchValueChange(text: string) {
-    this.searchUsernameValue = text;
+  onSearchValueChange(text: string) {this.searchUsernameValue = text;  }
 
-  }
   refreshGrid() {
     if (this.userGrid?.instance) {
       this.userGrid.instance.refresh();
@@ -85,7 +80,8 @@ export class MapUserCategoriesComponent implements OnInit {
     this.labelRole = data.roleName;
     this.mapDetailVisible = true;
   }
-
+  
+  onViewPopupHide() { this.mapDetailVisible = false; }
   onMapDetailPopupHide() { this.mapDetailVisible = false; }
 
   getCategoriesForUser(id: number) {
@@ -105,13 +101,11 @@ export class MapUserCategoriesComponent implements OnInit {
         return of(null);
       }))
       .subscribe(res => {
-        // this.initUserByRoleDataSource(this.searchUsernameValue);
         this.userGrid.instance.refresh()
         Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
         this.mapDetailVisible = false;
       });
   }
-
 
   getViewUserDetail(data: any) {
     const id = data.userId;
@@ -141,5 +135,4 @@ export class MapUserCategoriesComponent implements OnInit {
       .subscribe((res: any[]) => this.categoriesTagDataSource = res);
   }
 
-  onViewPopupHide() { this.mapDetailVisible = false; }
 }

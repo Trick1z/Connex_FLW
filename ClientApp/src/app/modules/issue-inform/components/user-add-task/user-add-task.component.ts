@@ -7,7 +7,7 @@ import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import Swal from 'sweetalert2';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SupportRoute, UserRoute, ViewsRoute } from '../../../../constants/routes.const';
+import { UserRoute, ViewsRoute } from '../../../../constants/routes.const';
 import { CheckAccessService } from '../../../../services/check-access.service';
 
 @Component({
@@ -28,6 +28,10 @@ export class UserAddTaskComponent implements OnInit {
   documentNumber: string = "Waiting Generate Document Number";
   titlePopup: string = "";
   popupButtonText: string = "Create";
+  productDataSource: DataSource = new DataSource({ store: [], key: 'productId' });
+  categoryDataSource: DataSource = new DataSource({ store: [], key: 'issueCategoriesId' });
+  dataValidatedDataSource: DataSource = new DataSource({ store: new ArrayStore({ data: [], key: "id" }) });
+  dataValidatedArray: any = [];
   createTaskErrorMessage: any = {
     form: '',
     categories: '',
@@ -36,15 +40,6 @@ export class UserAddTaskComponent implements OnInit {
     location: '',
     detectedTime: ''
   };
-  productDataSource: DataSource = new DataSource({ store: [], key: 'productId' });
-  categoryDataSource: DataSource = new DataSource({ store: [], key: 'issueCategoriesId' });
-  dataValidatedDataSource: DataSource = new DataSource({
-    store: new ArrayStore({
-      data: [],
-      key: "id"
-    })
-  });
-  dataValidatedArray: any = [];
 
   constructor(
     private dropDownService: DropDownService,
@@ -54,9 +49,10 @@ export class UserAddTaskComponent implements OnInit {
     private checkAccessService: CheckAccessService
   ) { }
 
-  // =================== Init ===================
   ngOnInit(): void {
+
     const id = this.activeRouter.snapshot.params['id'];
+
     if (id) {
       this.loadTaskById(id);
     } else {
@@ -64,6 +60,7 @@ export class UserAddTaskComponent implements OnInit {
         store: new ArrayStore({ data: [], key: 'id' })
       });
     }
+
   }
 
   private loadTaskById(id: number) {
@@ -74,22 +71,17 @@ export class UserAddTaskComponent implements OnInit {
       .subscribe((res: any) => {
         this.formId = res.formId ?? 0;
         this.documentNumber = res.docNo ?? "";
-
         const itemsWithId = res.taskItems.map((item: any, index: number) => ({
           ...item,
           id: item.id ?? index + 1
         }));
-
         this.dataValidatedDataSource = new DataSource({
           store: new ArrayStore({ data: itemsWithId, key: 'id' })
         });
       });
   }
 
-  // =================== Popup Handlers ===================
-  onAddInformPopupClose() {
-    this.InformPopupState = false;
-  }
+  onAddInformPopupClose() { this.InformPopupState = false; }
 
   onClickCreateIssueTask() {
     this.onClickEditItem({
@@ -119,19 +111,17 @@ export class UserAddTaskComponent implements OnInit {
     this.productDataSource = new DataSource({ store: [], key: 'productId' });
   }
 
-  // =================== Dropdown Loaders ===================
   async getCategoriesDropDown() {
     try {
       const categories = await firstValueFrom(this.dropDownService.getCategoryDropDown()) as any[];
       const mappedCategories = categories.map(cat => ({
-        issueCategoriesId: Number(cat.value),      
-        issueCategoriesName: cat.showText    
+        issueCategoriesId: Number(cat.value),
+        issueCategoriesName: cat.showText
       }));
 
       this.categoryDataSource = new DataSource({
         store: new ArrayStore({ key: 'issueCategoriesId', data: mappedCategories })
       });
-
     } catch (err) {
       this.categoryDataSource = new DataSource({
         store: new ArrayStore({ key: 'issueCategoriesId', data: [] })
@@ -158,7 +148,6 @@ export class UserAddTaskComponent implements OnInit {
   onEditCategoriesValueChange(e: any) {
     this.getEditProductDropDown(e.value);
     if (e.previousValue == null) return;
-
     const selectedCategory = this.categoryDataSource.items().find(
       (c: any) => c.issueCategoriesId === e.value
     );
@@ -168,14 +157,11 @@ export class UserAddTaskComponent implements OnInit {
   onValidateData() {
     const allItems = this.dataValidatedDataSource.items();
     const newItem: ValidatedItem = { dataSource: allItems, data: this.informTaskData };
-
     this.validateService.validateInformTask(newItem, this.formId)
       .pipe(catchError(err => {
         this.createTaskErrorMessage = err?.error?.messages ?? {};
         return err;
-      }))
-
-      .subscribe((res: any) => {
+      })).subscribe((res: any) => {
         this.createTaskErrorMessage = {};
         this.dataValidatedDataSource = new DataSource({
           store: new ArrayStore({ data: res, key: "id" })
@@ -184,7 +170,6 @@ export class UserAddTaskComponent implements OnInit {
       });
   }
 
-  // =================== Delete Item ===================
   deleteTaskItem(data: any) {
     Swal.fire({
       title: 'Are you sure?',
@@ -198,7 +183,6 @@ export class UserAddTaskComponent implements OnInit {
       if (!result.isConfirmed) return;
       const allItems = this.dataValidatedDataSource.items();
       const newItem: ValidatedItem = { dataSource: allItems, data: data };
-
       this.validateService.DeleteTask(newItem)
         .pipe(catchError(err => {
           const allItems = this.dataValidatedDataSource.items();
@@ -207,15 +191,12 @@ export class UserAddTaskComponent implements OnInit {
           });
           this.createTaskErrorMessage = err?.error?.messages ?? [];
           return err;
-        }))
-
-        .subscribe((res: any) => {
+        })).subscribe((res: any) => {
           this.createTaskErrorMessage = [];
           this.dataValidatedDataSource = new DataSource({
             store: new ArrayStore({ data: res, key: 'id' })
           });
         });
-
     });
   }
 
@@ -232,13 +213,12 @@ export class UserAddTaskComponent implements OnInit {
         .pipe(catchError(err => {
           this.createTaskErrorMessage.form = err?.error?.messages?.task?.[0];
           return of(err);
-        }))   
+        }))
         .subscribe(() => {
           this.checkAccessService.CheckAccess(`/user/form`)
             // this.checkAccessService.CheckAccess(UserRoute.UserFormFullPath)
             .pipe(catchError(err => of(err)))
             .subscribe((res: any) => {
-
               if (res.allowed) {
                 this.router.navigate([UserRoute.UserFormFullPath]);
               } else {

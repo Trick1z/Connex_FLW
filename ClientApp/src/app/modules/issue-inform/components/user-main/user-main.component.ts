@@ -23,14 +23,14 @@ export class UserMainComponent implements OnInit {
 
   openFormsDataSource!: DataSource;
   closedFormsDataSource!: DataSource;
-
-
+  isTaskPopupVisible: boolean = false;
   documentNumberSearch: string | null = null;
   productName: string | null = null;
   categoriesSearchId: string | null = null;
   statusCodeSearchText: string | null = null;
   startDate: Date | null = null;;
   endDate: Date | null = null;;
+  taskLogDetail: any = [];
   taskDetailCache: { [formId: number]: USP_Query_FormTaskDetailResult[] } = {};
   categoriesCheckBoxItem: CheckboxList<number>[] = [];
   statusCheckBoxItem: CheckboxList<string>[] = [];
@@ -80,6 +80,7 @@ export class UserMainComponent implements OnInit {
     this.startDate = e.value;
     this.refreshGrid()
   }
+
   onEndDateChange(e: any) {
     this.endDate = e.value
     this.refreshGrid()
@@ -140,7 +141,6 @@ export class UserMainComponent implements OnInit {
           },
           loadOption: loadOptions
         };
-
         return this.informTaskService.getUnsuccessInform(newLoad, 'Open')
           .pipe(catchError(err => { return err }))
           .toPromise()
@@ -162,7 +162,6 @@ export class UserMainComponent implements OnInit {
           },
           loadOption: loadOptions
         };
-
         return this.informTaskService.getUnsuccessInform(newLoad, 'Closed')
           .pipe(catchError(err => { return err }))
           .toPromise()
@@ -187,12 +186,10 @@ export class UserMainComponent implements OnInit {
       .pipe(
         catchError(err => {
           return of({ data: [], totalCount: 0 });
-        })
-      )
-      .subscribe((res: any) => {
-        this.taskDetailCache[formId] = res?.data ?? [];
-        detailGrid.option('dataSource', this.taskDetailCache[formId]);
-      });
+        })).subscribe((res: any) => {
+          this.taskDetailCache[formId] = res?.data ?? [];
+          detailGrid.option('dataSource', this.taskDetailCache[formId]);
+        });
   }
 
   onCloseFormClicked(data: any) {
@@ -214,11 +211,9 @@ export class UserMainComponent implements OnInit {
             showConfirmButton: false,
             timer: 2000
           });
-
           return err
         })).subscribe((res: any) => {
           this.refreshGrid()
-
           return Swal.fire({
             title: "สำเร็จ !",
             text: `ปิดงาน ${data.docNo} เสำเร็จแล้ว`,
@@ -230,9 +225,8 @@ export class UserMainComponent implements OnInit {
     });
   }
 
-  onEditClicked(data: USP_Query_IssueFormsResult) {
-    this.router.navigate([`${UserRoute.UserEditFormFullPath}/${data.formId}`])
-  }
+  TaskLogPopupCloseClicked() { this.isTaskPopupVisible = false; }
+  onEditClicked(data: USP_Query_IssueFormsResult) { this.router.navigate([`${UserRoute.UserEditFormFullPath}/${data.formId}`]) }
 
   refreshGrid() {
     this.openFormGrid.instance.refresh()
@@ -249,7 +243,6 @@ export class UserMainComponent implements OnInit {
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes"
     }).then((result) => {
-
       if (result.isConfirmed) {
         this.informTaskService.deleteInformTask(data).pipe(catchError(err => {
           Swal.fire({
@@ -260,7 +253,6 @@ export class UserMainComponent implements OnInit {
             timer: 2000
           });
           return err
-
         })).subscribe((res: any) => {
           Swal.fire({
             position: "center",
@@ -276,29 +268,16 @@ export class UserMainComponent implements OnInit {
     });
   }
 
-
-
-  taskLogDetail: any = [];
-  isTaskPopupVisible: boolean = false;
   TaskLogPopupOpenClicked(data: TaskLogParam) {
-
     this.loadTaskLog(data);
     this.isTaskPopupVisible = true;
   }
-
-  TaskLogPopupCloseClicked() {
-
-    this.isTaskPopupVisible = false;
-  }
-
-
 
   loadTaskLog(data: TaskLogParam) {
     var newLoad = {
       formId: data.formId,
       taskSeq: data.taskSeq
     }
-
     return this.informTaskService.queryTaskLog(newLoad)
       .pipe(catchError(err => { return err }))
       .subscribe((res: any) => {

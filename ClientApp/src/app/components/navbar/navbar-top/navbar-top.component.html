@@ -1,6 +1,7 @@
 <nav class="relative z-50 bg-gray-800">
     <div class="px-2 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div class="relative flex items-center justify-between h-16">
+
             <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
                 <button type="button" command="--toggle" commandfor="mobile-menu"
                     class="relative inline-flex items-center justify-center p-2 text-gray-400 rounded-md hover:bg-white/5 hover:text-white focus:outline-2 focus:-outline-offset-1 focus:outline-indigo-500">
@@ -17,21 +18,19 @@
                     </svg>
                 </button>
             </div>
+
             <div class="flex items-center justify-center flex-1 sm:items-stretch sm:justify-start">
+
                 <div class="flex items-center shrink-0">
                     <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500"
                         alt="Your Company" class="w-auto h-8" />
                 </div>
 
-                <!-- admin dropdown -->
                 <div  *ngIf="myRole == 1" class="relative inline-block ml-20 text-left ">
-                    <!-- Dropdown toggle button -->
                     <button *ngIf="adminRoutes.length != 0" (click)="toggleAdminDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
                         aria-haspopup="true">
                         Admin Menus
-
-                        <!-- arrow -->
                         <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd"
@@ -40,10 +39,10 @@
                         </svg>
                     </button>
 
-                    <!-- Dropdown menu -->
                     <div *ngIf="isAdminDropdownOpen"
                         class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical">
+
                         <div class="py-1" role="none" >
                             <button *ngFor="let item of adminRoutes; index as i"
                                 (click)="navigateTo(item.path); closeAllDropdowns()" type="button"
@@ -52,29 +51,25 @@
                                 {{ item.name }}
                             </button>
                         </div>
-                    </div>
-                    <!-- support -->
 
+                    </div>
                 </div>
 
-                <!-- user dropdown -->
                 <div  *ngIf="myRole == 1 || myRole == 2"  class="relative inline-block ml-20 text-left ">
-                    <!-- Dropdown toggle button -->
                     <button *ngIf="userRoutes.length != 0" (click)="toggleUserDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
                         aria-haspopup="true">
                         User Menus
 
-                        <!-- arrow -->
                         <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd"
                                 d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.23 8.27a.75.75 0 01.02-1.06z"
                                 clip-rule="evenodd" />
                         </svg>
+
                     </button>
 
-                    <!-- Dropdown menu -->
                     <div *ngIf="isUserDropdownOpen"
                         class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical">
@@ -87,30 +82,28 @@
                             </button>
                         </div>
                     </div>
+
                 </div>
 
-
-
                 <div *ngIf="myRole == 1 || myRole == 3" class="relative inline-block ml-20 text-left ">
-                    <!-- Dropdown toggle button -->
                     <button *ngIf="supportRoutes.length != 0" (click)="toggleSupportDropdown()" type="button"
                         class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md shadow-sm hover:bg-gray-50"
                         aria-haspopup="true">
                         Support Menus
 
-                        <!-- arrow -->
                         <svg class="w-5 h-5 ml-2 -mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd"
                                 d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.23 8.27a.75.75 0 01.02-1.06z"
                                 clip-rule="evenodd" />
                         </svg>
+
                     </button>
 
-                    <!-- Dropdown menu -->
                     <div *ngIf="isSupportDropdownOpen"
                         class="absolute right-0 w-56 mt-2 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                         role="menu" aria-orientation="vertical">
+
                         <div class="py-1" role="none">
                             <button *ngFor="let item of supportRoutes; index as i"
                                 (click)="navigateTo(item.path); closeAllDropdowns()" type="button"
@@ -119,15 +112,9 @@
                                 {{ item.name }}
                             </button>
                         </div>
+
                     </div>
-
                 </div>
-
-
-
-
-
-
             </div>
 
             <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
@@ -137,6 +124,7 @@
                     </p>
                 </div>
             </div>
+            
         </div>
     </div>
 </nav>

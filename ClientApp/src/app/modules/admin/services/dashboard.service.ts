@@ -9,8 +9,6 @@ import { QueryLogEnquiryParam } from '../../issue-inform/models/inform.model';
 })
 export class DashboardService {
 
-
-
   constructor(
     private http: HttpClient
   ) { }
@@ -19,16 +17,18 @@ export class DashboardService {
 
     return this.http.post(`${environment.apiUrl}DashBoard/QueryUserWorkLoad`, data)
   }
-  
+
   queryOverallFormStatus() {
 
     return this.http.get(`${environment.apiUrl}DashBoard/QueryOverallFormStatus`)
   }
-  queryOverallFormStatusDetail(data : DevExtremeParam<OverallDetailParam>) {
 
-    return this.http.post(`${environment.apiUrl}DashBoard/QueryOverallFormStatusDetail`,data)
+  queryOverallFormStatusDetail(data: DevExtremeParam<OverallDetailParam>) {
+
+    return this.http.post(`${environment.apiUrl}DashBoard/QueryOverallFormStatusDetail`, data)
   }
-  queryLogEnquiry(data : DevExtremeParam<QueryLogEnquiryParam>) {
-    return this.http.post(`${environment.apiUrl}DashBoard/QueryLogEnquiry`,data)
+
+  queryLogEnquiry(data: DevExtremeParam<QueryLogEnquiryParam>) {
+    return this.http.post(`${environment.apiUrl}DashBoard/QueryLogEnquiry`, data)
   }
 }

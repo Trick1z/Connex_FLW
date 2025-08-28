@@ -13,7 +13,7 @@ export class NavbarTopComponent implements OnInit {
 
   // User
   username: string = 'Unknown User';
-  myRole : number = 0;
+  myRole: number = 0;
 
   // Routes
   adminRoutes = [
@@ -46,11 +46,15 @@ export class NavbarTopComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.initSetupData();
+  }
+
+
+  initSetupData() {
     this.loadUsername();
     this.getRole()
   }
 
-  // Load user from session
   private loadUsername(): void {
     const data = sessionStorage.getItem('user');
     if (data) {

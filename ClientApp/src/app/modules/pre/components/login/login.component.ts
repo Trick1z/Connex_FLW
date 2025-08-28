@@ -12,38 +12,24 @@ import Swal from 'sweetalert2';
 })
 export class LoginComponent {
 
-  // =================== Variables ===================
   passwordMode: string = "password";
-
+  usernameError: string[] = [];
+  showError: boolean = false;
   userData: UserData = {
     username: "",
     password: ""
   };
 
-  usernameError: string[] = [];
-  showError: boolean = false;
 
-  // =================== Constructor ===================
   constructor(
     private router: Router,
     private authService: AuthServiceService
   ) { }
 
-  // =================== Error Handling ===================
-  handleCloseError() {
-    this.showError = false;
-  }
+  handleCloseError() { this.showError = false; }
+  triggerError() { this.showError = true; }
+  NavigateToRegisterPage() { return this.router.navigate([AuthRoute.RegisterFullPath]); }
 
-  triggerError() {
-    this.showError = true;
-  }
-
-  // =================== Navigation ===================
-  NavigateToRegisterPage() {
-    return this.router.navigate([AuthRoute.RegisterFullPath]);
-  }
-
-  // =================== Login Submit ===================
   onSubmit() {
     this.authService.login(this.userData).subscribe({
       next: () => {
@@ -72,5 +58,4 @@ export class LoginComponent {
       }
     });
   }
-
 }

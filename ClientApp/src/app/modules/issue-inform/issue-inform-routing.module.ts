@@ -9,7 +9,6 @@ const routes: Routes = [
     path: UserRoute.UserForm,
     component: UserMainComponent
   },
-  
   {
     path: UserRoute.UserAddForm,
     component: UserAddTaskComponent
@@ -18,8 +17,6 @@ const routes: Routes = [
     path: UserRoute.UserEditForm+"/:id",
     component: UserAddTaskComponent
   },
-
-
 ];
 
 @NgModule({
