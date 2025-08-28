@@ -392,6 +392,90 @@ namespace Domain.Models
             return _;
         }
 
+        public virtual async Task<List<USP_Query_LogEnquiryResult>> USP_Query_LogEnquiryAsync(string docNo, int? formId, string username, int? taskSeq, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "DocNo",
+                    Size = 50,
+                    Value = docNo ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "FormId",
+                    Value = formId ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Username",
+                    Size = 50,
+                    Value = username ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "TaskSeq",
+                    Value = taskSeq ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "StartDate",
+                    Value = startDate ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.DateTime,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "EndDate",
+                    Value = endDate ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.DateTime,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Skip",
+                    Value = skip ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Take",
+                    Value = take ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortBy",
+                    Size = 50,
+                    Value = sortBy ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortDirection",
+                    Size = 4,
+                    Value = sortDirection ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_LogEnquiryResult>("EXEC @returnValue = [dbo].[USP_Query_LogEnquiry] @DocNo = @DocNo, @FormId = @FormId, @Username = @Username, @TaskSeq = @TaskSeq, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
         public virtual async Task<List<USP_Query_NameResult>> USP_Query_NameAsync(string searchText, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter
@@ -439,6 +523,118 @@ namespace Domain.Models
                 parameterreturnValue,
             };
             var _ = await _context.SqlQueryAsync<USP_Query_NameResult>("EXEC @returnValue = [dbo].[USP_Query_Name] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<List<USP_Query_OverallFormsStatusResult>> USP_Query_OverallFormsStatusAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_OverallFormsStatusResult>("EXEC @returnValue = [dbo].[USP_Query_OverallFormsStatus]", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<List<USP_Query_OverallFormsStatusDetailResult>> USP_Query_OverallFormsStatusDetailAsync(string docNo, string status, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "DocNo",
+                    Size = 50,
+                    Value = docNo ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Status",
+                    Size = 50,
+                    Value = status ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Skip",
+                    Value = skip ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "Take",
+                    Value = take ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortBy",
+                    Size = 50,
+                    Value = sortBy ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "SortDirection",
+                    Size = 4,
+                    Value = sortDirection ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.VarChar,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_OverallFormsStatusDetailResult>("EXEC @returnValue = [dbo].[USP_Query_OverallFormsStatusDetail] @DocNo = @DocNo, @Status = @Status, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
+        public virtual async Task<List<USP_Query_TaskLogsResult>> USP_Query_TaskLogsAsync(int? formId, int? taskSeq, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                new SqlParameter
+                {
+                    ParameterName = "FormId",
+                    Value = formId ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                new SqlParameter
+                {
+                    ParameterName = "TaskSeq",
+                    Value = taskSeq ?? Convert.DBNull,
+                    SqlDbType = System.Data.SqlDbType.Int,
+                },
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_TaskLogsResult>("EXEC @returnValue = [dbo].[USP_Query_TaskLogs] @FormId = @FormId, @TaskSeq = @TaskSeq", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 

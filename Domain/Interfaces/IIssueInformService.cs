@@ -30,5 +30,10 @@ namespace Domain.Interfaces
         public Task<QueryViewModel<USP_Query_FormTasksByStatusResult>> QueryFormUser(DevExtremeParam<JobForUser> param);
         //public Task<bool> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status);
         public Task<bool> TaskManagement(USP_Query_FormTasksByStatusResult param, string status);
+        public Task<QueryViewModel<USP_Query_TaskLogsResult>> QueryTaskSeqLog(TaskLogParam param);
+
+
+
+
     }
 }

@@ -1,13 +1,13 @@
 import { LoadOptions } from "devextreme/data"
 
 export interface Search {
-    text: string| null
+    text: string | null
 }
 
 export interface productSearch {
     productName: string | null
     categoriesText: string | null
-    isMap : boolean 
+    isMap: boolean
 }
 
 export interface DevExtremeParam<T> {
@@ -28,3 +28,10 @@ export interface JobForUserParam {
     startDate: Date | null;
     endDate: Date | null;
 }
+
+export interface OverallDetailParam {
+    docNo: string | null;
+    status: string;
+
+}
+

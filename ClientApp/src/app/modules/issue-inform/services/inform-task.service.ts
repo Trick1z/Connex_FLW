@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {   QueryUserForm, QueryUserFormDetail, TaskRequest, USP_Query_IssueFormsResult, ValidatedItem } from '../models/inform.model';
+import {   QueryUserForm, QueryUserFormDetail, TaskLogParam, TaskRequest, USP_Query_IssueFormsResult, ValidatedItem } from '../models/inform.model';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { catchError } from 'rxjs';
@@ -15,26 +15,26 @@ export class InformTaskService {
   ) { }
 
 
-  validateInformTask(data: ValidatedItem , formId :number) {
-    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/SaveTask`, data)
+  validateInformTask(param: ValidatedItem , formId :number) {
+    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/SaveTask`, param)
   }
-  DeleteTask(data: ValidatedItem ) {
-    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/DeleteTask`, data)
+  DeleteTask(param: ValidatedItem ) {
+    return this.http.post<any[]>(`${environment.apiUrl}IssueInform/DeleteTask`, param)
   }
-  saveDraftInformTask(data: TaskRequest) {
-    return this.http.post(`${environment.apiUrl}IssueInform/SaveDraftIssueForm/${data.formId}`, data)
+  saveDraftInformTask(param: TaskRequest) {
+    return this.http.post(`${environment.apiUrl}IssueInform/SaveDraftIssueForm/${param.formId}`, param)
   }
-  saveSubmitInformTask(data: TaskRequest) {
-    return this.http.post(`${environment.apiUrl}IssueInform/SaveSubmitIssueForm/${data.formId}`, data)
-  }
-
-
-  deleteInformTask(data: USP_Query_IssueFormsResult) {
-    return this.http.post(`${environment.apiUrl}IssueInform/DeleteForm`, data)
+  saveSubmitInformTask(param: TaskRequest) {
+    return this.http.post(`${environment.apiUrl}IssueInform/SaveSubmitIssueForm/${param.formId}`, param)
   }
 
-  closeInformTask(data: USP_Query_IssueFormsResult) {
-    return this.http.post(`${environment.apiUrl}IssueInform/CloseIssueForm`, data)
+
+  deleteInformTask(param: USP_Query_IssueFormsResult) {
+    return this.http.post(`${environment.apiUrl}IssueInform/DeleteForm`, param)
+  }
+
+  closeInformTask(param: USP_Query_IssueFormsResult) {
+    return this.http.post(`${environment.apiUrl}IssueInform/CloseIssueForm`, param)
   }
 
   getInformTaskById(formId : number ){
@@ -53,7 +53,8 @@ export class InformTaskService {
 
   }
 
-
-
+  queryTaskLog(param :TaskLogParam ){
+    return this.http.post(`${environment.apiUrl}IssueInform/QueryTaskLog`,param)
+  }
 
 }

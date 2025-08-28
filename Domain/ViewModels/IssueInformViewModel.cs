@@ -9,9 +9,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace Domain.ViewModels
 {
 
-    // =========================
-    // Param models (Front-end -> Back-end)
-    // =========================
+    public class TaskLogParam
+    {
+        public int FormId { get; set; }
+        public int TaskSeq { get; set; }
+    }
     public class IssueFormParam
     {
         public int FormId { get; set; }

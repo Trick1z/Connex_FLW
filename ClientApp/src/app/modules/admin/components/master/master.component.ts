@@ -39,12 +39,9 @@ export class MasterComponent implements OnInit {
     this.initCategoriesDataSource();
     this.initProductDropdown()
   }
-  onChange(e: any) {
-    this.categoriesMapProduct.product = e.value;
-  }
-  onSearchValueChange(e: any) {
-    this.searchCategoriesValue = e;
-  }
+  onChange(e: any) { this.categoriesMapProduct.product = e.value;  }
+  onSearchValueChange(e: any) {this.searchCategoriesValue = e;  }
+  
   productPopupShow(data: any) {
     this.categoriesName = data.issueCategoriesName;
     this.loadCategoryProducts(data.issueCategoriesId);

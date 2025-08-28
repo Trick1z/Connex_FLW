@@ -1,4 +1,5 @@
 ﻿using Domain.Interfaces;
+using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,26 @@ namespace MyAPI.Controllers.DashBoard
         {
             return Ok(await _dashBoardService.QueryUserWorkLoad(param));
         }
+
+        [HttpGet("QueryOverallFormStatus")]
+        public async Task<IActionResult> QueryOverallFormStatus()
+        {
+            return Ok(await _dashBoardService.QueryOverallFormStatus());
+        }
+
+        [HttpPost("QueryOverallFormStatusDetail")]
+        public async Task<IActionResult> QueryOverallFormStatusDetail(DevExtremeParam<QueryOverallDetailParam>  param)
+        {
+            return Ok(await _dashBoardService.QueryOverallFormStatusDetail(param));
+        }
+        [AllowAnonymous]
+        [HttpPost("QueryLogEnquiry")]
+        public async Task<IActionResult> QueryEnQuiry(DevExtremeParam<QueryLogEnquiryParam>  param)
+        {
+            return Ok(await _dashBoardService.QueryLogEnquiry(param));
+        }
+
+
 
     }
 }

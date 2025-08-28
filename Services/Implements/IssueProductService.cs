@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 
 namespace Services.Implements
 {
+
     public class IssueProductService : IIssueProductService
     {
 
@@ -39,9 +40,7 @@ namespace Services.Implements
             var validate = new ValidateException();
             var dateNow = DateTime.Now;
             foreach (var item in id)
-            {
-                
-
+            {              
                 var dbProduct = await _context.Product.FirstOrDefaultAsync(x => x.ProductId == item && x.IsActive == true );
 
 

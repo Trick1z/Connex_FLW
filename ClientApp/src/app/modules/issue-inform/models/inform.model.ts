@@ -33,7 +33,7 @@ export interface USP_Query_IssueFormsResult {
   modifiedBy: string;
   modifiedTime: string | null;
   canEdit: boolean | null;
-  canClose : boolean | null
+  canClose: boolean | null
   totalCount: number | null;
 }
 
@@ -64,18 +64,33 @@ export interface USP_Query_FormTaskDetailResult {
   totalCount: number | null;
 }
 
-    // public partial class USP_Query_IssueFormsResult
-    // {
-    //     public int? FormId { get; set; }
-    //     [StringLength(50)]
-    //     public string DocNo { get; set; }
-    //     [StringLength(20)]
-    //     public string Status { get; set; }
-    //     [StringLength(20)]
-    //     public string Progressing { get; set; }
-    //     [StringLength(100)]
-    //     public string ModifiedBy { get; set; }
-    //     public DateTime? ModifiedTime { get; set; }
-    //     public bool? CanEdit { get; set; }
-    //     public int? TotalCount { get; set; }
-    // }
+// public partial class USP_Query_IssueFormsResult
+// {
+//     public int? FormId { get; set; }
+//     [StringLength(50)]
+//     public string DocNo { get; set; }
+//     [StringLength(20)]
+//     public string Status { get; set; }
+//     [StringLength(20)]
+//     public string Progressing { get; set; }
+//     [StringLength(100)]
+//     public string ModifiedBy { get; set; }
+//     public DateTime? ModifiedTime { get; set; }
+//     public bool? CanEdit { get; set; }
+//     public int? TotalCount { get; set; }
+// }
+
+
+export interface TaskLogParam {
+  formId: number;
+  taskSeq: number;
+}
+
+export interface QueryLogEnquiryParam {
+  docNo: string | null;
+  formId: number | null;
+  taskSeq: number | null;
+  username: string | null;
+  startDate: Date | null;
+  endDate: Date | null;
+}

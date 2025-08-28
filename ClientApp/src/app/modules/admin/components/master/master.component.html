@@ -17,54 +17,51 @@
     <div class="mt-1 ml-36 app-btn">
       <app-button (clicked)="onSearchClicked()" [message]="'Search'"></app-button>
     </div>
-
-
   </div>
+
   <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDataSource" [showBorders]="true"
     [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
-
-
-    <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
+    <dxo-paging [pageSize]="5" [pageIndex]="0">
     </dxo-paging>
-
     <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
     </dxo-pager>
-
-
     <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
       [groupPaging]="false">
     </dxo-remote-operations>
 
-
     <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
-    <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
-    <dxi-column dataField="isProgramIssue" caption="Program Issue" width="150" alignment="center"></dxi-column>
 
+    <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
+
+    <dxi-column dataField="isProgramIssue" caption="Program Issue" width="150" alignment="center"></dxi-column>
 
     <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
       alignment="center">
     </dxi-column>
+
     <div *dxTemplate="let cell of 'actionTemplate'">
       <dx-button class="m-2" (onClick)="getViewProductDetail(cell.data) " text="Info" type="default"
         stylingMode="contained"></dx-button>
       <dx-button class="m-2" (onClick)="productPopupShow(cell.data) " text="Map" type="success"
         stylingMode="contained"></dx-button>
     </div>
+
   </dx-data-grid>
-
 </div>
-<!-- *ngIf="categoriesMapProduct" -->
-<div >
-  <dx-popup [width]="400" [height]="400" [(visible)]="productVisible" [showTitle]="true" [dragEnabled]="true"
-    [closeOnOutsideClick]="true" title="Map Categories Product" (onHiding)="productPopupHide()">
 
+<div>
+  <dx-popup [width]="600" [height]="300" [(visible)]="productVisible" [showTitle]="true" [dragEnabled]="true"
+    [closeOnOutsideClick]="true" title="Map Categories Product" (onHiding)="productPopupHide()">
     <div class="popup-content" *ngIf="categoriesMapProduct ">
+
       <div class="flex justify-start mb-5 text-2xl user-box">
-        <span class="label">Categories :</span>
-        <span class="ml-5 username">{{ categoriesName }}</span>
+        <span class="mr-4 text-xl font-bold label">Categories </span>
+        <span
+          class="inline-flex items-center px-2 py-1 text-xl font-medium text-green-900 bg-green-200 rounded-md inset-ring inset-ring-green-600/20">{{categoriesName}}
+        </span>
       </div>
 
-      <dx-tag-box  [dataSource]="productTagDataSource" displayExpr="showText" valueExpr="value"
+      <dx-tag-box [dataSource]="productTagDataSource" displayExpr="showText" valueExpr="value"
         (onValueChanged)="onChange($event)" [value]="categoriesMapProduct.product" [showSelectionControls]="true">
       </dx-tag-box>
 
@@ -72,35 +69,32 @@
         <app-button (clicked)="onProductSave()" [message]="'Save'"></app-button>
         <app-button color="red" (clicked)="productPopupHide()" [message]="'Close'"></app-button>
       </div>
+
     </div>
   </dx-popup>
 </div>
 
-
-
-
-
-
-<!-- viewDetail -->
-
-
 <dx-popup [height]="500" [(visible)]="viewPopupDetail" [width]="800" [showTitle]="true" [closeOnOutsideClick]="true"
   title="Categories Info" (onHiding)="onViewPopupHide()">
+
   <div class="popup-content">
+
     <div class="flex justify-start" id="">
-      <div class="flex justify-start text-2xl user-box">
-        <span class="label">Category : </span>
-        <span class="ml-5 username "> {{ viewUserCategoriesName }}</span>
+      <div class="flex items-center justify-start text-2xl user-box">
+        <span class="mr-4 text-xl font-bold label">Category </span>
+        <span
+          class="inline-flex items-center px-2 py-1 text-xl font-medium text-green-900 bg-green-200 rounded-md inset-ring inset-ring-green-600/20">{{viewUserCategoriesName}}
+        </span>
+        <!-- <span class="ml-5 username "> {{ viewUserCategoriesName }}</span> -->
       </div>
     </div>
+
     <app-head-underline [title]="'Products'"></app-head-underline>
 
     <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewCategoriesDetail.length > 0 ;else noViewData">
-
-
-      <h4 class="text-xl font-bold" *ngFor="let item of viewCategoriesDetail">{{item}}</h4>
-
-
+      <span *ngFor="let item of viewCategoriesDetail"
+        class="inline-flex items-center px-2 py-1 text-xs font-medium text-green-700 rounded-md bg-green-50 inset-ring inset-ring-green-600/20">{{item}}
+      </span>
     </div>
 
     <ng-template #noViewData>
@@ -108,5 +102,7 @@
         <p class="text-gray-500">No products mapped for this categories.</p>
       </div>
     </ng-template>
+
   </div>
+
 </dx-popup>

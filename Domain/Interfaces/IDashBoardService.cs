@@ -12,5 +12,9 @@ namespace Domain.Interfaces
     {
         public Task<QueryViewModel<USP_Query_WorkloadSummaryResult>> QueryUserWorkLoad(DevExtremeParam<SearchUsernameParam> param);
 
+        public Task<QueryViewModel<USP_Query_OverallFormsStatusResult>> QueryOverallFormStatus();
+
+        public Task<QueryViewModel<USP_Query_OverallFormsStatusDetailResult>> QueryOverallFormStatusDetail(DevExtremeParam<QueryOverallDetailParam> param);
+        public  Task<QueryViewModel<USP_Query_LogEnquiryResult>> QueryLogEnquiry(DevExtremeParam<QueryLogEnquiryParam> param);
     }
 }

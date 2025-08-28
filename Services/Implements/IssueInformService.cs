@@ -42,7 +42,16 @@ namespace Services.Implements
 
 
 
+        public async Task<QueryViewModel<USP_Query_TaskLogsResult>> QueryTaskSeqLog(TaskLogParam param)
+        {
+            var result = await _context.Procedures.USP_Query_TaskLogsAsync(param.FormId, param.TaskSeq);
+            var data = new QueryViewModel<USP_Query_TaskLogsResult>();
 
+            data.Data = result;
+            data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
+            return data;
+
+        }
 
         public async Task<QueryViewModel<USP_Query_IssueFormsResult>> QueryForms(DevExtremeParam<QueryUserForm> param, string formStatus)
         {

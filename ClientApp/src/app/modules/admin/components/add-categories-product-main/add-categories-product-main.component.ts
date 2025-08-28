@@ -149,7 +149,6 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
   }
   initCategoriesDataSource() {
-
     this.issueProductService.getCategoriesItems()
       .pipe(
         catchError(err => {
@@ -223,8 +222,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
         })).subscribe((res => {
           this.categoryPopupHide()
           // this.initCategoriesDataSource()
-          this.categoriesGrid.instance.refresh();
-
+          // this.categoriesGrid.instance.refresh();
+          this.initCategoriesDataSource()
           this.initCategoriesCheckBoxDataSource()
           this.showSuccessPopup()
         }))

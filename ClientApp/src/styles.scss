@@ -31,30 +31,37 @@
 
 
 .dx-textbox .dx-texteditor-input {
-    height: 1rem;       
-    line-height: 2rem;   
-    padding: 0 0.5rem;  
-    font-size: 0.875rem;
+  height: 1rem;
+  line-height: 2rem;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
 }
 
 .dx-textbox .dx-texteditor-container {
-    height: 2.1rem;       
+  height: 2.1rem;
 }
 
 
 .dx-textbox .dx-texteditor-input::placeholder {
-    font-size: 0.75rem;  
-    font-weight: 400;    
-    color: #888;
-    opacity: 1;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #888;
+  opacity: 1;
 }
 
 .dx-textbox .dx-texteditor-input {
-    font-weight: 400;   
+  font-weight: 400;
 }
 
 
-.dx-row.dx-header-row>td{
+.dx-row.dx-header-row>td {
   text-align: center !important;
+}
 
+.dx-texteditor-input-container.dx-tag-container {
+  padding: 0;
+}
+
+.dx-placeholder {
+  display: none !important;
 }

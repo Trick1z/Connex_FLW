@@ -81,8 +81,12 @@
 
       <dxi-column alignment="center" dataField="modifiedBy" caption="Modified By"></dxi-column>
 
-      <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"></dxi-column>
+      <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"
+        cellTemplate="modifiedTimeCell"></dxi-column>
 
+      <div *dxTemplate="let cell of 'modifiedTimeCell'">
+        {{ cell.data.modifiedTime | date:'dd MMM yyyy HH:mm:ss' }}
+      </div>
       <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
       <div *dxTemplate="let detail of 'actionCell'">
@@ -105,15 +109,29 @@
           <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
           <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
           <dxi-column alignment="center" dataField="location" caption="Location"></dxi-column>
-          <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"></dxi-column>
-
-
+          <dxi-column cellTemplate="detectedCell" alignment="center" dataField="detectedTime"
+            caption="Detected Time"></dxi-column>
+          <div *dxTemplate="let cell of 'detectedCell'">
+            {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm:ss' }}
+          </div>
+          <!-- 
           <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
           <div *dxTemplate="let cell of 'statusCell'">
             <span [ngClass]="getStatusClass(cell.data.status)">
               {{ cell.data.status }}
             </span>
+          </div> -->
+
+          <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
+          <div *dxTemplate="let cell of 'statusCell'">
+            <a href="javascript:void(0)" [ngClass]="getStatusClass(cell.data.status)"
+              (click)="TaskLogPopupOpenClicked(cell.data)">
+              {{ cell.data.status }}
+            </a>
           </div>
+
+
+
         </dx-data-grid>
       </div>
     </dx-data-grid>
@@ -142,9 +160,12 @@
       <dxi-column alignment="center" dataField="progressing" caption="Progressing"></dxi-column>
 
       <dxi-column alignment="center" dataField="modifiedBy" caption="Modified By"></dxi-column>
+      <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"
+        cellTemplate="modifiedTimeCell"></dxi-column>
 
-      <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"></dxi-column>
-
+      <div *dxTemplate="let cell of 'modifiedTimeCell'">
+        {{ cell.data.modifiedTime | date:'dd MMM yyyy HH:mm:ss' }}
+      </div>
       <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
 
@@ -156,8 +177,14 @@
           <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
           <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
           <dxi-column alignment="center" dataField="location" caption="Location"></dxi-column>
-          <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"></dxi-column>
+          <dxi-column cellTemplate="detectedCell" alignment="center" dataField="detectedTime"
+            caption="Detected Time"></dxi-column>
 
+
+
+          <div *dxTemplate="let cell of 'detectedCell'">
+            {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm:ss' }}
+          </div>
 
           <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
           <div *dxTemplate="let cell of 'statusCell'">
@@ -172,3 +199,32 @@
 
 
 </div>
+
+
+<!-- popup -->
+
+<!-- task log -->
+<dx-popup [width]="600" [height]="600" [showTitle]="true" [dragEnabled]="true" [closeOnOutsideClick]="true"
+  [title]="'ActionLog'" (onHiding)="TaskLogPopupCloseClicked()" [(visible)]="isTaskPopupVisible">
+
+  <div class="">
+    <dx-data-grid [dataSource]="taskLogDetail" [showBorders]="true" [columnAutoWidth]="true">
+      <dxi-column dataField="username" caption="Username"></dxi-column>
+
+      <dxi-column dataField="action" caption="Action" cellTemplate="statusCell" alignment="center"></dxi-column>
+      <div *dxTemplate="let cell of 'statusCell'">
+        <span [ngClass]="getActionClass(cell.data.action)">
+          {{ cell.data.action }}
+        </span>
+      </div>
+
+      <dxi-column cellTemplate="actionCell" alignment="center" dataField="actionTime"
+        caption="Action Time"></dxi-column>
+      <div *dxTemplate="let cell of 'actionCell'">
+        {{ cell.data.actionTime | date:'dd MMM yyyy HH:mm:ss' }}
+      </div>
+
+
+    </dx-data-grid>
+  </div>
+</dx-popup>

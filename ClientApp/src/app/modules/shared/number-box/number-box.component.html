@@ -1,6 +1,7 @@
 <!-- number-box.component.html -->
 <dx-number-box
   [(ngModel)]="value"
+  (onValueChanged)="onValueChangeFunc($event)"
   [min]="min"
   [max]="max"
   [step]="step"

@@ -2,7 +2,7 @@
 
 
 
-
+<!-- 
 <div class="mx-10 mt-10">
     <app-head-underline [title]="'Monitor'"></app-head-underline>
 
@@ -16,7 +16,7 @@
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
         </dxo-pager>
 
-        <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
+        <dxo-paging [pageSize]="5" [pageIndex]="0"> 
         </dxo-paging>
 
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
@@ -44,17 +44,67 @@
 
 
 
+</div> -->
+
+
+<div class="m-10 my-10">
+    <app-head-underline [title]="'Overall Forms Status'"></app-head-underline>
+    <div class="grid justify-center grid-cols-2 gap-5 text-center md:grid-cols-2 xl:grid-cols-4 p-14 overall-status">
+
+
+
+
+        <div (click)="onOverallPopupClicked('All', 'Total Forms')"
+            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-blue-100">
+
+            <h5 class="mb-2 font-bold tracking-tight text-gray-900 md:text-xl text-md">Total Forms</h5>
+            <h1 class="text-3xl font-bold text-blue-700">{{overallFormStatusDataSource.totalForm}}</h1>
+        </div>
+
+        <!-- <div (click)="onOverallPopupClicked('Draft', 'Drafted Forms')"
+            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-gray-100">
+
+            <h5 class="mb-2 text-3xl font-bold tracking-tight text-gray-900 ">Drafted Forms</h5>
+            <h1 class="text-3xl font-bold text-gray-700 ">{{overallFormStatusDataSource.draftedForm}}</h1>
+        </div> -->
+
+        <div (click)="onOverallPopupClicked('Submit', 'Submitted Forms')"
+            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-blue-100 ">
+
+            <h5 class="mb-2 font-bold tracking-tight text-gray-900 md:text-xl text-md ">Submitted Forms</h5>
+            <h1 class="text-3xl font-bold text-blue-700">{{overallFormStatusDataSource.submittedForm}}</h1>
+        </div>
+
+        <div (click)="onOverallPopupClicked('InProgress', 'InProgressed Forms')"
+            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-yellow-100 ">
+
+            <h5 class="mb-2 font-bold tracking-tight text-gray-900 md:text-xl text-md">In Progressed Forms</h5>
+            <h1 class="text-3xl font-bold text-yellow-700 ">{{overallFormStatusDataSource.inProgressForm}}</h1>
+        </div>
+        <div (click)="onOverallPopupClicked('Completed', 'Completed Forms')"
+            class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:bg-green-100">
+
+            <h5 class="mb-2 font-bold tracking-tight text-gray-900 md:text-xl text-mdl ">Completed Forms</h5>
+            <h1 class="text-3xl font-bold text-green-700">{{overallFormStatusDataSource.completedForm}}</h1>
+        </div>
+
+    </div>
 </div>
 
 
 
-<div class="m-10 my-10">
+<div class="m-10 ">
     <app-head-underline [title]="'Work Load'"></app-head-underline>
 
     <div class="flex max-w-sm my-6 search-box">
         <label class="mr-4 font-bold" for="searchBox">Search Username</label>
-        <app-text-box #searchBox (onValueChanged)="onSearchBoxValueChange($event)" [value]="searchUsernameValue"
+        <app-text-box class="" #searchBox (onValueChanged)="onWorkloadEvent($event)" [value]="searchUsernameValue"
             [placeHolder]="'Search...'"></app-text-box>
+    </div>
+
+
+    <div class="mb-7 ml-36">
+        <app-button (clicked)="onWorkloadSearchClicked()" [message]="'Search'"></app-button>
     </div>
 
     <dx-data-grid #workLoadGrid [dataSource]="workLoadDataSource" [showBorders]="true" [columnAutoWidth]="true"
@@ -64,8 +114,7 @@
         </dxo-paging>
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
         </dxo-pager>
-        <dxo-remote-operations
-         [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
+        <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
             [groupPaging]="false">
         </dxo-remote-operations>
 
@@ -74,9 +123,9 @@
         <dxi-column alignment="right" dataField="canAssigned" caption="Can Assigned"></dxi-column>
         <dxi-column dataField="totalAssigned" caption="Total Assigned"></dxi-column>
 
-        <dxi-column  caption="Borrow">
-            <dxi-column  dataField="borrowSubmit" caption="Submit"></dxi-column>
-            <dxi-column  dataField="borrowAssigned" caption="Assigned"></dxi-column>
+        <dxi-column caption="Borrow">
+            <dxi-column dataField="borrowSubmit" caption="Submit"></dxi-column>
+            <dxi-column dataField="borrowAssigned" caption="Assigned"></dxi-column>
         </dxi-column>
 
         <dxi-column caption="Repair">
@@ -89,5 +138,139 @@
             <dxi-column dataField="programAssigned" caption="Assigned"></dxi-column>
         </dxi-column>
 
+
+
+
     </dx-data-grid>
 </div>
+
+
+<div class="m-10 my-10">
+
+    <app-head-underline [title]="'Log Enquiry'"></app-head-underline>
+    <div class="text-end">
+        <!-- Row 1 -->
+        <div class="flex flex-wrap gap-6 mb-4">
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-bold text-gray-700">Document Number</label>
+                <app-text-box [value]="logEnquirySearchParam.docNo!" (onValueChanged)="onEnquiryDocNoEvent($event)"
+                    [placeHolder]="'Search...'" class="w-64"></app-text-box>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-bold text-gray-700">Username</label>
+                <app-text-box [value]="logEnquirySearchParam.username!"
+                    (onValueChanged)="onEnquiryUsernameEvent($event)" [placeHolder]="'Search...'"
+                    class="w-64"></app-text-box>
+            </div>
+        </div>
+
+        <!-- Row 2 -->
+        <div class="flex flex-wrap gap-6 mb-4">
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-bold text-gray-700">Form ID</label>
+                <app-number-box
+                (onValueChanged)="onEnquiryFormIdEvent($event)" 
+                [value]="logEnquirySearchParam.formId!"
+                class="w-64"></app-number-box>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-bold text-gray-700">Task Sequence</label>
+                <app-number-box [value]="logEnquirySearchParam.taskSeq!"
+                    (onValueChanged)="onEnquiryTaskSeqEvent($event)" class="w-64"></app-number-box>
+            </div>
+        </div>
+
+        <!-- Row 3 -->
+        <div class="flex flex-wrap gap-6">
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-bold text-gray-700">Start Date</label>
+                <dx-date-box (onValueChanged)="onEnquiryStartEvent($event)" [value]="logEnquirySearchParam.startDate!"
+                    class="w-64" displayFormat="dd/MM/yyyy" type="date" placeholder="Start Date"></dx-date-box>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <label class="w-40 font-bold text-gray-700">End Date</label>
+                <dx-date-box [value]="logEnquirySearchParam.endDate!" (onValueChanged)="onEnquiryEndDateEvent($event)"
+                    class="w-64" displayFormat="dd/MM/yyyy" type="date" placeholder="End Date"></dx-date-box>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="my-5 ml-44">
+        <app-button (clicked)="onLogEnquirySearchClicked()" [message]="'Search'"></app-button>
+    </div>
+
+    <dx-data-grid #logEnquiryGrid [dataSource]="logEnquiryDataSource" [showBorders]="true" [columnAutoWidth]="true"
+        [rowAlternationEnabled]="true">
+
+        <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
+        </dxo-paging>
+        <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
+        </dxo-pager>
+        <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
+            [groupPaging]="false">
+        </dxo-remote-operations>
+
+        <dxi-column alignment="center" dataField="docNo" caption="Document Number" minWidth="180"
+            width="200"></dxi-column>
+
+
+        <dxi-column minWidth="80" width="120" alignment="center" dataField="formId" caption="Form Id"></dxi-column>
+
+        <dxi-column minWidth="100" width="120" alignment="center" dataField="taskSeq"
+            caption="Task Sequence"></dxi-column>
+
+        <dxi-column dataField="actionBy" caption="Action By"></dxi-column>
+        <dxi-column alignment="center" dataField="action" caption="Action"></dxi-column>
+
+
+        <dxi-column cellTemplate="actionCell" alignment="center" dataField="actionTime"
+            caption="Action Time"></dxi-column>
+        <div *dxTemplate="let cell of 'actionCell'">
+            {{ cell.data.actionTime| date:'dd MMM yyyy HH:mm:ss' }}
+        </div>
+
+        <dxi-column cellTemplate="createdDateCell" alignment="center" dataField="createdTime"
+            caption="Created Time"></dxi-column>
+        <div *dxTemplate="let cell of 'createdDateCell'">
+            {{ cell.data.createdTime| date:'dd MMM yyyy HH:mm:ss' }}
+        </div>
+
+    </dx-data-grid>
+</div>
+
+<!-- popup -->
+<!-- Overall Detail -->
+
+
+<dx-popup [width]="800" [height]="600" [showTitle]="true" [dragEnabled]="true" [closeOnOutsideClick]="true"
+    [title]="overallPopupHeader" (onHiding)="onOverallPopupHide()" [(visible)]="overallPopupVisible">
+
+    <div class="">
+        <dx-data-grid #overallDetailGrid [dataSource]="overallDetailDataSource" [showBorders]="true"
+            [columnAutoWidth]="true">
+            <dxi-column dataField="docNo" caption="Document Number"></dxi-column>
+            <dxi-column alignment="center" dataField="progressing" caption="progressing"></dxi-column>
+
+            <dxi-column alignment="center" cellTemplate="statusCell" dataField="status" caption="status"></dxi-column>
+            <div *dxTemplate="let cell of 'statusCell'">
+                <span [ngClass]="getStatusClass(cell.data.status)">
+                    {{ cell.data.status }}
+                </span>
+            </div>
+
+            <dxi-column dataField="modifiedBy" caption="modifiedBy"></dxi-column>
+
+            <dxi-column cellTemplate="modifiedTimeCell" alignment="center" dataField="modifiedTime"
+                caption="Modified Time"></dxi-column>
+            <div *dxTemplate="let cell of 'modifiedTimeCell'">
+                {{ cell.data.modifiedTime | date:'dd MMM yyyy HH:mm:ss' }}
+            </div>
+
+
+        </dx-data-grid>
+    </div>
+</dx-popup>

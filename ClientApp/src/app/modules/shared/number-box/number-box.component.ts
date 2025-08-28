@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'app-number-box',
@@ -9,7 +9,15 @@ export class NumberBoxComponent {
 
   @Input() value: number = 0;   // รับค่าจาก parent
   @Input() min: number = 0;     // ค่า min
-  @Input() max: number = 100;   // ค่า max
+  @Input() max: number = Infinity;   // ค่า max
   @Input() step: number = 1; 
 
+
+    @Output('onValueChanged') public onValueChanged = new EventEmitter<number>();
+  
+    onValueChangeFunc(e: any) {      
+      this.value = e.value
+      this.onValueChanged.emit (this.value);
+    }
+    
 }

@@ -1,25 +1,29 @@
 <app-head-underline [title]="'Categories Products'"></app-head-underline>
 
-<!-- grid category -->
 <div class="mt-20 ml-20 mr-20 categroy-box ">
     <app-head-underline [title]="'Issue Categories'"></app-head-underline>
 
-    <!-- (click)="categoryPopupShow()" -->
     <app-button (clicked)="categoryPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
 
     <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDatasource" [showBorders]="true"
         [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
+
         <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
+
         <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="110" alignment="left"></dxi-column>
-        <dxi-column dataField="issueCategoriesDescription" caption="คำอธิบาย" minWidth="120"
-            alignment="left"></dxi-column>
+
+        <dxi-column dataField="issueCategoriesDescription" caption="คำอธิบาย" minWidth="120" alignment="left">
+        </dxi-column>
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
-            [cellTemplate]="'dateCellTemplate'"></dxi-column>
+            [cellTemplate]="'dateCellTemplate'">
+        </dxi-column>
+
         <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="center"></dxi-column>
 
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
-            [cellTemplate]="'dateCellTemplate'"></dxi-column>
+            [cellTemplate]="'dateCellTemplate'">
+        </dxi-column>
 
         <dxi-column dataField="isProgramIssue" caption="isProgram" width="140" alignment="center"></dxi-column>
 
@@ -27,27 +31,31 @@
         <div *dxTemplate="let cell of 'dateCellTemplate'">
             {{ cell.value | date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
         </div>
+
         <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
             alignment="center">
         </dxi-column>
-        <!-- Template ปุ่มใน cell -->
+
         <div *dxTemplate="let cell of 'actionTemplate'">
             <dx-button class="m-2" (onClick)="onEditCategoriesPopupShow(cell.data)" text="Edit" type="success"
-                stylingMode="contained"></dx-button>
+                stylingMode="contained">
+            </dx-button>
+
             <dx-button class="m-2" (onClick)="showDeleteAlert(cell.data,'categories')" text="Delete" type="danger"
-                stylingMode="contained"></dx-button>
+                stylingMode="contained">
+            </dx-button>
         </div>
+
     </dx-data-grid>
 </div>
 
 
-<!-- grid product -->
 <div class="mt-24 ml-20 mr-20 Product-box ">
+
     <app-head-underline [title]="'Product'"></app-head-underline>
 
     <div class="mt-5 ml-10 space-y-4 search-box ">
 
-        <!-- Product Name Search -->
         <div class="flex items-center">
             <label class="w-40 font-bold">Product Name</label>
             <div class="flex-1 max-w-60">
@@ -60,12 +68,8 @@
         <div class="flex">
             <label class="w-40 font-bold" for="isMap">Already Used</label>
             <dx-check-box [value]="isMap" (onValueChanged)="onMaValueCheck($event)" text="Yes"></dx-check-box>
-
         </div>
 
-
-
-        <!-- Categories -->
         <div *ngIf="isMap" class="flex items-start">
             <label class="w-40 font-bold">Categories</label>
             <div class="grid flex-1 grid-cols-3 gap-2 max-w-96">
@@ -74,9 +78,9 @@
                         [name]="item.text" [text]="item.text">
                     </dx-check-box>
                 </div>
-
             </div>
         </div>
+
     </div>
 
 
@@ -89,17 +93,12 @@
 
     <app-head-underline></app-head-underline>
 
-
     <dx-data-grid #productGrid class="flex m-10 mt-8 max-w-max " [dataSource]="productDataSource" [showBorders]="true"
         [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
-
         <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
         </dxo-paging>
-
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
         </dxo-pager>
-
-
         <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
             [groupPaging]="false">
         </dxo-remote-operations>
@@ -109,14 +108,14 @@
         <dxi-column dataField="productName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
-            [cellTemplate]="'dateCellTemplate'"></dxi-column>
+            [cellTemplate]="'dateCellTemplate'">
+        </dxi-column>
+
         <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="center"></dxi-column>
+
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
-            [cellTemplate]="'dateCellTemplate'"></dxi-column>
-
-
-
-
+            [cellTemplate]="'dateCellTemplate'">
+        </dxi-column>
 
         <div *dxTemplate="let cell of 'dateCellTemplate'">
             {{ cell.value | date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
@@ -126,51 +125,52 @@
             alignment="center">
         </dxi-column>
 
-        <!-- Template ปุ่มใน cell -->
         <div *dxTemplate="let cell of 'actionTemplate'">
             <dx-button class="m-2" (onClick)="onEditProductPopupShow(cell.data)" text="Edit" type="success"
-                stylingMode="contained"></dx-button>
+                stylingMode="contained">
+            </dx-button>
+
             <dx-button class="m-2" (onClick)="showDeleteAlert(cell.data, 'product')" text="Delete" type="danger"
-                stylingMode="contained"></dx-button>
+                stylingMode="contained">
+            </dx-button>
         </div>
     </dx-data-grid>
 </div>
 
-
-
-<!--category-popup -->
-
 <div class="category-popup">
-
-    <dx-popup [width]="500" [height]="500" [(visible)]="categoryVisible" [width]="400" [showTitle]="true"
-        [dragEnabled]="true" [closeOnOutsideClick]="true" [title]="categoriesPopupTitle"
-        (onHiding)="categoryPopupHide()">
+    <dx-popup [width]="600" [height]="500" [(visible)]="categoryVisible" [showTitle]="true" [dragEnabled]="true"
+        [closeOnOutsideClick]="true" [title]="categoriesPopupTitle" (onHiding)="categoryPopupHide()">
         <div class="popup-content">
-
 
             <div *ngIf="categoriesError"
                 class="px-3 py-2 mt-1 text-sm text-red-800 bg-red-100 border border-red-400 rounded-lg">
                 <p>⚠ {{ categoriesError}}</p>
                 <!-- *ngFor="let errorItem of   createTaskErrorMessage.form " -->
             </div>
+
             <div class="items-center checkbox text-start">
 
-
                 <div class="">
-                    <label for="textBox" class="mr-2 font-bold">Category Name</label>
-                    <label for="textBox"
-                        class="font-bold text-green-700 underline">{{categoryModel.issueCategoriesName}}</label>
+                    <label for="textBox" class="mr-2 font-bold">Category Name
+                        <span *ngIf="categoriesPopupTitle === 'Add Categories'" class="ml-1 text-red-500">*
+                        </span>
+                    </label>
+                    <span *ngIf="categoriesPopupTitle === 'Edit Categories'"
+                        class="inline-flex items-center px-2 py-1 text-xl font-medium text-green-900 bg-green-100 rounded-md inset-ring inset-ring-green-600/20">{{categoryModel.issueCategoriesName}}
+                    </span>
                 </div>
-
 
                 <dx-text-box *ngIf="categoriesPopupTitle === 'Add Categories'" id="textBox"
                     [(value)]="categoryModel.issueCategoriesName!" placeholder="กรอกข้อความ" stylingMode="outlined">
                 </dx-text-box>
 
-
             </div>
+
             <div class="items-start justify-between mt-5">
-                <label for="textArea" class="w-32 mt-2 mr-2 font-bold text-end">Category Description</label>
+                <label for="textArea" class="w-32 mt-2 mr-2 font-bold text-end">Category Description
+                    <span *ngIf="categoriesPopupTitle === 'Add Categories'" class="ml-1 text-red-500">*
+                    </span>
+                </label>
                 <dx-text-area id="textArea" class="flex-1" [(value)]="categoryModel.issueCategoriesDescription!"
                     placeholder="กรอกรายละเอียด" [height]="100" stylingMode="outlined">
                 </dx-text-area>
@@ -178,50 +178,40 @@
 
             <div class="mt-5 checkbox">
                 <label for="programCheck" class="font-bold">Program Issue</label>
-
                 <dx-check-box (onValueChanged)="onIsProgramValueChanged($event)" class="ml-5" id="programCheck"
-                    [value]="categoryModel.isProgramIssue"></dx-check-box>
+                    [value]="categoryModel.isProgramIssue">
+                </dx-check-box>
             </div>
+
             <div class="flex justify-center gap-2 mt-10">
                 <app-button (clicked)="onSave('categories')" [message]="'Save'"></app-button>
-
                 <app-button (clicked)="categoryPopupHide()" color="red" [message]="'Close'"></app-button>
-
             </div>
+
         </div>
     </dx-popup>
 </div>
 
-<!--add product-popup -->
-
-
-
 <div class="product-popup">
-
     <dx-popup [width]="400" [height]="250" [(visible)]="productVisible" [width]="400" [showTitle]="true"
         [dragEnabled]="true" [closeOnOutsideClick]="true" [title]="productPopupTitle" (onHiding)="productPopupHide()">
+
         <div class="popup-content">
-
             <div class="items-start checkbox text-start">
-
-                <label for="textBox" class="mr-2 font-bold">Product Name </label>
-
+                <label for="textBox" class="mr-2 font-bold">Product Name
+                    <span *ngIf="categoriesPopupTitle === 'Add Categories'" class="ml-1 text-red-500">*
+                    </span>
+                </label>
                 <dx-text-box id="textBox" [(value)]="productModel.productName" placeholder="กรอกข้อความ"
                     stylingMode="outlined">
                 </dx-text-box>
-
-
             </div>
 
             <div class="flex justify-center gap-2 mt-10">
-                <!-- <button (click)="categoryPopupHide()">ปิด</button> -->
-
-
                 <app-button (clicked)="onSave('product')" [message]="'Save'"></app-button>
-
                 <app-button (clicked)="productPopupHide()" color="red" [message]="'Close'"></app-button>
-
             </div>
         </div>
+
     </dx-popup>
 </div>

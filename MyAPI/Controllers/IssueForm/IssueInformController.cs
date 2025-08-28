@@ -2,6 +2,7 @@
 using Domain.Models;
 using Domain.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Services.DashBoard;
 //using Services.Auth;
 //using Services.Form;
 
@@ -92,6 +93,13 @@ namespace MyAPI.Controllers.IssueForm
         public async Task<IActionResult> TaskManagement(USP_Query_FormTasksByStatusResult param, string status)
         {
             return Ok(await _issueInformService.TaskManagement(param, status));
+        }
+
+
+        [HttpPost("QueryTaskLog")]
+        public async Task<IActionResult> QueryTaskLog(TaskLogParam param)
+        {
+            return Ok(await _issueInformService.QueryTaskSeqLog(param));
         }
 
     }

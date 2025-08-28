@@ -6,7 +6,7 @@ import { CheckboxService } from '../../../../services/checkbox.service';
 import { CheckboxList } from 'src/app/models/checkBox.model';
 import { LoadOptions } from 'devextreme/data';
 import { DevExtremeParam } from 'src/app/modules/admin/models/search.Model';
-import { QueryUserForm, QueryUserFormDetail, USP_Query_FormTaskDetailResult, USP_Query_IssueFormsResult } from '../../models/inform.model';
+import { QueryUserForm, QueryUserFormDetail, TaskLogParam, USP_Query_FormTaskDetailResult, USP_Query_IssueFormsResult } from '../../models/inform.model';
 import ArrayStore from 'devextreme/data/array_store';
 import CustomStore from 'devextreme/data/custom_store';
 import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
@@ -37,7 +37,7 @@ export class UserMainComponent implements OnInit {
 
   @ViewChild('openFormGrid', { static: false }) openFormGrid!: DxDataGridComponent;
   @ViewChild('closedFormGrid', { static: false }) closedFormGrid!: DxDataGridComponent;
-  
+
   constructor(
     private informTaskService: InformTaskService,
     private checkboxService: CheckboxService,
@@ -113,6 +113,15 @@ export class UserMainComponent implements OnInit {
       case 'InProgress': return 'text-yellow-600 font-bold';
       case 'Done': return 'text-green-600 font-bold';
       case 'Closed': return 'text-green-600 font-bold';
+      default: return 'text-gray-600';
+    }
+  }
+
+  getActionClass(status: string): string {
+    switch (status) {
+      case 'Rejected': return 'text-red-600 font-bold';
+      case 'Assigned': return 'text-yellow-600 font-bold';
+      case 'Created Task': return 'text-blue-600 font-bold';
       default: return 'text-gray-600';
     }
   }
@@ -265,5 +274,35 @@ export class UserMainComponent implements OnInit {
       }
       return
     });
+  }
+
+
+
+  taskLogDetail: any = [];
+  isTaskPopupVisible: boolean = false;
+  TaskLogPopupOpenClicked(data: TaskLogParam) {
+
+    this.loadTaskLog(data);
+    this.isTaskPopupVisible = true;
+  }
+
+  TaskLogPopupCloseClicked() {
+
+    this.isTaskPopupVisible = false;
+  }
+
+
+
+  loadTaskLog(data: TaskLogParam) {
+    var newLoad = {
+      formId: data.formId,
+      taskSeq: data.taskSeq
+    }
+
+    return this.informTaskService.queryTaskLog(newLoad)
+      .pipe(catchError(err => { return err }))
+      .subscribe((res: any) => {
+        this.taskLogDetail = res.data
+      })
   }
 }
