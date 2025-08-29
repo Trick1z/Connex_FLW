@@ -38,8 +38,8 @@
             </div>
         </div>
     </div>
-    <div class="space-x-2 " *dxTemplate="let cell of 'actionCell'">
-        <app-button [color]="buttonColor.Search" [message]="'Search'" (clicked)="onSubmit(cell.data , 'Assigned')">
+    <div class="ml-52">
+        <app-button (clicked)="onSearchClicked()" [color]="buttonColor.Search" [message]="'Search'">
         </app-button>
     </div>
 
@@ -85,9 +85,9 @@
 </div>
 
 
-<div class="m-10 my-36">
+<div class="px-2 py-2 m-10 my-5 bg-white rounded-lg shadow-2xl">
 
-    <app-head-underline [title]="'Process Task'"></app-head-underline>
+    <app-head-underline [color]="underlineColor.black" [title]="'Process Task'"></app-head-underline>
     <div class="flex justify-end space-x-2 " id="">
     </div>
 
@@ -136,15 +136,12 @@
 
 
 
-<div class="mx-10 my-36">
+<div class="px-2 py-2 mx-10 my-5 bg-white rounded-lg shadow-2xl">
 
-    <app-head-underline [title]="'Done Task'"></app-head-underline>
-
-
-
+    <app-head-underline [color]="underlineColor.black" [title]="'Done Task'"></app-head-underline>
     <div class="flex justify-end" id="">
     </div>
-    <div class="flex m-10">
+    <div class="flex m-5">
         <dx-data-grid #doneeGrid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
 

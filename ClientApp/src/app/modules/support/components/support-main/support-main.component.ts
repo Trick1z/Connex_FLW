@@ -16,6 +16,7 @@ import { Button, HeaderUnderline } from 'src/app/constants/color.const';
   styleUrls: ['./support-main.component.scss']
 })
 export class SupportMainComponent implements OnInit {
+
   buttonColor = Button;
   underlineColor = HeaderUnderline;
   fieldDocNo: string | null = null;
@@ -57,21 +58,17 @@ export class SupportMainComponent implements OnInit {
       .filter((item: any) => item.selected)
       .map((item: any) => item.value);
     this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    this.getTaskDataGrid();
   }
 
   onDocumentChange(e: any) {
     this.fieldDocNo = e
-    this.getTaskDataGrid()
   }
 
   onStartDateChange(e: Date) {
     this.startDate = e
-    this.getTaskDataGrid()
   }
   onEndDateChange(e: Date) {
     this.endDate = e
-    this.getTaskDataGrid()
   }
 
   initCategoriesCheckBox() {
@@ -88,6 +85,11 @@ export class SupportMainComponent implements OnInit {
     this.unassignedGrid.instance.refresh()
     this.assignedGrid.instance.refresh()
     this.doneGrid.instance.refresh()
+  }
+
+  onSearchClicked() {
+    this.getTaskDataGrid()
+
   }
 
   initUnassignedTaskDataSource() {
