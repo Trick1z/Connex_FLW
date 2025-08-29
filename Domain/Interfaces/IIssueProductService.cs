@@ -10,18 +10,14 @@ namespace Domain.Interfaces
     {
 
         public Task<IssueCategories> SaveCategories(CategoriesParam param);
-
+        public Task<string> DeleteCategories(CategoriesParam param);
         public Task<Product> SaveProduct(ProductParam param);
-        public Task<bool> DeletedProduct(List<int> id);
+        public Task<Product> DeleteProduct(ProductParam param);
+        //public Task<bool> DeletedProduct(List<int> id);
 
 
         public Task<IEnumerable<IssueCategoriesViewModel>> GetCategoriesItems();
         
-        
-
-
-
-
 
         public Task<CategoriesMapProductViewModel> LoadCategories(int id); 
         public Task<bool> SaveCategoriesProduct(SaveCategoriesProductParam param);

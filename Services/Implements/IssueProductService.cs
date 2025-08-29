@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ViewModels;
@@ -35,51 +36,37 @@ namespace Services.Implements
         }
 
 
-        public async Task<bool> DeletedProduct(List<int> id) {
-            var userId = _claimsService.GetCurrentUserId();
-            var validate = new ValidateException();
-            var dateNow = DateTime.Now;
-            foreach (var item in id)
-            {              
-                var dbProduct = await _context.Product.FirstOrDefaultAsync(x => x.ProductId == item && x.IsActive == true );
+        //public async Task<bool> DeletedProduct(List<int> id) {
+        //    var userId = _claimsService.GetCurrentUserId();
+        //    var validate = new ValidateException();
+        //    var dateNow = DateTime.Now;
 
+        //    foreach (var item in id)
+        //    {              
+        //        var dbProduct = await _context.Product.FirstOrDefaultAsync(x => x.ProductId == item && x.IsActive == true );
+        //        if (dbProduct != null)
+        //        {
+        //            var dbIssueTask = await _context.IssueFormTask.Include(t=>t.Form)
+        //                .FirstOrDefaultAsync(x => x.ProductId == item);
 
+        //            if (dbIssueTask != null )
+        //            {
+        //                validate.Add("product",$"ข้อมูลกำลังถูกใช้งานอยู่ที่ Task {dbIssueTask.Form.DocNo} ,{dbIssueTask.FormId} , {dbIssueTask.TaskSeq}" );
+        //            }
+        //            dbProduct.IsActive = false;
+        //            dbProduct.ModifiedBy = userId;
+        //            _context.Product.Update(dbProduct);
 
-                if (dbProduct != null)
-                {
-
-                    var dbIssueTask = await _context.IssueFormTask.Include(t=>t.Form)
-                        .FirstOrDefaultAsync(x => x.ProductId == item);
-
-                    if (dbIssueTask != null )
-                    {
-                        validate.Add("product",$"ข้อมูลถูกใช้งานอยู่ที่ Task {dbIssueTask.Form.DocNo} ,{dbIssueTask.FormId} , {dbIssueTask.TaskSeq}" );
-                    }
-
-                    dbProduct.IsActive = false;
-                    dbProduct.ModifiedBy = userId;
-                    _context.Product.Update(dbProduct);
-
-                    AddLog("product", item, userId, "Deactivated Product", dateNow);
-                }
-                else {
-
-                    validate.Add("product", "");
-                
-                }
-            }
-
-            validate.Throw();
-
-
-
-
-            await _context.SaveChangesAsync();
-            
-
-
-            return true;
-        }
+        //            AddLog("product", item, userId, "Deactivated Product", dateNow);
+        //        }
+        //        else {
+        //            validate.Add("product", "");
+        //        }
+        //    }
+        //    validate.Throw();
+        //    await _context.SaveChangesAsync();         
+        //    return true;
+        //}
 
 
 
@@ -117,12 +104,12 @@ namespace Services.Implements
 
             if (string.IsNullOrWhiteSpace(param.ProductName))
             {
-                validate.Add("product", "กรุณาใส่ข้อมูลให้ครบถ้วน");
+                validate.Add(ValidateKey.Product, ValidateMsg.PleaseFillAllInfo);
                 validate.Throw();
 
             }
 
-            await ValidateDupicated(param, validate);
+            await ValidateProductDupicated(param, validate);
 
 
 
@@ -137,7 +124,7 @@ namespace Services.Implements
                 _context.Product.Add(dbProduct);
                 await _context.SaveChangesAsync();
 
-                AddLog("product", dbProduct.ProductId, userId, "Added Product", datenow);
+                AddLog(DbRef.Product, dbProduct.ProductId, userId, LogActionRef.AddProduct, datenow);
 
             }
             else
@@ -147,7 +134,7 @@ namespace Services.Implements
                          .FirstOrDefaultAsync(x => x.ProductId == param.ProductId && x.IsActive == true);
 
                 if (dbProduct == null) {
-                    validate.Add("product","ไม่พบข้อมูล");
+                    validate.Add(ValidateKey.Product,ValidateMsg.NotFound);
                 }
 
                 TimeValidate(param.ModifiedTime, dbProduct.ModifiedTime, validate);
@@ -156,7 +143,7 @@ namespace Services.Implements
 
                 _context.Product.Update(dbProduct);
 
-                AddLog("product", param.ProductId, userId, "Edited Product", datenow);
+                AddLog(DbRef.Product, param.ProductId, userId, LogActionRef.EditProduct, datenow);
 
             }
 
@@ -165,14 +152,149 @@ namespace Services.Implements
             return dbProduct;
         }
 
+        public async Task<Product> DeleteProduct(ProductParam param)
+        {
+            var userId = _claimsService.GetCurrentUserId();
+            var validate = new ValidateException();
+            var dateNow = DateTime.Now;
+            var dbProduct = await _context.Product.FirstOrDefaultAsync(x => x.ProductId == param.ProductId);
+
+            if (dbProduct == null)
+            {
+                validate.Add(ValidateKey.Product, ValidateMsg.NotFound);
+                validate.Throw();
+            }
+
+            TimeValidate(param.ModifiedTime, dbProduct.ModifiedTime, validate);
+
+            var dbRelation = await _context.Rel_Categories_Product.FirstOrDefaultAsync(x => x.ProductId == param.ProductId);
+            if (dbRelation != null)
+            {
+                validate.Add(ValidateKey.Product, ValidateMsg.DataAllReadyUsed);
+                validate.Throw();
+            }
+
+            dbProduct.IsActive = false;
+            dbProduct.ModifiedBy = userId;
+            dbProduct.ModifiedTime = dateNow;
+            _context.Product.Update(dbProduct);
+
+            AddLog(DbRef.Product, param.ProductId, userId, LogActionRef.DeactiveProduct, dateNow);
+
+            await _context.SaveChangesAsync();
+            return dbProduct;
+        }
+        public async Task<IssueCategories> SaveCategories(CategoriesParam param)
+        {
+
+            var userId = _claimsService.GetCurrentUserId();
+            var datenow = DateTime.Now;
+            var validate = new ValidateException();
+            IssueCategories dbCategories;
+
+
+            if (string.IsNullOrWhiteSpace(param.IssueCategoriesName) || string.IsNullOrWhiteSpace(param.IssueCategoriesDescription))
+            {
+                validate.Add(ValidateKey.Categories, ValidateMsg.PleaseFillAllInfo);
+                validate.Throw();
+            }
+
+            await ValidateCategoriesDupicated(param, validate);
+
+
+
+            if (param.IssueCategoriesId == null || param.IssueCategoriesId <= 0)
+            {
+                dbCategories = new IssueCategories();
+
+                UpdateDbCategories(param, userId, datenow, dbCategories);
+                dbCategories.IsActive = true;
+                dbCategories.CreatedTime = datenow;
+
+                _context.IssueCategories.Add(dbCategories);
+                await _context.SaveChangesAsync();
+
+                AddLog(DbRef.Categories, dbCategories.IssueCategoriesId, userId, LogActionRef.AddCategories, datenow);
+
+            }
+            else
+            {
+
+                dbCategories = await _context.IssueCategories
+                        .FirstOrDefaultAsync(x => x.IssueCategoriesId == param.IssueCategoriesId && x.IsActive == true);
+
+                if (dbCategories == null)
+                {
+                    validate.Add(ValidateKey.Categories, ValidateMsg.NotFound);
+                }
+
+                TimeValidate(param.ModifiedTime, dbCategories.ModifiedTime, validate);
+
+                CheckCategoriesValueChanged(param, validate, dbCategories);
+
+                UpdateDbCategories(param, userId, datenow, dbCategories);
+
+                _context.IssueCategories.Update(dbCategories);
+
+                AddLog(DbRef.Categories, param.IssueCategoriesId, userId, LogActionRef.EditCategories, datenow);
+
+            }
+
+            await _context.SaveChangesAsync();
+
+            return dbCategories;
+
+        }
+
+        public async Task<string> DeleteCategories(CategoriesParam param)
+        {
+            var userId = _claimsService.GetCurrentUserId();
+            var validate = new ValidateException();
+            var dateNow = DateTime.Now;
+            var dbCategories = await _context.IssueCategories.FirstOrDefaultAsync(x => x.IssueCategoriesId == param.IssueCategoriesId);
+
+            if (dbCategories == null)
+            {
+                validate.Add(ValidateKey.Categories, ValidateMsg.NotFound);
+                validate.Throw();
+            }
+
+            TimeValidate(param.ModifiedTime, dbCategories.ModifiedTime, validate);
+
+            var dbRelation = await _context.Rel_Categories_Product.FirstOrDefaultAsync(x => x.IssueCategoriesId == param.IssueCategoriesId);
+
+            if (dbRelation != null)
+            {
+                validate.Add(ValidateKey.Categories, ValidateMsg.DataAllReadyUsed);
+                validate.Throw();
+            }
+
+            dbCategories.ModifiedBy = userId;
+            dbCategories.ModifiedTime = dateNow;
+            dbCategories.IsActive = false;
+            _context.IssueCategories.Update(dbCategories);
+
+            AddLog(DbRef.Categories, param.IssueCategoriesId, userId, LogActionRef.DeactiveCategories, dateNow);
+
+            await _context.SaveChangesAsync();
+            return "OK";
+        }
+
         private static void UpdateDbProduct(ProductParam param, int userId, DateTime datenow, Product dbProduct)
         {
             dbProduct.ProductName = param.ProductName;
             dbProduct.ModifiedTime = datenow;
             dbProduct.ModifiedBy = userId;
         }
+        private static void UpdateDbCategories(CategoriesParam param, int userId, DateTime datenow, IssueCategories dbCategories)
+        {
+            dbCategories.IssueCategoriesName = param.IssueCategoriesName;
+            dbCategories.IssueCategoriesDescription = param.IssueCategoriesDescription;
+            dbCategories.ModifiedTime = datenow;
+            dbCategories.ModifiedBy = userId;
+        }
 
-        private async Task ValidateDupicated(ProductParam param, ValidateException validate)
+        private async Task ValidateProductDupicated(ProductParam param, ValidateException validate)
         {
            var  dbProduct = await _context.Product
                    .FirstOrDefaultAsync(x => x.ProductName == param.ProductName
@@ -180,7 +302,22 @@ namespace Services.Implements
 
             if (dbProduct != null)
             {
-                validate.Add("product", "มีข้อมูลในระบบแล้ว");
+                validate.Add(ValidateKey.Product, ValidateMsg.DataAlreadyExists );
+                validate.Throw();
+            }
+
+
+        }
+
+        private async Task ValidateCategoriesDupicated(CategoriesParam param, ValidateException validate)
+        {
+            var dbCategories = await _context.IssueCategories
+                    .FirstOrDefaultAsync(x => x.IssueCategoriesName == param.IssueCategoriesName
+                    && x.IssueCategoriesId != param.IssueCategoriesId && x.IsActive == true);
+
+            if (dbCategories != null)
+            {
+                validate.Add(ValidateKey.Categories, ValidateMsg.DataAlreadyExists);
                 validate.Throw();
             }
 
@@ -194,126 +331,37 @@ namespace Services.Implements
 
             if (param.ProductName == dbProduct.ProductName)
             {
-                validate.Add("product", "คุณไม่ได้เปลี่ยนข้อมูล");
+                validate.Add(ValidateKey.Product, ValidateMsg.NoChangesMade);
+                validate.Throw();
+            }
+
+            return true;
+        }
+        private static bool CheckCategoriesValueChanged(CategoriesParam param, ValidateException validate, IssueCategories? dbCategories)
+        {
+            if (param.IssueCategoriesDescription == dbCategories.IssueCategoriesDescription)
+            {
+                validate.Add(ValidateKey.Categories, ValidateMsg.NoChangesMade);
                 validate.Throw();
             }
 
             return true;
         }
 
-        public async Task<IssueCategories> SaveCategories(CategoriesParam param )
-        {
-
-
-            var userId = _claimsService.GetCurrentUserId();
-            var dateNow = DateTime.Now;
-            var validate = new ValidateException();
-
-            var dbIssueCategory = new IssueCategories();
-
-            if (string.IsNullOrWhiteSpace(param.IssueCategoriesName) || string.IsNullOrWhiteSpace(param.IssueCategoriesDescription))
-            {
-                validate.Add("categories", "กรอกข้อมูลให้ครบถ้วน");
-                validate.Throw();
-            }
-
-            if (param.IssueCategoriesId <= 0 || param.IssueCategoriesId == null){
-
-                dbIssueCategory = await _context.IssueCategories
-                         .FirstOrDefaultAsync(x => x.IssueCategoriesName == param.IssueCategoriesName 
-                         || x.IssueCategoriesDescription == param.IssueCategoriesDescription && x.IsActive == true)!;
-                if (dbIssueCategory != null)
-                {
-                    validate.Add("categories", "มีข้อมูลในระบบแล้ว");
-                    validate.Throw();
-                }
-
-                dbIssueCategory = new IssueCategories();
-                dbIssueCategory.IssueCategoriesDescription = param.IssueCategoriesDescription;
-                dbIssueCategory.IssueCategoriesName = param.IssueCategoriesName;
-                dbIssueCategory.IsProgramIssue = param.IsProgramIssue;
-                dbIssueCategory.CreatedTime = dateNow;
-                dbIssueCategory.ModifiedTime = dateNow;
-                dbIssueCategory.IsActive = true;
-                dbIssueCategory.ModifiedBy = userId;
-
-                _context.IssueCategories.Add(dbIssueCategory);
-                await _context.SaveChangesAsync();
-
-
-                AddLog("categories", dbIssueCategory.IssueCategoriesId, userId, "Added Categories", dateNow);
-
-            }
-            else {
-
-
-                dbIssueCategory = await _context.IssueCategories
-                           .FirstOrDefaultAsync(x => x.IssueCategoriesId == param.IssueCategoriesId && x.IsActive == true)!;
-
-                TimeValidate(dbIssueCategory.ModifiedTime, param.ModifiedTime, validate);
-
-
-                if (param.Action == "Edit")
-                {
-
-                   
-
-
-                    CheckCategoriesValueChanged(param, validate, dbIssueCategory);
-
-
-                    dbIssueCategory.IssueCategoriesDescription = param.IssueCategoriesDescription;
-                    dbIssueCategory.IssueCategoriesName = param.IssueCategoriesName;
-                    dbIssueCategory.ModifiedTime = dateNow;
-                    dbIssueCategory.ModifiedBy = userId;
-                    _context.IssueCategories.Update(dbIssueCategory);
-
-                    AddLog("categories", dbIssueCategory.IssueCategoriesId, userId, "Edited Categories", dateNow);
-                }
-                else if (param.Action == "Delete")
-                {
-                    var dbRelation = await _context.Rel_Categories_Product.FirstOrDefaultAsync(x => x.IssueCategoriesId == param.IssueCategoriesId);
-
-                    if (dbRelation != null)
-                    {
-
-                        validate.Add("categories", "ไม่สามารถดำเนินการได้ข้อมูลกำลังถูกใช้งาน");
-                        validate.Throw();
-                    }
-
-                    DeActiveCategories(dbIssueCategory , userId);
-                    AddLog("categories", dbIssueCategory.IssueCategoriesId, userId, "Deactivated Categories", dateNow);
-                }
-            }
-
-            await _context.SaveChangesAsync();
-
-            return dbIssueCategory;
-            
-
-        }
 
         private static void TimeValidate(DateTime dbTime , DateTime paramTime, ValidateException validate)
         {
             if (paramTime != dbTime)
             {
-                validate.Add("modifiedTime", "กรุณารีเฟรชหน้านีแล้วลองใหม่");
+                validate.Add(ValidateKey.Time  , ValidateMsg.TimeNoMatch);
                 validate.Throw();
             }
         }
 
-        private void DeActiveCategories(IssueCategories? dbIssueCategory ,int userId)
-        {
-            dbIssueCategory.IsActive = false;
-            dbIssueCategory.ModifiedBy = userId;
-            _context.IssueCategories.Update(dbIssueCategory);
-        }
-
- 
 
         private void AddLog(string db,int id, int userId, string action, DateTime dateNow)
         {        
-            if (db == "product")
+            if (db == DbRef.Product)
             {
                 var log = new ProductAudit();
                 log.Action = action;
@@ -322,7 +370,7 @@ namespace Services.Implements
                 log.productId = id;
                 _context.ProductAudit.Add(log);
             }
-            else if(db == "categories") {
+            else if(db == DbRef.Categories) {
                 var log = new IssueCategoriesAudit();
                 log.Action = action;
                 log.ActionTime = dateNow;
@@ -331,19 +379,7 @@ namespace Services.Implements
                 _context.IssueCategoriesAudit.Add(log);
             }
         }
-    
-        private static void CheckCategoriesValueChanged(CategoriesParam param, ValidateException validate, IssueCategories dbIssueCategory)
-        {
-            if (param.IssueCategoriesName == dbIssueCategory.IssueCategoriesName
-                && param.IssueCategoriesDescription == dbIssueCategory.IssueCategoriesDescription)
-            {
-                validate.Add("categories", "คุณไม่ได้เปลี่ยนข้อมูล");
-                validate.Throw();
-            }
-        }
-
-
-        //mapIssueProduct
+   
         public async Task<bool> SaveCategoriesProduct(SaveCategoriesProductParam param)
         {
             var validate = new ValidateException();
@@ -351,8 +387,10 @@ namespace Services.Implements
                 .Include(c => c.Rel_Categories_Product)
                 .FirstOrDefaultAsync(c => c.IssueCategoriesId == param.CategoriesId);
 
-            if (categories == null)
-                validate.Add("categories", "ไม่พบหมวดหมู่");
+            if (categories == null) { 
+                validate.Add(ValidateKey.Categories, ValidateMsg.NotFound);
+                validate.Throw();
+            }
 
             //foreach (var item in param.product)
             //{
@@ -363,14 +401,20 @@ namespace Services.Implements
 
             //}
 
-            bool IsUserUsed = await _context.IssueFormTask.AnyAsync(x => param.product.Contains(x.IssueCategoriesId.Value));
-            if (IsUserUsed)
+            var dbRelation = await _context.Rel_Categories_Product
+                .Where(s => s.IssueCategoriesId == param.CategoriesId)
+                .FirstOrDefaultAsync();
+
+            if (dbRelation != null)
             {
-                validate.Add("product", "ไม่สามารถลบได้ ข้อมูลถูกใช้งานอยู่");
-                validate.Throw();
+                bool IsUserUsed = await _context.IssueFormTask.AnyAsync(x => param.product.Contains(x.IssueCategoriesId.Value));
+                if (IsUserUsed)
+                {
+                    validate.Add(ValidateKey.Product, ValidateMsg.DataAllReadyUsed);
+                    validate.Throw();
+                }
+
             }
-
-
 
             var productList = await _context.Rel_Categories_Product
                 .Where(r => r.IssueCategoriesId == param.CategoriesId)
@@ -382,10 +426,11 @@ namespace Services.Implements
 
                 if (param.ModifiedTime != dbModifiedTime)
                 {
-                    validate.Add("modifiedTime", "กรุณารีเฟรชหน้านีแล้วลองใหม่");
+                    validate.Add(ValidateKey.Time, ValidateMsg.TimeNoMatch);
+                    validate.Throw();
+
                 }
             }
-            validate.Throw();
 
             var products = await _context.Product
                 .Where(p => p.IsActive && param.product.Contains(p.ProductId))

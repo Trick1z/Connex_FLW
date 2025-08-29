@@ -72,5 +72,11 @@ namespace Services.DashBoard
             return data;
 
         }
+
+        public async Task<IEnumerable<USP_Query_ChartResult>> ActionFormChart()
+        {
+            var result = await _context.Procedures.USP_Query_ChartAsync();
+            return result;
+        }
     }
 }

@@ -38,11 +38,17 @@ namespace MyAPI.Controllers.DashBoard
         {
             return Ok(await _dashBoardService.QueryOverallFormStatusDetail(param));
         }
-        [AllowAnonymous]
+
         [HttpPost("QueryLogEnquiry")]
         public async Task<IActionResult> QueryEnQuiry(DevExtremeParam<QueryLogEnquiryParam>  param)
         {
             return Ok(await _dashBoardService.QueryLogEnquiry(param));
+        }
+
+        [HttpGet("ActionFormChart")]
+        public async Task<IActionResult> ActionFormChart()
+        {
+            return Ok(await _dashBoardService.ActionFormChart());
         }
 
 

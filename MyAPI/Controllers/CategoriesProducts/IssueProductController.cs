@@ -34,17 +34,29 @@ namespace MyAPI.Controllers.CategoriesProducts
         }
 
         [HttpPost("CategoriesManagement")]
-        public async Task<IActionResult> CategoriesManagement([FromBody] CategoriesParam param)
+        public async Task<IActionResult> CategoriesManagement(CategoriesParam param)
         {
             return Ok(await _issueProduct.SaveCategories(param ));
         }
 
 
         [HttpPost("ProductManagement")]
-        public async Task<IActionResult> ProductManagement([FromBody] ProductParam param)
+        public async Task<IActionResult> ProductManagement( ProductParam param)
         {
             return Ok(await _issueProduct.SaveProduct(param ));
         }
+        [HttpPost("DeleteProduct")]
+        public async Task<IActionResult> DeleteProduct(ProductParam param)
+        {
+            return Ok(await _issueProduct.DeleteProduct(param ));
+        }
+
+        [HttpPost("DeleteCategories")]
+        public async Task<IActionResult> DeleteCategories(CategoriesParam param)
+        {
+            return Ok(await _issueProduct.DeleteCategories(param ));
+        }
+
 
 
 

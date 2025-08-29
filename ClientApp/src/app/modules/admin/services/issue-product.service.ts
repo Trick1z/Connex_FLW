@@ -50,4 +50,12 @@ export class IssueProductService {
   getCategoriesItems() {
     return this.http.get(`${environment.apiUrl}IssueProduct/GetIssueCategoriesItem`)
   }
+
+  deleteProductItems(data:ProductParam) {
+    return this.http.post(`${environment.apiUrl}IssueProduct/DeleteProduct`,data)
+  }
+
+  deleteCategoriesItems(data:CategoriesParam) {
+    return this.http.post(`${environment.apiUrl}IssueProduct/DeleteCategories`,data)
+  }
 }

@@ -119,8 +119,8 @@ namespace Services.Implements
                     Quantity = t.Br_Qty,
                     Location = t.Rp_Location,
                     DetectedTime = t.DetectedTime,
-                    CanEdit = t.SystemStatusCode == Domain.Enums.FormTaskStatus.Draft
-                             || t.SystemStatusCode == Domain.Enums.FormTaskStatus.Submit,
+                    CanEdit = t.SystemStatusCode == IssueTaskStatus.Draft
+                             || t.SystemStatusCode == IssueTaskStatus.Submit,
 
                 }).ToList()
             };
@@ -150,12 +150,11 @@ namespace Services.Implements
             var userId = _claimsService.GetCurrentUserId();
             var dateNow = DateTime.Now;
             var validate = new ValidateException();
-            var genDocNumber = await _genNumberService.GenDocNo("yymmm");
 
             // Validate TaskItems
             if (param.TaskItems.Count == 0)
             {
-                validate.Add("task", "กรุณาเพิ่มปัญหาที่ต้องการแจ้ง");
+                validate.Add(ValidateKey.Task, ValidateMsg.EmptyTaskList);
                 validate.Throw();
             }
 
@@ -168,6 +167,7 @@ namespace Services.Implements
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
+            var genDocNumber = await _genNumberService.GenDocNo("yymmm");
             if (param.FormId == 0)
             {
                 // -----------------
@@ -180,7 +180,7 @@ namespace Services.Implements
                     CreatedBy = userId,
                     CreatedTime = dateNow,
                     ModifiedTime = dateNow,
-                    SubmitedTime = status == "Submit" ? dateNow : null,
+                    SubmitedTime = status == IssueTaskStatus.Submit ? dateNow : null,
                 };
 
                 int taskSeq = 1;
@@ -198,7 +198,7 @@ namespace Services.Implements
                         Br_Qty = taskItem.IssueCategoriesId == 1 ? taskItem.Quantity : null,
                         Rp_Location = taskItem.IssueCategoriesId == 2 ? taskItem.Location : null,
                         DetectedTime = (taskItem.IssueCategoriesId == 2 || taskItem.IssueCategoriesId == 3) ? taskItem.DetectedTime : null,
-                        SubmitTime = status == "Submit" ? dateNow : null
+                        SubmitTime = status == IssueTaskStatus.Submit ? dateNow : null
                     });
 
                     taskSeq++;
@@ -244,7 +244,7 @@ namespace Services.Implements
                         {
                             FormId = param.FormId,
                             TaskSeq = t.TaskSeq,
-                            Action = "Deleted Task",
+                            Action = LogTaskActionRef.DeleteTask,
                             ActionBy = userId,
                             ActionTime = dateNow,
                             IssueCategoriesId = t.IssueCategoriesId,
@@ -271,7 +271,7 @@ namespace Services.Implements
                 {
 
 
-                    var logAction = "Edited Task";
+                    var logAction = LogTaskActionRef.EditTask;
 
                     var dbTask = dbIssueForm.IssueFormTask
                         .FirstOrDefault(t => t.TaskSeq == dsTask.TaskSeq);
@@ -288,10 +288,10 @@ namespace Services.Implements
                         };
                         dbIssueForm.IssueFormTask.Add(dbTask);
 
-                        logAction = "Added Task";
+                        logAction = LogTaskActionRef.AddTask;
                     }
 
-                    if (dbTask.SystemStatusCode == FormTaskStatus.Assigned)
+                    if (dbTask.SystemStatusCode == IssueTaskStatus.Assigned)
                     {
                         dbIssueForm.SystemStatusCode = DocumentStatus.InProgress;
                         continue;
@@ -304,7 +304,7 @@ namespace Services.Implements
                     dbTask.Br_Qty = dsTask.IssueCategoriesId == 1 ? dsTask.Quantity : null;
                     dbTask.Rp_Location = dsTask.IssueCategoriesId == 2 ? dsTask.Location : null;
                     dbTask.DetectedTime = (dsTask.IssueCategoriesId == 2 || dsTask.IssueCategoriesId == 3) ? dsTask.DetectedTime : null;
-                    dbTask.SubmitTime = status == "Submit" ? dateNow : null;
+                    dbTask.SubmitTime = status == IssueTaskStatus.Submit ? dateNow : null;
 
                     CreatedTaskAddLog(param, userId, dateNow, dsTask, logAction, maxTaskSeq);
                 }
@@ -346,7 +346,7 @@ namespace Services.Implements
 
             formLog.ActionTime = dateNow;
             formLog.ActionBy = userId;
-            formLog.Action = "Edited Task In Form";
+            formLog.Action = LogFormActionRef.TaskEdited;
             formLog.FormId = formId;
 
             _context.IssueFormAudit.Add(formLog);
@@ -355,7 +355,7 @@ namespace Services.Implements
         private void CreatedFormAddFormLog(IssueFormParam param, int userId, DateTime dateNow)
         {
             var formLog = new IssueFormAudit();
-            formLog.Action = "Created Form";
+            formLog.Action = LogFormActionRef.Created;
             formLog.ActionTime = dateNow;
             formLog.FormId = param.FormId;
             formLog.ActionBy = userId;
@@ -370,7 +370,7 @@ namespace Services.Implements
                 var taskLog = new IssueFormTaskAudit();
 
                 taskLog.TaskSeq = t.TaskSeq;
-                taskLog.Action = "Created Task";
+                taskLog.Action = LogTaskActionRef.AddTask;
                 taskLog.FormId = param.FormId;
                 taskLog.ActionBy = userId;
                 taskLog.ActionTime = dateNow;
@@ -420,7 +420,7 @@ namespace Services.Implements
         {
             var log = new IssueFormAudit();
             log.FormId = param.FormId;
-            log.Action = "Closed Form";
+            log.Action = LogFormActionRef.Closed;
             log.ActionTime = dateNow;
             log.ActionBy = userId;
             _context.IssueFormAudit.Add(log);
@@ -428,7 +428,7 @@ namespace Services.Implements
 
         private void ClosedFormUpdated(int userId, DateTime dateNow, IssueForm? dbForm)
         {
-            dbForm.SystemStatusCode = "Closed";
+            dbForm.SystemStatusCode = DocumentStatus.Closed;
             dbForm.ModifiedBy = userId;
             dbForm.ModifiedTime = dateNow;
             dbForm.ClosedBy = userId;
@@ -442,13 +442,13 @@ namespace Services.Implements
         {
             if (dbForm == null)
             {
-                validate.Add("form", "ไม่เจอฟอร์ม");
+                validate.Add(ValidateKey.Form, ValidateMsg.NotFound);
                 validate.Throw();
             }
 
             if (param.ModifiedTime != dbForm.ModifiedTime)
             {
-                validate.Add("time", "กรุณารีเฟรชหน้านีแล้วลองใหม่");
+                validate.Add(ValidateKey.Time, ValidateMsg.TimeNoMatch);
                 validate.Throw();
 
             }
@@ -460,7 +460,7 @@ namespace Services.Implements
 
             if (dbIssueForm == null)
             {
-                validate.Add("form", "ไม่เจอฟอร์ม");
+                validate.Add(ValidateKey.Form, ValidateMsg.NotFound);
             }
 
             validate.Throw();
@@ -497,16 +497,16 @@ namespace Services.Implements
 
         private static void ValidateTask(ValidateTaskParam param, IssueFormTask? dbIssueFormTasks, ValidateException validate)
         {
-            if (dbIssueFormTasks.SystemStatusCode != "Draft")
+            if (dbIssueFormTasks.SystemStatusCode != IssueTaskStatus.Draft)
             {
-                validate.Add("task", "มีคนรับงานนี้เรียบร้อยแล้ว");
+                validate.Add(ValidateKey.Task, ValidateMsg.AllreadyAssigned);
             }
 
 
             if (param?.DataSource == null || param.Data?.Id == null)
             {
 
-                validate.Add("task", "ไม่พบข้อมูล");
+                validate.Add(ValidateKey.Task, ValidateMsg.NotFound);
 
             }
 
@@ -524,20 +524,20 @@ namespace Services.Implements
 
                 if ((param.Data.IssueCategoriesId == IssueCategoriesId.Borrow) && (param.Data.ProductId == item.ProductId))
                 {
-                    validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
+                    validate.Add(ValidateKey.Task, ValidateMsg.DupicatedItem);
                     validate.Throw();
                 }
 
 
                 if ((param.Data.IssueCategoriesId == IssueCategoriesId.Repair) && (param.Data.ProductId == item.ProductId) && (param.Data.Location == item.Location))
                 {
-                    validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
+                    validate.Add(ValidateKey.Task, ValidateMsg.DupicatedItem);
                     validate.Throw();
                 }
 
                 if ((param.Data.IssueCategoriesId == IssueCategoriesId.Progream) && (param.Data.DetectedTime == item.DetectedTime))
                 {
-                    validate.Add("item", "คุณเพิ่มข้อมูลนี้แล้ว");
+                    validate.Add(ValidateKey.Task, ValidateMsg.DupicatedItem);
                     validate.Throw();
 
                 }
@@ -558,7 +558,7 @@ namespace Services.Implements
 
             if (dbRCP == null)
             {
-                validate.Add("categories", "ไม่พบข้อมูล");
+                validate.Add(ValidateKey.Categories,ValidateMsg.NotFound);
                 validate.Throw();
             }
 
@@ -661,7 +661,7 @@ namespace Services.Implements
         {
             if (param.DetectedTime == null)
             {
-                validate.Add("date", "กรุณากรอกวันที่");
+                validate.Add(ValidateKey.Date,ValidateMsg.DateRequired);
             }
         }
 
@@ -669,20 +669,20 @@ namespace Services.Implements
         {
             if (string.IsNullOrWhiteSpace(param.Location))
             {
-                validate.Add("location", "กรุณากรอกสถานที่");
+                validate.Add(ValidateKey.Location,ValidateMsg.LocationRequired);
             }
         }
 
         private static void CheckiQuantityBelowOrZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.Quantity <= 0 || param.Quantity == null)
-                validate.Add("quantity", "กรูณากรอกจำนวน");
+                validate.Add(ValidateKey.Quantity,ValidateMsg.QuantityRequired);
         }
 
         private static void CheckProductNullOrBelowZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.ProductId <= 0 || param.ProductId == null)
-                validate.Add("product", "กรุณเลือก product");
+                validate.Add(ValidateKey.Product, ValidateMsg.ProductRequired);
             validate.Throw();
 
         }
@@ -690,7 +690,7 @@ namespace Services.Implements
         private static void CheckCategoriesNullOrBrlowZero(TaskParamViewModel param, ValidateException validate)
         {
             if (param.IssueCategoriesId <= 0 || param.IssueCategoriesId == null)
-                validate.Add("categories", "กรุณเลือก category");
+                validate.Add(ValidateKey.Categories, ValidateMsg.CategoriesRequired);
             validate.Throw();
 
         }
@@ -768,20 +768,20 @@ namespace Services.Implements
             userTaskSeq.SystemStatusCode = userStatusCode;
             userTaskSeq.ModifiedTime = dateNow;
 
-            if (status == FormTaskStatus.Done || status == FormTaskStatus.Rejected)
+            if (status == IssueTaskStatus.Done || status == IssueTaskStatus.Rejected)
             {
                 await UpdateFormStatus(param, dateNow, userId);
                 userTaskSeq.DoneTime = dateNow;
                 userTaskSeq.Br_Qty = param.Br_Qty;
             }
 
-            if (status == FormTaskStatus.Assigned)
+            if (status == IssueTaskStatus.Assigned)
             {
                 await UpdateFormStatus(param, dateNow, userId);
                 userTaskSeq.AssignedTime = dateNow;
                 userTaskSeq.AssignedTo = userId;
             }
-            if (status == FormTaskStatus.CancelAssigned)
+            if (status == IssueTaskStatus.CancelAssigned)
             {
                 await UpdateFormStatus(param, dateNow, userId);
 
@@ -789,7 +789,7 @@ namespace Services.Implements
                 userTaskSeq.AssignedTime = null;
             }
 
-            if (status == FormTaskStatus.CancelCompleted)
+            if (status == IssueTaskStatus.CancelCompleted)
             {
                 await UpdateFormStatus(param, dateNow, userId);
                 userTaskSeq.DoneTime = null;
@@ -804,36 +804,55 @@ namespace Services.Implements
 
         private async Task UpdateFormStatus(USP_Query_FormTasksByStatusResult param, DateTime dateNow, int userId)
         {
+
+            var dbFormLogAudit = new IssueFormAudit();
+
+
             var tasks = await _context.IssueFormTask
                                       .Where(w => w.FormId == param.FormId)
                                       .Select(s => s.SystemStatusCode)
                                       .ToListAsync();
 
             if (!tasks.Any())
-                return; // ไม่มี Task ไม่ต้องอัพเดตสถานะ
+                return; 
 
             var dbIssueForm = await _context.IssueForm.FirstOrDefaultAsync(x => x.FormId == param.FormId);
             if (dbIssueForm == null)
                 return;
 
-            if (tasks.All(x => x == FormTaskStatus.Done || x == FormTaskStatus.Done))
+            if (tasks.All(x => x == IssueTaskStatus.Done || x == IssueTaskStatus.Rejected))
             {
+
                 dbIssueForm.SystemStatusCode = DocumentStatus.Done;
                 dbIssueForm.DoneTime = dateNow;
+                FormAddLog(dateNow, userId, dbFormLogAudit, $"Form {DocumentStatus.Done}" , param.FormId ?? 0);
             }
-            else if (tasks.All(x => x == FormTaskStatus.Submit))
+            else if (tasks.All(x => x == IssueTaskStatus.Submit))
             {
                 dbIssueForm.SystemStatusCode = DocumentStatus.Submit;
+                FormAddLog(dateNow, userId, dbFormLogAudit, $"Form {DocumentStatus.Submit}", param.FormId ?? 0);
+
             }
-            else if (tasks.Any(x => x == FormTaskStatus.Assigned
-                                 || x == FormTaskStatus.Done
-                                 || x == FormTaskStatus.Rejected))
+            else if (tasks.Any(x => x == IssueTaskStatus.Assigned
+                                 || x == IssueTaskStatus.Done
+                                 || x == IssueTaskStatus.Rejected))
             {
                 dbIssueForm.SystemStatusCode = DocumentStatus.InProgress;
+                FormAddLog(dateNow, userId, dbFormLogAudit, $"Form {DocumentStatus.InProgress}", param.FormId ?? 0);
+
             }
 
             dbIssueForm.ModifiedTime = dateNow;
             dbIssueForm.ModifiedBy = userId;
+        }
+
+        private void FormAddLog(DateTime dateNow, int userId, IssueFormAudit dbFormLogAudit ,string action ,int formId)
+        {
+            dbFormLogAudit.Action = action;
+            dbFormLogAudit.ActionBy = userId;
+            dbFormLogAudit.ActionTime = dateNow;
+            dbFormLogAudit.FormId = formId;
+            _context.IssueFormAudit.Add(dbFormLogAudit);
         }
 
         private async Task AddLog(int userId, IssueFormTask? userTaskSeq, DateTime dateNow, string status)
@@ -864,7 +883,7 @@ namespace Services.Implements
             //ไม่เจอโยน validate
             if (param.ModifiedTime != userTaskSeq.ModifiedTime)
             {
-                validate.Add("update", "กรุณารีเฟรชหน้านีแล้วลองใหม่");
+                validate.Add(ValidateKey.Time,ValidateMsg.TimeNoMatch);
                 validate.Throw();
 
             }
@@ -877,7 +896,7 @@ namespace Services.Implements
             //ไม่เจอโยน validate
             if (userTaskSeq == null)
             {
-                validate.Add("task", "ไม่พบข้อมูล");
+                validate.Add(ValidateKey.Task,ValidateMsg.NotFound);
                 validate.Throw();
             }
 
@@ -889,11 +908,13 @@ namespace Services.Implements
             var validate = new ValidateException();
 
             bool canNotDelete = await _context.IssueFormTask.AnyAsync(x => x.FormId == param.FormId
-            && (x.SystemStatusCode == FormTaskStatus.Done || x.SystemStatusCode == FormTaskStatus.Rejected || x.SystemStatusCode == FormTaskStatus.Assigned));
+            && (x.SystemStatusCode == IssueTaskStatus.Done 
+            || x.SystemStatusCode == IssueTaskStatus.Rejected 
+            || x.SystemStatusCode == IssueTaskStatus.Assigned));
 
             if (canNotDelete)
             {
-                validate.Add("item", "มีคนกำลังทำงานไม่สามารถลบได้");
+                validate.Add(ValidateKey.Form, ValidateMsg.SupportAreWorking);
                 validate.Throw();
             }
 
@@ -909,15 +930,11 @@ namespace Services.Implements
             }
             else
             {
-                validate.Add("form", "ไม่พบข้อมูล");
+                validate.Add(ValidateKey.Form, ValidateMsg.NotFound);
                 validate.Throw();
             }
 
             return true;
         }
-
-
     }
-
-
 }

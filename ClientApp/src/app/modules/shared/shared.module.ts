@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DxButtonModule, DxCheckBoxModule, DxDataGridModule, DxDateBoxModule, DxFileUploaderModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxRadioGroupModule, DxSelectBoxModule, DxTagBoxModule, DxTextAreaModule, DxTextBoxModule } from 'devextreme-angular';
+import { DxButtonModule, DxChartModule, DxCheckBoxModule, DxDataGridModule, DxDateBoxModule, DxFileUploaderModule, DxFormModule, DxNumberBoxModule, DxPopupModule, DxRadioGroupModule, DxSelectBoxModule, DxTagBoxModule, DxTextAreaModule, DxTextBoxModule } from 'devextreme-angular';
 import { ButtonComponent } from './button/button.component';
 import { CheckBoxComponent } from './check-box/check-box.component';
 import { DataGridComponent } from './data-grid/data-grid.component';
@@ -18,6 +18,7 @@ import { TagBoxComponent } from './tag-box/tag-box.component';
 import { TextBoxComponent } from './text-box/text-box.component';
 import { FormsModule } from '@angular/forms';
 import dxTextArea from 'devextreme/ui/text_area';
+import { DxiSeriesModule, DxoValueAxisModule } from 'devextreme-angular/ui/nested';
 
 
 
@@ -39,7 +40,7 @@ import dxTextArea from 'devextreme/ui/text_area';
     RadioComponent,
     SelectBoxComponent,
     TagBoxComponent,
-    TextBoxComponent
+    TextBoxComponent,
 
 
   ],
@@ -59,11 +60,14 @@ import dxTextArea from 'devextreme/ui/text_area';
     FormsModule,
     DxFormModule,
     DxTextAreaModule,
-
-
+    DxChartModule,
+    DxiSeriesModule,
+    DxoValueAxisModule
 
   ],
-  exports: [ButtonComponent,
+  exports: [
+    CommonModule,
+    ButtonComponent,
     CheckBoxComponent,
     DataGridComponent,
     DataGridGroupComponent,
@@ -94,6 +98,10 @@ import dxTextArea from 'devextreme/ui/text_area';
     DxRadioGroupModule,
     DxFormModule,
     DxTextAreaModule,
+    DxChartModule,
+    DxiSeriesModule,
+    DxoValueAxisModule
+
 
   ]
 

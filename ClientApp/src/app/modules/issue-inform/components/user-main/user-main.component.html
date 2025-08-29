@@ -1,4 +1,4 @@
-<app-head-underline [title]="'User Form'"></app-head-underline>
+<app-head-underline [color]="underlineColor.green" [title]="'User Form'"></app-head-underline>
 <div class="flex justify-start max-w-full ml-10 mr-10 items- search-box">
   <div class="gap-4 space-y-4 text-end text-box">
 
@@ -39,29 +39,32 @@
   </div>
 
   <div class="ml-10">
-    <div class="flex items-center text-start text-end check-box">
+    <div class="flex items-start text-end">
       <label for="check-box" class="w-20 mr-2 font-bold">Categories</label>
       <app-check-box [options]="categoriesCheckBoxItem" (optionsChange)="onCategoriesCheck($event)">
       </app-check-box>
     </div>
 
-    <div class="flex items-start mt-10 text-end check-box">
+    <div class="flex items-start mt-10 text-end">
       <label for="check-box" class="w-20 mr-2 font-bold">Status</label>
       <app-check-box [options]="statusCheckBoxItem" (optionsChange)="onStatusCodeCheck($event)">
       </app-check-box>
     </div>
   </div>
 
+</div>
+<div class="mt-3 ml-52">
+  <app-button (clicked)="onSearchClicked()" class="" [color]="buttonColor.Search" [message]="'Search'">
 
-
-
+  </app-button>
 </div>
 
+<app-head-underline [color]="underlineColor.black"></app-head-underline>
 
 <!-- (onRowExpanding)="onMasterDetailRowExpanding($event.key.formId)"  -->
-<div class="gap-y-8 p-14">
-  <app-head-underline [title]="'Open Issues'"></app-head-underline>
-  <div class="mx-10 my-5">
+<div class="px-2 py-2 m-5 bg-white rounded-lg shadow-2xl gap-y-8">
+  <app-head-underline [color]="underlineColor.black" [title]="'Open Issues'"></app-head-underline>
+  <div class="my-5">
     <dx-data-grid #openFormGrid [dataSource]="openFormsDataSource" keyExpr="formId" [showBorders]="true"
       [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
 
@@ -79,24 +82,25 @@
 
       <dxi-column alignment="center" dataField="progressing" caption="Progressing"></dxi-column>
 
-      <dxi-column alignment="center" dataField="modifiedBy" caption="Modified By"></dxi-column>
+      <dxi-column alignment="left" dataField="modifiedBy" caption="Modified By"></dxi-column>
 
       <dxi-column alignment="center" dataField="modifiedTime" caption="Modified Time"
         cellTemplate="modifiedTimeCell"></dxi-column>
 
       <div *dxTemplate="let cell of 'modifiedTimeCell'">
-        {{ cell.data.modifiedTime | date:'dd MMM yyyy HH:mm:ss' }}
+        {{ cell.data.modifiedTime | date:'dd MMM yyyy HH:mm' }}
       </div>
       <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
 
       <div *dxTemplate="let detail of 'actionCell'">
         <div *ngIf="!detail.data.canClose" class="flex justify-center space-x-2">
-          <app-button (clicked)="onEditClicked(detail.data)" [color]="'yellow'" [message]="'Edit'"></app-button>
-          <app-button (clicked)="onFormDeleteClicked(detail.data)" [color]="'red'" [message]="'Delete'"></app-button>
+          <app-button (clicked)="onEditClicked(detail.data)" [color]="buttonColor.Edit" [message]="'Edit'"></app-button>
+          <app-button (clicked)="onFormDeleteClicked(detail.data)" [color]="buttonColor.Delete"
+            [message]="'Delete'"></app-button>
         </div>
 
         <div *ngIf="detail.data.canClose">
-          <app-button [color]="'blue'" (clicked)="onCloseFormClicked(detail.data)"
+          <app-button [color]="buttonColor.CloseForm" (clicked)="onCloseFormClicked(detail.data)"
             [message]="'Close Form'"></app-button>
         </div>
 
@@ -106,13 +110,13 @@
         <dx-data-grid (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" [showBorders]="true"
           [columnAutoWidth]="true">
           <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
-          <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
+          <dxi-column alignment="left" dataField="productName" caption="Product"></dxi-column>
           <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
           <dxi-column alignment="center" dataField="location" caption="Location"></dxi-column>
           <dxi-column cellTemplate="detectedCell" alignment="center" dataField="detectedTime"
             caption="Detected Time"></dxi-column>
           <div *dxTemplate="let cell of 'detectedCell'">
-            {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm:ss' }}
+            {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm' }}
           </div>
           <!-- 
           <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
@@ -138,9 +142,14 @@
   </div>
 
 
-  <div class="my-24">
+</div>
 
-    <app-head-underline [title]="'Closed Issues'"></app-head-underline>
+
+
+<div class="p-5 px-2 m-5 bg-white rounded-lg shadow-2xl">
+
+  <div class="my-4">
+    <app-head-underline [color]="underlineColor.black" [title]="'Closed Issues'"></app-head-underline>
 
     <dx-data-grid #openFormGrid [dataSource]="closedFormsDataSource" keyExpr="formId" [showBorders]="true"
       [masterDetail]="{ enabled: true, template: 'unsuccessDetail'  }" [paging]="{ enabled: true, pageSize: 5 }">
@@ -164,17 +173,14 @@
         cellTemplate="modifiedTimeCell"></dxi-column>
 
       <div *dxTemplate="let cell of 'modifiedTimeCell'">
-        {{ cell.data.modifiedTime | date:'dd MMM yyyy HH:mm:ss' }}
+        {{ cell.data.modifiedTime | date:'dd MMM yyyy HH:mm' }}
       </div>
-      <dxi-column alignment="center" width="160" caption="Actions" cellTemplate="actionCell"></dxi-column>
-
-
 
       <div *dxTemplate="let masterData of 'unsuccessDetail'">
         <dx-data-grid (onContentReady)="onDetailGridContentReady($event, masterData.data.formId)" [showBorders]="true"
           [columnAutoWidth]="true">
           <dxi-column dataField="issueCategoriesName" caption="Category"></dxi-column>
-          <dxi-column alignment="center" dataField="productName" caption="Product"></dxi-column>
+          <dxi-column alignment="left" dataField="productName" caption="Product"></dxi-column>
           <dxi-column dataField="quantity" caption="Quantity"></dxi-column>
           <dxi-column alignment="center" dataField="location" caption="Location"></dxi-column>
           <dxi-column cellTemplate="detectedCell" alignment="center" dataField="detectedTime"
@@ -183,7 +189,7 @@
 
 
           <div *dxTemplate="let cell of 'detectedCell'">
-            {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm:ss' }}
+            {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm' }}
           </div>
 
           <dxi-column dataField="status" caption="Status" cellTemplate="statusCell" alignment="center"></dxi-column>
@@ -192,11 +198,14 @@
               {{ cell.data.status }}
             </span>
           </div>
+
+
+
+
         </dx-data-grid>
       </div>
     </dx-data-grid>
   </div>
-
 
 </div>
 
@@ -221,7 +230,7 @@
       <dxi-column cellTemplate="actionCell" alignment="center" dataField="actionTime"
         caption="Action Time"></dxi-column>
       <div *dxTemplate="let cell of 'actionCell'">
-        {{ cell.data.actionTime | date:'dd MMM yyyy HH:mm:ss' }}
+        {{ cell.data.actionTime | date:'dd MMM yyyy HH:mm' }}
       </div>
 
 

@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { categoriesMapProductViewModel, ProductsDataModel } from '../../models/tag-option.model';
-import Swal from 'sweetalert2';
 import { IssueProductService } from '../../services/issue-product.service';
 import { DropDownService } from 'src/app/services/drop-down.service';
 import DataSource from 'devextreme/data/data_source';
@@ -8,6 +7,9 @@ import { LoadOptions } from 'devextreme/data';
 import { catchError, lastValueFrom, of } from 'rxjs';
 import { DevExtremeParam, Search } from '../../models/search.Model';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { Button, HeaderUnderline } from 'src/app/constants/color.const';
+import { SwalService } from '../../services/swal.service';
+import { Alert } from 'src/app/constants/alert.const';
 
 @Component({
   selector: 'app-master',
@@ -15,6 +17,9 @@ import { DxDataGridComponent } from 'devextreme-angular';
   styleUrls: ['./master.component.scss']
 })
 export class MasterComponent implements OnInit {
+
+  buttonColor = Button;
+  underlineColor = HeaderUnderline;
 
   productVisible: boolean = false;
   viewPopupDetail: boolean = false;
@@ -32,6 +37,7 @@ export class MasterComponent implements OnInit {
   constructor(
     private dropDownService: DropDownService,
     private issueProductService: IssueProductService,
+    private swalService : SwalService
   ) { }
 
   ngOnInit(): void {
@@ -71,24 +77,13 @@ export class MasterComponent implements OnInit {
     this.issueProductService.onProductSaveData(this.categoriesMapProduct)
       .pipe(catchError(err => {
         this.productVisible = false;
-        Swal.fire({
-          title: 'Error',
-          text: err?.error?.messages.product ?? "มีบางอย่างผิดพลาด",
-          icon: 'error',
-          confirmButtonText: 'ตกลง',
-          timer: 1000
-        });
+        this.swalService.showErrorLog(err);
+  
         return of(null);
       })).subscribe((res: any) => {
         if (res) {
           this.productVisible = false;
-          Swal.fire({
-            title: 'สำเร็จ',
-            text: 'บันทึกข้อมูลสำเร็จ',
-            icon: 'success',
-            confirmButtonText: 'ตกลง',
-            timer: 1000
-          });
+          this.swalService.showSuccessPopup(Alert.saveSuccessfully)   
         }
       });
   }
@@ -103,7 +98,7 @@ export class MasterComponent implements OnInit {
     this.issueProductService.getViewProductDetail(categoryId)
       .pipe(catchError(err => {
         this.viewCategoriesDetail = [];
-        return of({ productText: '' });
+        return of([]);
       })).subscribe((res: any) => {
         this.viewCategoriesDetail = res.productText?.split(',') || [];
       });

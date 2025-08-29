@@ -96,6 +96,26 @@ namespace Domain.Models
             return _;
         }
 
+        public virtual async Task<List<USP_Query_ChartResult>> USP_Query_ChartAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
+        {
+            var parameterreturnValue = new SqlParameter
+            {
+                ParameterName = "returnValue",
+                Direction = System.Data.ParameterDirection.Output,
+                SqlDbType = System.Data.SqlDbType.Int,
+            };
+
+            var sqlParameters = new []
+            {
+                parameterreturnValue,
+            };
+            var _ = await _context.SqlQueryAsync<USP_Query_ChartResult>("EXEC @returnValue = [dbo].[USP_Query_Chart]", sqlParameters, cancellationToken);
+
+            returnValue?.SetValue(parameterreturnValue.Value);
+
+            return _;
+        }
+
         public virtual async Task<List<USP_Query_FormTaskDetailResult>> USP_Query_FormTaskDetailAsync(int? formId, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default)
         {
             var parameterreturnValue = new SqlParameter

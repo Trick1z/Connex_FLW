@@ -8,6 +8,7 @@ import { DevExtremeParam, JobForUserParam } from 'src/app/modules/admin/models/s
 import Swal from 'sweetalert2';
 import { USP_Query_FormTasksByStatusResult } from '../../models/assignedTask.model';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { Button, HeaderUnderline } from 'src/app/constants/color.const';
 
 @Component({
   selector: 'app-support-main',
@@ -15,7 +16,8 @@ import { DxDataGridComponent } from 'devextreme-angular';
   styleUrls: ['./support-main.component.scss']
 })
 export class SupportMainComponent implements OnInit {
-
+  buttonColor = Button;
+  underlineColor = HeaderUnderline;
   fieldDocNo: string | null = null;
   categoriesCheckBoxItem: any = [];
   startDate: Date | null = null;
@@ -40,7 +42,7 @@ export class SupportMainComponent implements OnInit {
   @ViewChild('doneGrid', { static: false }) doneGrid!: DxDataGridComponent;
 
   ngOnInit(): void {
-     this.initSetUpDataSource();
+    this.initSetUpDataSource();
   }
 
   initSetUpDataSource() {
@@ -195,7 +197,7 @@ export class SupportMainComponent implements OnInit {
     });
 
     if (!result.isConfirmed) return;
-    
+
     const newItem: USP_Query_FormTasksByStatusResult = { ...this.prepareData };
     this.taskService.taskManagement(newItem, status)
       .pipe(catchError(err => {

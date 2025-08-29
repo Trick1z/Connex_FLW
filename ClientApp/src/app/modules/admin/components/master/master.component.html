@@ -1,23 +1,25 @@
-<app-head-underline [title]="'Relation mapping'"></app-head-underline>
+<app-head-underline [color]="underlineColor.green" [title]="'Relation Mapping'"></app-head-underline>
 
-<div class="m-11">
-  <app-head-underline [title]="'Map Categories Product'"></app-head-underline>
+<div class="px-1 py-2 m-3 bg-white rounded-lg shadow-2xl">
+  <app-head-underline [color]="underlineColor.black" [title]="'Map Categories Product'"></app-head-underline>
   <div class="ml-10 groups">
 
     <div class="flex max-w-sm search-box">
 
-      <label for="searchBox" class="w-36">Category Name</label>
+      <label  for="searchBox" class="font-bold w-36">Category Name</label>
 
       <div class="">
         <app-text-box #searchBox [value]="searchCategoriesValue" (onValueChanged)="onSearchValueChange($event)"
-          [placeHolder]="'Search By Username'"></app-text-box>
+          [placeHolder]="'Search...'"></app-text-box>
       </div>
     </div>
 
     <div class="mt-1 ml-36 app-btn">
-      <app-button (clicked)="onSearchClicked()" [message]="'Search'"></app-button>
+      <app-button [color]="buttonColor.Search" (clicked)="onSearchClicked()" [message]="'Search'"></app-button>
     </div>
   </div>
+  <app-head-underline [color]="underlineColor.black"></app-head-underline>
+
 
   <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDataSource" [showBorders]="true"
     [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
@@ -31,7 +33,7 @@
 
     <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
 
-    <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
+    <dxi-column dataField="issueCategoriesName" caption="Categories Name" minWidth="150" alignment="left"></dxi-column>
 
     <dxi-column dataField="isProgramIssue" caption="Program Issue" width="150" alignment="center"></dxi-column>
 

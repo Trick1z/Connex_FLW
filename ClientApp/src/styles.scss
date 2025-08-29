@@ -41,12 +41,62 @@
   height: 2.1rem;
 }
 
-
 .dx-textbox .dx-texteditor-input::placeholder {
   font-size: 0.75rem;
   font-weight: 400;
   color: #888;
   opacity: 1;
+}
+
+.dx-textbox .dx-texteditor-input {
+  font-weight: 400;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "~devextreme/dist/css/dx.light.css";
+
+
+::ng-deep .dx-datagrid .dx-header-row>td {
+  text-align: center;
+}
+
+
+
+.dx-datagrid .dx-datagrid-headers .dx-header-row>td {
+  vertical-align: middle !important;
+}
+
+.dx-datagrid-rowsview .dx-datagrid-table .dx-freespace-row,
+.dx-datagrid-rowsview .dx-datagrid-table .dx-virtual-row {
+  border-top: 0;
+  border-bottom: 0;
+  height: 0px !important;
+}
+
+.dx-datagrid .dx-row>td {
+  padding: 6px;
+}
+
+.dx-field-item:not(.dx-field-item-has-group):not(.dx-field-item-has-tabs):not(.dx-first-row):not(.dx-label-v-align) {
+  padding-top: 0 !important;
+}
+
+
+.dx-textbox .dx-texteditor-input {
+  height: 1rem;
+  line-height: 2rem;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+}
+
+.dx-textbox .dx-texteditor-container {
+  height: 2.1rem;
+}
+.dx-texteditor-input {
+
+  padding: 0 !important;
 }
 
 .dx-textbox .dx-texteditor-input {
@@ -64,4 +114,23 @@
 
 .dx-placeholder {
   display: none !important;
+}
+
+
+
+
+.dx-row.dx-header-row>td {
+  text-align: center !important;
+}
+
+.dx-texteditor-input-container.dx-tag-container {
+  padding: 0;
+}
+
+.dx-placeholder {
+  display: none !important;
+}
+.dx-texteditor-input{
+
+  margin-left: 5px !important;
 }

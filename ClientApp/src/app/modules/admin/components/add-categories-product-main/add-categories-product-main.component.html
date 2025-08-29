@@ -1,25 +1,25 @@
-<app-head-underline [title]="'Categories Products'"></app-head-underline>
+<app-head-underline [color]="underlineColor.green"  [title]="'Categories Products'"></app-head-underline>
 
-<div class="mt-20 ml-20 mr-20 categroy-box ">
-    <app-head-underline [title]="'Issue Categories'"></app-head-underline>
+<div class="px-2 py-1 mt-10 ml-5 mr-5 bg-white rounded-lg shadow-2xl" >
+    <app-head-underline [color]="underlineColor.black"  [title]="'Issue Categories'"></app-head-underline>
 
-    <app-button (clicked)="categoryPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
+    <app-button [color]="buttonColor.Add" (clicked)="categoryPopupShow()" class="flex ml-10 mr-10 text-end" [message]="'Add'"></app-button>
 
     <dx-data-grid #categoriesGrid class="m-10" [dataSource]="categoriesDatasource" [showBorders]="true"
         [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
 
         <dxi-column dataField="issueCategoriesId" caption="ID" width="80" alignment="center"></dxi-column>
 
-        <dxi-column dataField="issueCategoriesName" caption="ชื่อ" minWidth="110" alignment="left"></dxi-column>
+        <dxi-column dataField="issueCategoriesName" caption="Username" minWidth="110" alignment="left"></dxi-column>
 
-        <dxi-column dataField="issueCategoriesDescription" caption="คำอธิบาย" minWidth="120" alignment="left">
+        <dxi-column alignment="center" dataField="issueCategoriesDescription" caption="Description" minWidth="120">
         </dxi-column>
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'">
         </dxi-column>
 
-        <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="center"></dxi-column>
+        <dxi-column dataField="modifiedByUserName" caption="Modified By" width="140" alignment="left"></dxi-column>
 
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'">
@@ -29,7 +29,7 @@
 
 
         <div *dxTemplate="let cell of 'dateCellTemplate'">
-            {{ cell.value | date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
+            {{ cell.value | date : "dd MMM yyyy HH:mm" : '' : 'en-EN' }}
         </div>
 
         <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
@@ -41,7 +41,7 @@
                 stylingMode="contained">
             </dx-button>
 
-            <dx-button class="m-2" (onClick)="showDeleteAlert(cell.data,'categories')" text="Delete" type="danger"
+            <dx-button class="m-2" (onClick)="onCategoriesDeleteClicked(cell.data)" text="Delete" type="danger"
                 stylingMode="contained">
             </dx-button>
         </div>
@@ -50,14 +50,14 @@
 </div>
 
 
-<div class="mt-24 ml-20 mr-20 Product-box ">
+<div class="px-1 py-2 mt-24 mb-6 ml-5 mr-5 bg-white rounded-lg shadow-2xl ">
 
-    <app-head-underline [title]="'Product'"></app-head-underline>
+    <app-head-underline [color]="underlineColor.black"  [title]="'Product'"></app-head-underline>
 
-    <div class="mt-5 ml-10 space-y-4 search-box ">
+    <div class="mt-5 ml-10 space-y-4 text-end search-box ">
 
         <div class="flex items-center">
-            <label class="w-40 font-bold">Product Name</label>
+            <label class="w-40 mr-3 font-bold">Product Name</label>
             <div class="flex-1 max-w-60">
                 <app-text-box [value]="productSearch" [placeHolder]="'Search...'"
                     (onValueChanged)="onChangeTest($event)">
@@ -66,14 +66,14 @@
         </div>
 
         <div class="flex">
-            <label class="w-40 font-bold" for="isMap">Already Used</label>
+            <label class="w-40 mr-3 font-bold" for="isMap">Already Used</label>
             <dx-check-box [value]="isMap" (onValueChanged)="onMaValueCheck($event)" text="Yes"></dx-check-box>
         </div>
 
         <div *ngIf="isMap" class="flex items-start">
-            <label class="w-40 font-bold">Categories</label>
+            <label class="w-40 mr-3 font-bold" >Categories</label>
             <div class="grid flex-1 grid-cols-3 gap-2 max-w-96">
-                <div *ngFor="let item of categoryDataList">
+                <div class="flex items-start" *ngFor="let item of categoryDataList">
                     <dx-check-box [(ngModel)]="item.selected" (onValueChanged)="onCategoriesValueCheck($event)"
                         [name]="item.text" [text]="item.text">
                     </dx-check-box>
@@ -86,12 +86,12 @@
 
 
 
-    <div class="flex mt-5 ml-48 button">
-        <app-button (clicked)="productPopupShow()" class="flex ml-1 mr-5 text-end" [message]="'Add'"></app-button>
-        <app-button [color]="'blue'" [message]="'Search'" (clicked)="onSearch()"></app-button>
+    <div class="flex mt-5 ml-52 button">
+        <app-button [color]="buttonColor.Add" (clicked)="productPopupShow()" class="flex ml-1 mr-5 text-end" [message]="'Add'"></app-button>
+        <app-button [color]="buttonColor.Search" [message]="'Search'" (clicked)="onSearch()"></app-button>
     </div>
 
-    <app-head-underline></app-head-underline>
+    <app-head-underline [color]="underlineColor.black" ></app-head-underline>
 
     <dx-data-grid #productGrid class="flex m-10 mt-8 max-w-max " [dataSource]="productDataSource" [showBorders]="true"
         [paging]="{ pageSize: 5 }" [columnAutoWidth]="true">
@@ -105,20 +105,20 @@
 
         <dxi-column dataField="productId" caption="ID" minWidth="80" width="100" alignment="center"></dxi-column>
 
-        <dxi-column dataField="productName" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
+        <dxi-column dataField="productName" caption="Username" minWidth="150" alignment="left"></dxi-column>
 
         <dxi-column dataField="createdTime" caption="Create Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'">
         </dxi-column>
 
-        <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="center"></dxi-column>
+        <dxi-column dataField="username" caption="Modified By" minWidth="150" alignment="left"></dxi-column>
 
         <dxi-column dataField="modifiedTime" caption="Modified Time" minWidth="150" alignment="center"
             [cellTemplate]="'dateCellTemplate'">
         </dxi-column>
 
         <div *dxTemplate="let cell of 'dateCellTemplate'">
-            {{ cell.value | date : "dd MMMM yyyy HH:mm:ss" : '' : 'en-EN' }}
+            {{ cell.value | date : "dd MMM yyyy HH:mm" : '' : 'en-EN' }}
         </div>
 
         <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
@@ -130,7 +130,7 @@
                 stylingMode="contained">
             </dx-button>
 
-            <dx-button class="m-2" (onClick)="showDeleteAlert(cell.data, 'product')" text="Delete" type="danger"
+            <dx-button class="m-2" (onClick)="onProductDeleteClicked(cell.data)" text="Delete" type="danger"
                 stylingMode="contained">
             </dx-button>
         </div>
@@ -184,8 +184,8 @@
             </div>
 
             <div class="flex justify-center gap-2 mt-10">
-                <app-button (clicked)="onSave('categories')" [message]="'Save'"></app-button>
-                <app-button (clicked)="categoryPopupHide()" color="red" [message]="'Close'"></app-button>
+                <app-button [color]="buttonColor.Save" (clicked)="onSave('categories')" [message]="'Save'"></app-button>
+                <app-button [color]="buttonColor.Close" (clicked)="categoryPopupHide()" [message]="'Close'"></app-button>
             </div>
 
         </div>
@@ -208,8 +208,8 @@
             </div>
 
             <div class="flex justify-center gap-2 mt-10">
-                <app-button (clicked)="onSave('product')" [message]="'Save'"></app-button>
-                <app-button (clicked)="productPopupHide()" color="red" [message]="'Close'"></app-button>
+                <app-button [color]="buttonColor.Save" (clicked)="onSave('product')" [message]="'Save'"></app-button>
+                <app-button [color]="buttonColor.Close" (clicked)="productPopupHide()" [message]="'Close'"></app-button>
             </div>
         </div>
 

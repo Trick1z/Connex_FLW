@@ -2,12 +2,15 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { catchError, of } from 'rxjs';
 import { DropDownService } from 'src/app/services/drop-down.service';
 import { IssueProductService } from '../../services/issue-product.service';
-import { CategoriesParam, ProductParam, ProductUpdateFormData} from '../../models/categories.model';
+import { CategoriesParam, ProductParam, ProductUpdateFormData } from '../../models/categories.model';
 import { DevExtremeParam, productSearch } from '../../models/search.Model';
 import DataSource from 'devextreme/data/data_source';
 import Swal from 'sweetalert2';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { CheckboxList } from 'src/app/models/checkBox.model';
+import { Alert } from 'src/app/constants/alert.const';
+import { SwalService } from '../../services/swal.service';
+import { Button, HeaderUnderline } from 'src/app/constants/color.const';
 
 @Component({
   selector: 'app-add-categories-product-main',
@@ -15,6 +18,9 @@ import { CheckboxList } from 'src/app/models/checkBox.model';
   styleUrls: ['./add-categories-product-main.component.scss']
 })
 export class AddCategoriesProductMainComponent implements OnInit {
+
+  buttonColor = Button;
+  underlineColor = HeaderUnderline;
 
   categoryVisible: boolean = false;
   productVisible: boolean = false;
@@ -59,7 +65,8 @@ export class AddCategoriesProductMainComponent implements OnInit {
 
   constructor(
     private dropDownService: DropDownService,
-    private issueProductService: IssueProductService
+    private issueProductService: IssueProductService,
+    private swalService: SwalService
   ) { }
 
   ngOnInit(): void {
@@ -104,7 +111,10 @@ export class AddCategoriesProductMainComponent implements OnInit {
     this.categoryVisible = true;
   }
 
-  productPopupShow() { this.productVisible = true;}
+  productPopupShow() {
+    this.productPopupTitle = "Add Product"
+    this.productVisible = true;
+  }
 
   productPopupHide() {
     this.productVisible = false;
@@ -128,15 +138,16 @@ export class AddCategoriesProductMainComponent implements OnInit {
   }
 
   initCategoriesDataSource() {
-    this.issueProductService.getCategoriesItems()
-      .pipe(
-        catchError(err => {
-          return of([]);
-        })
-      )
-      .subscribe((res: any) => {
-        this.categoriesDatasource = res ?? [];
-      });
+    this.categoriesDatasource = new DataSource({
+      load: (loadOptions) => {
+
+        return this.issueProductService.getCategoriesItems()
+          .pipe(catchError(err => of([])))
+          .toPromise();
+      }
+    });
+
+
   }
 
   initProductDataSource() {
@@ -177,93 +188,87 @@ export class AddCategoriesProductMainComponent implements OnInit {
     });
   }
 
-  getSelectedCategories(): string {return this.categoryDataList.filter(c => c.selected).map(c => c.value).join(',');}
+  getSelectedCategories(): string { return this.categoryDataList.filter(c => c.selected).map(c => c.value).join(','); }
 
   onSave(type: string) {
     if (type === "categories") {
       this.issueProductService.categoriesManagement(this.categoryModel)
         .pipe(catchError(err => {
           this.categoryPopupHide()
-          Swal.fire({
-            title: 'ไม่มีอะไรเปลี่ยนแปลง',
-            text: err.error.messages.categories || err.error.messages.modifiedTime || 'มีบางอย่างผิดพลาด',
-            icon: 'question',
-            showConfirmButton: false,
-            timer: 2000
-          });
+          this.swalService.showErrorLog(err)
+
           return err
         })).subscribe((res => {
           this.categoryPopupHide()
-          this.initCategoriesDataSource()
+          this.categoriesGrid.instance.refresh()
           this.initCategoriesCheckBoxDataSource()
-          this.showSuccessPopup()
+          this.swalService.showSuccessPopup(Alert.saveSuccessfully)
         }))
       return
     } else {
       this.issueProductService.productManagement(this.productModel)
         .pipe(catchError(err => {
           this.productPopupHide()
-          Swal.fire({
-            title: 'ไม่มีอะไรเปลี่ยนแปลง',
-            text: err.error.messages.product ||
-              err.error.messages.modifiedTime ||
-              'มีบางอย่างผิดพลาด',
-            icon: 'question',
-            showConfirmButton: false,
-            timer: 2000
-          });
+          this.swalService.showErrorLog(err)
           return err
         })).subscribe((res: any) => {
           this.productGrid.instance.refresh()
           this.productPopupHide()
-          this.showSuccessPopup()
+          this.swalService.showSuccessPopup(Alert.saveSuccessfully)
         })
     }
   }
 
-  showDeleteAlert(data: any, type: string) {
-    if (type === "product") {
-      Swal.fire({
-        title: "ต้องการดำเนินการลบ ?",
-        text: `ยืนยันที่จะลบ ${data.productName}`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ยืนยัน"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.productModel = { ...data }
-          this.productModel.action = "Delete";
-          this.onSave("product")
-        }
-      });
-    } else {
-      Swal.fire({
-        title: "ต้องการดำเนินการลบ ?",
-        text: `ยืนยันที่จะลบ ${data.issueCategoriesDescription}`,
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "ยืนยัน"
-      }).then((result) => {
-        if (result.isConfirmed) {
-          this.categoryModel = { ...data }
-          this.categoryModel.action = "Delete"
-          this.onSave("categories")
-        }
-      });
-    }
+  onProductDeleteClicked(data: any) {
+    Swal.fire({
+      title: "ต้องการดำเนินการลบ ?",
+      text: `ยืนยันที่จะลบ ${data.productName}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ยืนยัน"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.productModel = { ...data }
+        this.issueProductService.deleteProductItems(this.productModel)
+          .pipe(catchError(err => {
+            this.swalService.showErrorLog(err)
+            return of(null)
+          })).subscribe((res: any) => {
+
+            this.swalService.showSuccessPopup(Alert.deleteSuccessfully)
+          })
+      }
+    });
+
   }
 
-  showSuccessPopup() {
-    return Swal.fire({
-      title: 'สำเร็จ',
-      text: 'อัพเดทข้อมูลเรีบร้อยแล้ว',
-      icon: 'success',
-      showConfirmButton: false,
-      timer: 2000
+  onCategoriesDeleteClicked(data: any) {
+    Swal.fire({
+      title: "ต้องการดำเนินการลบ ?",
+      text: `ยืนยันที่จะลบ ${data.issueCategoriesName}`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ยืนยัน"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.categoryModel = { ...data }
+
+      } this.issueProductService.deleteCategoriesItems(this.categoryModel)
+        .pipe(catchError(err => {
+          this.swalService.showErrorLog(err)
+          return of(null)
+        })).subscribe((res: any) => {
+
+          this.swalService.showSuccessPopup(Alert.deleteSuccessfully)
+          this.categoriesGrid.instance.refresh()
+        })
     });
+
   }
+
+
 }

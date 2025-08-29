@@ -1,4 +1,5 @@
-﻿using Domain.Exceptions;
+﻿using Domain.Enums;
+using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
 using Domain.ViewModels;
@@ -32,36 +33,27 @@ namespace Services.Implements
                 .FirstOrDefaultAsync(u => u.UserId == param.UserId);
 
             if (user == null)
-                throw new Exception("User not found");
+            {
+                validate.Add(ValidateKey.User, ValidateMsg.NotFound);
+                validate.Throw();
+            }
 
             var categoriesList = await _context.Rel_User_Categories.Where(r => r.UserId == param.UserId).ToListAsync();
 
             if (categoriesList.Count > 0)
             {
-                //validate
-
-
                 var dbModifiedTime = categoriesList.Select(s => s.CreatedTime).Max();
-
-
                 if (param.ModifiedTime != dbModifiedTime)
                 {
-                    //validate
-                    validate.Add("ModifiedTime", "Time Not Match!");
+                    validate.Add(ValidateKey.Time, ValidateMsg.TimeNoMatch);
+                    validate.Throw();
                 }
-
-
             }
 
-            validate.Throw();
-
-
-            // ดึง categories ที่ active และอยู่ใน request
             var categories = await _context.IssueCategories
                 .Where(c => c.IsActive && param.Categories.Contains(c.IssueCategoriesId))
                 .ToListAsync();
 
-            // สร้าง relation ใหม่
             var newRelations = categories.Select(c => new Rel_User_Categories
             {
                 User = user,
@@ -69,7 +61,6 @@ namespace Services.Implements
                 CreatedTime = DateTime.Now
             }).ToList();
 
-            // แทนที่ relation เดิม
             user.Rel_User_Categories = newRelations;
 
             await _context.SaveChangesAsync();
@@ -94,9 +85,6 @@ namespace Services.Implements
             return usersWithRole;
         }
 
-
-
-
         public async Task<UserMapCategoriesViewModel> LoadUser(int id)
         {
             var selectedCategories = await _context.Rel_User_Categories
@@ -106,8 +94,6 @@ namespace Services.Implements
 
                      .ToListAsync();
 
-
-            //สร้าง DTO
             var data = new UserMapCategoriesViewModel
             {
                 UserId = id,
@@ -117,30 +103,15 @@ namespace Services.Implements
             };
             return data;
         }
-
-
-
-
-
         public async Task<QueryViewModel<USP_Query_NameResult>> QueryUser(DevExtremeParam<SearchUsernameParam> param)
         {
 
-
             var result = await _context.Procedures.USP_Query_NameAsync(param.SearchCriteria.Text, param.LoadOption.Skip, param.LoadOption.Take, param.SortField, param.SortBy);
-            //var result = await _context.Procedures.USP_Query_NameAsync(text, loadParam.Skip, loadParam.Take, loadParam.Sort[0].Selector, "DESC");
             var data = new QueryViewModel<USP_Query_NameResult>();
             data.Data = result;
             data.TotalCount = result.Select(x => x.TotalCount).FirstOrDefault() ?? 0;
 
-
-
             return data;
-
-
         }
-
-     
-
-
     }
 }

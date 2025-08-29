@@ -112,6 +112,10 @@
          "ObjectType": 1
       },
       {
+         "Name": "[dbo].[USP_Query_Chart]",
+         "ObjectType": 1
+      },
+      {
          "Name": "[dbo].[USP_Query_FormTaskDetail]",
          "ObjectType": 1
       },

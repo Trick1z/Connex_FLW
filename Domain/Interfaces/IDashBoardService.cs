@@ -16,5 +16,7 @@ namespace Domain.Interfaces
 
         public Task<QueryViewModel<USP_Query_OverallFormsStatusDetailResult>> QueryOverallFormStatusDetail(DevExtremeParam<QueryOverallDetailParam> param);
         public  Task<QueryViewModel<USP_Query_LogEnquiryResult>> QueryLogEnquiry(DevExtremeParam<QueryLogEnquiryParam> param);
+
+        public Task<IEnumerable<USP_Query_ChartResult>> ActionFormChart();
     }
 }

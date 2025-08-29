@@ -8,5 +8,6 @@ import { Component, Input } from '@angular/core';
 export class HeadUnderlineComponent {
 
   @Input ("title") public title : string = '';
+  @Input () public color : string = 'green';
 
 }

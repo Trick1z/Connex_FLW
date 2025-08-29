@@ -31,4 +31,8 @@ export class DashboardService {
   queryLogEnquiry(data: DevExtremeParam<QueryLogEnquiryParam>) {
     return this.http.post(`${environment.apiUrl}DashBoard/QueryLogEnquiry`, data)
   }
+  
+  actionFormChart() {
+    return this.http.get(`${environment.apiUrl}DashBoard/ActionFormChart`)
+  }
 }

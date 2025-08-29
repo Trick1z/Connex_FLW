@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { UserMapCategoriesViewModel } from '../../models/tag-option.model';
-import Swal from 'sweetalert2';
 import { ConfigSupportService } from '../../services/config-support.service';
 import { catchError, of } from 'rxjs';
 import { DropDownService } from 'src/app/services/drop-down.service';
@@ -9,6 +8,9 @@ import { LoadOptions } from 'devextreme/data';
 import { DevExtremeParam, Search } from '../../models/search.Model';
 import { DropDownList } from 'src/app/models/dropDown.model';
 import { DxDataGridComponent } from 'devextreme-angular';
+import { Button, HeaderUnderline } from 'src/app/constants/color.const';
+import { SwalService } from '../../services/swal.service';
+import { Alert } from 'src/app/constants/alert.const';
 
 @Component({
   selector: 'app-map-user-categories',
@@ -16,6 +18,9 @@ import { DxDataGridComponent } from 'devextreme-angular';
   styleUrls: ['./map-user-categories.component.scss']
 })
 export class MapUserCategoriesComponent implements OnInit {
+
+  buttonColor = Button;
+  underlineColor = HeaderUnderline;
 
   viewPopupDetail = false;
   mapDetailVisible = false;
@@ -34,7 +39,8 @@ export class MapUserCategoriesComponent implements OnInit {
 
   constructor(
     private service: ConfigSupportService,
-    private dropDownService: DropDownService
+    private dropDownService: DropDownService,
+    private swalService: SwalService
   ) { }
 
   ngOnInit(): void {
@@ -59,7 +65,7 @@ export class MapUserCategoriesComponent implements OnInit {
     });
   }
 
-  onSearchValueChange(text: string) {this.searchUsernameValue = text;  }
+  onSearchValueChange(text: string) { this.searchUsernameValue = text; }
 
   refreshGrid() {
     if (this.userGrid?.instance) {
@@ -68,8 +74,8 @@ export class MapUserCategoriesComponent implements OnInit {
   }
 
   onSearch() {
-    this.initUserByRoleDataSource(this.searchUsernameValue); 
-    this.refreshGrid();                   
+    this.initUserByRoleDataSource(this.searchUsernameValue);
+    this.refreshGrid();
   }
 
   onMapDetailPopupShow(data: any) {
@@ -80,7 +86,7 @@ export class MapUserCategoriesComponent implements OnInit {
     this.labelRole = data.roleName;
     this.mapDetailVisible = true;
   }
-  
+
   onViewPopupHide() { this.mapDetailVisible = false; }
   onMapDetailPopupHide() { this.mapDetailVisible = false; }
 
@@ -97,12 +103,14 @@ export class MapUserCategoriesComponent implements OnInit {
     this.service.insertMappingUserCategories(this.userMapCategories)
       .pipe(catchError(err => {
         this.mapDetailVisible = false;
-        Swal.fire('ไม่สามารถบันทึกข้อมูลได้', 'กรุณาลองรีเฟรชหน้าเว็บและลองอีกครั้ง', 'error');
+
+        this.swalService.showErrorLog(err)
         return of(null);
       }))
       .subscribe(res => {
         this.userGrid.instance.refresh()
-        Swal.fire('สำเร็จ', 'บันทึกข้อมูลสำเร็จ', 'success');
+        this.swalService.showSuccessPopup(Alert.saveSuccessfully)
+
         this.mapDetailVisible = false;
       });
   }
@@ -120,7 +128,7 @@ export class MapUserCategoriesComponent implements OnInit {
     this.service.getCategoriesForUser(userId)
       .pipe(catchError(err => {
         this.viewUserDetail = [];
-        return of({ categoriesText: '' });
+        return of([]);
       }))
       .subscribe((res: any) => {
         this.viewUserDetail = res.categoriesText?.split(',').map((item: string) => item.trim()) || [];

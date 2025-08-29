@@ -13,6 +13,9 @@ import { DxDataGridComponent, DxDataGridModule } from 'devextreme-angular';
 import { Router } from '@angular/router';
 import { UserRoute } from 'src/app/constants/routes.const';
 import Swal from 'sweetalert2';
+import { Button, HeaderUnderline } from 'src/app/constants/color.const';
+import { SwalService } from '../../../admin/services/swal.service';
+import { Alert } from 'src/app/constants/alert.const';
 
 @Component({
   selector: 'app-user-main',
@@ -20,6 +23,9 @@ import Swal from 'sweetalert2';
   styleUrls: ['./user-main.component.scss']
 })
 export class UserMainComponent implements OnInit {
+
+  buttonColor = Button;
+  underlineColor = HeaderUnderline;
 
   openFormsDataSource!: DataSource;
   closedFormsDataSource!: DataSource;
@@ -41,7 +47,8 @@ export class UserMainComponent implements OnInit {
   constructor(
     private informTaskService: InformTaskService,
     private checkboxService: CheckboxService,
-    private router: Router
+    private router: Router,
+    private swalService: SwalService
   ) { }
 
   ngOnInit(): void {
@@ -53,11 +60,9 @@ export class UserMainComponent implements OnInit {
 
   onDocumentChange(e: any) {
     this.documentNumberSearch = e
-    this.refreshGrid()
   }
   onProductNameChange(e: any) {
     this.productName = e
-    this.refreshGrid()
   }
 
   onCategoriesCheck(e: any) {
@@ -65,7 +70,6 @@ export class UserMainComponent implements OnInit {
       .filter((item: any) => item.selected)
       .map((item: any) => item.value);
     this.categoriesSearchId = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    this.refreshGrid()
   }
 
   onStatusCodeCheck(e: any) {
@@ -73,16 +77,17 @@ export class UserMainComponent implements OnInit {
       .filter((item: any) => item.selected)
       .map((item: any) => item.value);
     this.statusCodeSearchText = selectedItems.length > 0 ? selectedItems.join(',') : null;
-    this.refreshGrid()
   }
 
   onStartDateChange(e: any) {
     this.startDate = e.value;
-    this.refreshGrid()
   }
 
   onEndDateChange(e: any) {
     this.endDate = e.value
+  }
+
+  onSearchClicked() {
     this.refreshGrid()
   }
 
@@ -114,6 +119,8 @@ export class UserMainComponent implements OnInit {
       case 'InProgress': return 'text-yellow-600 font-bold';
       case 'Done': return 'text-green-600 font-bold';
       case 'Closed': return 'text-green-600 font-bold';
+      case 'Assigned': return 'text-amber-600 font-bold';
+
       default: return 'text-gray-600';
     }
   }
@@ -204,21 +211,11 @@ export class UserMainComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.informTaskService.closeInformTask(data).pipe(catchError(err => {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: `${err?.error?.messages.time ?? "มีบางอย่างผิดพลาด"} "`,
-            showConfirmButton: false,
-            timer: 2000
-          });
+          this.swalService.showErrorLog(err)
           return err
         })).subscribe((res: any) => {
           this.refreshGrid()
-          return Swal.fire({
-            title: "สำเร็จ !",
-            text: `ปิดงาน ${data.docNo} เสำเร็จแล้ว`,
-            icon: "success"
-          });
+          return this.swalService.showSuccessPopup(Alert.saveSuccessfully)
         })
       }
       return
@@ -245,22 +242,11 @@ export class UserMainComponent implements OnInit {
     }).then((result) => {
       if (result.isConfirmed) {
         this.informTaskService.deleteInformTask(data).pipe(catchError(err => {
-          Swal.fire({
-            position: "center",
-            icon: "warning",
-            title: err?.error?.messages?.item ?? "มีบางอย่างผิดพลาด",
-            showConfirmButton: false,
-            timer: 2000
-          });
+          this.swalService.showErrorLog(err)
           return err
         })).subscribe((res: any) => {
-          Swal.fire({
-            position: "center",
-            icon: "success",
-            title: "ลบงานสำเร็จ",
-            showConfirmButton: false,
-            timer: 2000
-          });
+          this.swalService.showSuccessPopup(Alert.deleteSuccessfully)
+
           this.refreshGrid()
         })
       }

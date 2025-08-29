@@ -1,4 +1,5 @@
 ﻿using Braintree;
+using Domain.Enums;
 using Domain.Exceptions;
 using Domain.Interfaces;
 using Domain.Models;
@@ -25,7 +26,7 @@ namespace Services.Authentications
         private readonly IPasswordHasher<object> _hasher;
 
 
-        public AuthenticationService(IPasswordHasher<object> hasher,MYGAMEContext context, IConfiguration config)
+        public AuthenticationService(IPasswordHasher<object> hasher, MYGAMEContext context, IConfiguration config)
         {
             _config = config;
             _context = context;
@@ -34,23 +35,28 @@ namespace Services.Authentications
 
         public async Task<LoginResponseViewModel> UserLoginAsync(LoginViewModel request)
         {
+            var validate = new ValidateException();
+
+
             var user = await _context.User.Include(u => u.Role)
                 .FirstOrDefaultAsync(u => u.Username == request.Username);
 
-            if (user == null) throw new Exception("Username or Password are incorrect");
+            if (user == null)
+            {
+                validate.Add(ValidateKey.User, ValidateMsg.UserPasswordIncorrect);
+                validate.Throw();
+            }
 
             var hasher = new PasswordHasher<object>();
             var result = hasher.VerifyHashedPassword(null, user.Password, request.Password);
+
             if (result != PasswordVerificationResult.Success)
-                throw new Exception("Username or Password are incorrect");
+            {
+                validate.Add(ValidateKey.User, ValidateMsg.UserPasswordIncorrect);
+                validate.Throw();
+            }
 
-            // Query access pages
-            //var accessPages = await (from pr in _context.Rel_Page_Role
-            //                         join p in _context.Pages on pr.PageId equals p.PageId
-            //                         where pr.RoleId == user.RoleId && !p.IsDeleted
-            //                         select p.PageUrl).ToListAsync();
 
-            // สร้าง JWT โดยใช้ RoleId (int)
             var token = GenerateJwtToken(user.UserId, user.RoleId);
 
             return new LoginResponseViewModel
@@ -105,11 +111,18 @@ namespace Services.Authentications
         {
 
 
-            if (string.IsNullOrWhiteSpace(request.Username))
-                validateException.Add("Username", "Field Username must not be empty");
+            if (string.IsNullOrWhiteSpace(request.Username) || string.IsNullOrWhiteSpace(request.Password))
+            {
+                validateException.Add(ValidateKey.Username, ValidateMsg.UsernameRequired);
+                validateException.Throw();
+            }
+
 
             if (string.IsNullOrWhiteSpace(request.Password))
-                validateException.Add("Password", "Field Password must not be empty");
+            {
+                validateException.Add(ValidateKey.Password, ValidateMsg.PasswordRequired); 
+                validateException.Throw();
+            }
 
             return false;
         }
@@ -119,7 +132,7 @@ namespace Services.Authentications
             var dataExists = await _context.User.FirstOrDefaultAsync(u => u.Username == request.Username);
 
             if (dataExists == null)
-                validateException.Add("Username,Password", "Username or Password are in correct !");
+                validateException.Add(ValidateKey.User, ValidateMsg.UserPasswordIncorrect);
 
             return dataExists;
         }
@@ -152,7 +165,6 @@ namespace Services.Authentications
         }
 
 
-        //register
         public async Task<bool> UserRegisterAsync(UserRegisterViewModel request)
         {
             var validate = new ValidateException();
@@ -181,7 +193,8 @@ namespace Services.Authentications
         {
             if (request.Username.Length < 6)
             {
-                validate.Add("username", "Username Length Minimum is 6");
+                validate.Add(ValidateKey.Username, ValidateMsg.UsernameMinLength);
+                validate.Throw();
             }
         }
 
@@ -201,9 +214,10 @@ namespace Services.Authentications
 
         public static void IsPasswordLengthMinimum(UserRegisterViewModel request, ValidateException validate)
         {
-            if (request.Password.Length < 6)
-                validate.Add("Password", "Password Length minimum Required 6");
-
+            if (request.Password.Length < 6) {
+                validate.Add(ValidateKey.Password, ValidateMsg.PasswordMinLength);
+                validate.Throw();
+            }
         }
 
         public bool IsNullOrEmptyString(UserRegisterViewModel request, ValidateException validate)
@@ -211,21 +225,21 @@ namespace Services.Authentications
 
 
             if (string.IsNullOrWhiteSpace(request.Username))
-                validate.Add("Username", "Field Username are required");
+                validate.Add(ValidateKey.Username, ValidateMsg.UsernameRequired);
 
             if (string.IsNullOrWhiteSpace(request.Password))
-                validate.Add("Password", "Field Password are required");
+                validate.Add(ValidateKey.Password, ValidateMsg.PasswordRequired);
 
 
 
 
             if (string.IsNullOrWhiteSpace(request.ConfirmPassword))
-                validate.Add("ConfirmPassword", "Field ConfirmPassword are required");
+                validate.Add(ValidateKey.ConfirmPassword,ValidateMsg.ConfirmPasswordRequired);
 
 
             if (request.Role <= 0)
             {
-                validate.Add("Role", "Field Role is required");
+                validate.Add(ValidateKey.Role,ValidateMsg.RoleRequired);
             }
 
 
@@ -238,7 +252,7 @@ namespace Services.Authentications
             var isExists = await _context.User.FirstOrDefaultAsync(u => u.Username == request.Username);
 
             if (isExists != null)
-                validate.Add("Username", "This Username are already taken!");
+                validate.Add(ValidateKey.Username, ValidateMsg.UserTaken);
 
             return false;
         }
@@ -246,7 +260,7 @@ namespace Services.Authentications
         public static void ArePasswordsMatching(UserRegisterViewModel request, ValidateException validate)
         {
             if (request.Password != request.ConfirmPassword)
-                validate.Add("Password", "Password and ConfirmPassword do not match");
+                validate.Add(ValidateKey.Password,ValidateMsg.PasswordNotMatch);
         }
 
         public string HashPassword(UserRegisterViewModel request)

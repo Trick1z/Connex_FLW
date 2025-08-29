@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserRoute, ViewsRoute } from '../../../../constants/routes.const';
 import { CheckAccessService } from '../../../../services/check-access.service';
+import { Button } from 'src/app/constants/color.const';
 
 @Component({
   selector: 'app-user-add-task',
@@ -17,7 +18,9 @@ import { CheckAccessService } from '../../../../services/check-access.service';
 })
 export class UserAddTaskComponent implements OnInit {
 
+  buttonColor = Button;
 
+  
   InformPopupState: boolean = false;
   editPopupVisible: boolean = false;
   informTaskData!: InformTask;

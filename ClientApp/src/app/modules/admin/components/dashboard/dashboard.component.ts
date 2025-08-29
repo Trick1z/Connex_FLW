@@ -6,6 +6,7 @@ import { DevExtremeParam, OverallDetailParam, Search } from '../../models/search
 import { catchError } from 'rxjs';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { QueryLogEnquiryParam } from 'src/app/modules/issue-inform/models/inform.model';
+import { Button, HeaderUnderline } from 'src/app/constants/color.const';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,14 +15,20 @@ import { QueryLogEnquiryParam } from 'src/app/modules/issue-inform/models/inform
 })
 export class DashboardComponent implements OnInit {
 
+  underlineColor = HeaderUnderline;
+  buttonColor = Button;
+
   overallPopupVisible: boolean = false;
   overallStatus: string = 'All';
   overallPopupHeader: string = 'Total Forms';
   searchUsernameValue: string = '';
+
   workLoadDataSource!: DataSource;
   overallDetailDataSource!: DataSource;
-  overallFormStatusDataSource: any = {};
+  actionFormChartDataSource!: DataSource;
   logEnquiryDataSource!: DataSource;
+  
+  overallFormStatusDataSource: any = {};
   logEnquirySearchParam: QueryLogEnquiryParam = {
     docNo: null,
     formId: null,
@@ -29,6 +36,12 @@ export class DashboardComponent implements OnInit {
     username: null,
     startDate: null,
     endDate: null
+  }
+
+  customizeTooltip(arg: any) {
+    return {
+      text: `${arg.seriesName} <br> Hour: ${arg.argumentText} <br> Qty: ${arg.value}`
+    };
   }
 
   @ViewChild('workLoadGrid', { static: false }) public workLoadGrid!: DxDataGridComponent;
@@ -48,6 +61,7 @@ export class DashboardComponent implements OnInit {
     this.initOverallFormStatus()
     this.initOverallDetail()
     this.initLogEnquiryDataSource()
+    this.initActionFormChart()
   }
 
   onWorkloadEvent(e: string) { this.searchUsernameValue = e }
@@ -137,6 +151,17 @@ export class DashboardComponent implements OnInit {
           loadOption: loadOptions
         };
         return this.dashBoardService.queryLogEnquiry(newLoad)
+          .pipe(catchError(err => {
+            return err;
+          })).toPromise();
+      }
+    });
+  }
+
+  initActionFormChart() {
+    this.actionFormChartDataSource = new DataSource({
+      load: () => {
+        return this.dashBoardService.actionFormChart()
           .pipe(catchError(err => {
             return err;
           })).toPromise();

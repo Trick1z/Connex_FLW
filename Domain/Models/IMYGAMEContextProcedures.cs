@@ -14,6 +14,7 @@ namespace Domain.Models
     public partial interface IMYGAMEContextProcedures
     {
         Task<List<USP_Query_CategoriesResult>> USP_Query_CategoriesAsync(string searchText, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
+        Task<List<USP_Query_ChartResult>> USP_Query_ChartAsync(OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_FormTaskDetailResult>> USP_Query_FormTaskDetailAsync(int? formId, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_FormTasksByStatusResult>> USP_Query_FormTasksByStatusAsync(int? userId, string status, string searchDocNo, string searchCategoriesItems, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);
         Task<List<USP_Query_IssueFormsResult>> USP_Query_IssueFormsAsync(string docNo, string formStatus, string productName, string categories, string statusCode, DateTime? startDate, DateTime? endDate, int? skip, int? take, string sortBy, string sortDirection, OutputParameter<int> returnValue = null, CancellationToken cancellationToken = default);

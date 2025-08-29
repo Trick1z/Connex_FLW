@@ -1,5 +1,12 @@
-<div class="border-b-4 border-green-500 pb-1 mb-4 ">
-  <h1 class="mt-5 ml-5 text-start text-black-600 text-xl font-medium" >
+<div class="pb-1 mb-4 border-b-4 " 
+[ngClass]="{
+      'border-green-500': color === 'green',
+      'border-red-500': color === 'red',
+      'border-blue-500': color === 'blue',
+      'border-yellow-500': color === 'yellow',
+      'border-black-700': color === 'black'
+    }">
+  <h1 class="mt-5 ml-5 text-xl font-medium text-start text-black-600">
     {{ title }}
   </h1>
 </div>

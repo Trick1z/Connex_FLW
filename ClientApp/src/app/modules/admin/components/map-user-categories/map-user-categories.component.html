@@ -1,36 +1,28 @@
-<app-head-underline [title]="'Mapping User - Categories'"></app-head-underline>
+<app-head-underline [color]="underlineColor.green"  [title]="'Mapping User - Categories'"></app-head-underline>
 
-<div class="mt-20 ml-20 mr-20 categroy-box ">
-    <app-head-underline [title]="'Support User'"></app-head-underline>
+<div class="px-2 py-1 mt-10 ml-5 mr-5 bg-white rounded-lg shadow-2xl ">
+    <app-head-underline [color]="underlineColor.black"  [title]="'Support User'"></app-head-underline>
 
-
-
-
-
-    <div class="ml-10 groups">
-
-        <div class="max-w-sm search-box">
-            <app-text-box  [value]="searchUsernameValue" (onValueChanged)="onSearchValueChange($event)" [placeHolder]="'Search By Username'"></app-text-box>
+    <div class="ml-10">
+        <div class="flex max-w-sm ">
+            <label for="searchUsername" class="font-bold">Username</label>
+            <app-text-box class="ml-1 " #searchUsername [value]="searchUsernameValue"
+                (onValueChanged)="onSearchValueChange($event)" [placeHolder]="'Search...'"></app-text-box>
         </div>
-
-        <div class="mt-1 app-btn">
-            <app-button (clicked)="onSearch()" [message]="'Search'"></app-button>
+        <div class="mt-2 ml-20 ">
+            <app-button [color]="buttonColor.Search" (clicked)="onSearch()" [message]="'Search'"></app-button>
         </div>
-
 
     </div>
+    <app-head-underline [color]="underlineColor.black" ></app-head-underline>
+
 
     <dx-data-grid #userGrid class="flex m-10 max-w-max " [dataSource]="userByRoleDataSource" [showBorders]="true"
         [columnAutoWidth]="true">
-
-
         <dxo-paging [pageSize]="5" [pageIndex]="0"> <!-- Shows the second page -->
         </dxo-paging>
-
         <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[10, 20, 50]" [showNavigationButtons]="true">
         </dxo-pager>
-
-
         <dxo-remote-operations [filtering]="false" [paging]="true" [sorting]="true" [summary]="false" [grouping]="false"
             [groupPaging]="false">
         </dxo-remote-operations>
@@ -39,7 +31,7 @@
 
 
         <dxi-column dataField="userId" caption="ID" width="80" alignment="center"></dxi-column>
-        <dxi-column dataField="username" caption="ชื่อ" minWidth="150" alignment="left"></dxi-column>
+        <dxi-column dataField="username" caption="Username" minWidth="150" alignment="left"></dxi-column>
         <dxi-column dataField="roleName" caption="Role" minWidth="150" alignment="center"></dxi-column>
 
         <dxi-column caption="Action" width="200" [fixed]="true" [fixedPosition]="'right'" cellTemplate="actionTemplate"
@@ -56,53 +48,69 @@
 
 <div *ngIf="userMapCategories" class="product-popup">
 
-    <dx-popup [height]="300" [(visible)]="mapDetailVisible" [width]="500" [showTitle]="true"
+    <dx-popup [height]="320" [(visible)]="mapDetailVisible" [width]="500" [showTitle]="true"
         [closeOnOutsideClick]="true" title="Map Categories" (onHiding)="onMapDetailPopupHide()">
-        <div class="popup-content">
-            <div class="flex justify-start" id="">
-                <div class="flex justify-start text-2xl user-box">
-                    <span class="label">User : </span>
-                    <span class="mb-5 ml-5 username"> {{ labelUsername }}</span>
+
+
+        <div class="flex flex-col justify-between popup-content">
+            <div class="">
+                <div class="flex justify-start" id="">
+                    <div class="flex items-center justify-start text-2xl user-box">
+                        <span class="label">Username </span>
+                        <span
+                            class="inline-flex items-center px-2 py-1 text-2xl font-medium text-green-700 rounded-md bg-green-50 inset-ring inset-ring-green-600/20">{{labelUsername}}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center justify-start ml-10 text-2xl user-box">
+                        <span class="label">Role</span>
+                        <span
+                            class="inline-flex items-center px-2 py-1 text-2xl font-medium text-green-700 rounded-md bg-green-50 inset-ring inset-ring-green-600/20">{{labelRole}}
+                        </span>
+                    </div>
+
                 </div>
-
-                <div class="flex justify-start ml-10 text-2xl user-box">
-                    <span class="label">Role : </span>
-                    <span class="mb-5 ml-5 username"> {{ labelRole }}</span>
-                </div>
-
-            </div>
-            <dx-tag-box [dataSource]="categoriesTagDataSource" displayExpr="showText" valueExpr="value"
-                (onValueChanged)="onChange($event)" [value]="userMapCategories.categories"
-                [showSelectionControls]="true">
-            </dx-tag-box>
-            <div class="flex items-end justify-center gap-2 h-28">
-                <app-button (clicked)="onSaveSubmit()" [message]="'Save'"></app-button>
-                <app-button (clicked)="onViewPopupHide() " color="red" [message]="'Close'"></app-button>
+                <dx-tag-box [dataSource]="categoriesTagDataSource" displayExpr="showText" valueExpr="value"
+                    (onValueChanged)="onChange($event)" [value]="userMapCategories.categories"
+                    [showSelectionControls]="true">
+                </dx-tag-box>
             </div>
 
-
+            <div class="flex items-end justify-center h-32 gap-2">
+                <app-button [color]="buttonColor.Save" (clicked)="onSaveSubmit()" [message]="'Save'"></app-button>
+                <app-button [color]="buttonColor.Close" (clicked)="onViewPopupHide() "  [message]="'Close'"></app-button>
+            </div>
         </div>
+
+
     </dx-popup>
 </div>
 <!-- view popup-->
-<dx-popup [height]="300" [(visible)]="viewPopupDetail" [width]="500" [showTitle]="true" [closeOnOutsideClick]="true"
+<dx-popup [height]="400" [(visible)]="viewPopupDetail" [width]="600" [showTitle]="true" [closeOnOutsideClick]="true"
     title="User Info" (onHiding)="onViewPopupHide()">
     <div class="popup-content">
         <div class="flex justify-start" id="">
-            <div class="flex justify-start text-2xl user-box">
-                <span class="label">User : </span>
-                <span class="ml-5 username"> {{ viewUsername }}</span>
+            <div class="flex items-center justify-start user-box">
+                <span class="text-2xl label ">Username </span>
+                <span
+                    class="inline-flex items-center px-2 py-1 text-2xl font-medium text-green-700 rounded-md bg-green-50 inset-ring inset-ring-green-600/20">{{viewUsername}}
+                </span>
             </div>
 
-            <div class="flex justify-start ml-10 text-2xl user-box">
-                <span class="label">Role : </span>
-                <span class="ml-5 username"> {{ viewRole }}</span>
+            <div class="flex items-center justify-start ml-10 text-2xl user-box">
+                <span class="label">Role </span>
+                <span
+                    class="inline-flex items-center px-2 py-1 text-2xl font-medium text-green-700 rounded-md bg-green-50 inset-ring inset-ring-green-600/20">{{viewRole}}
+                </span>
             </div>
 
         </div>
-        <app-head-underline [title]="'Categories'"></app-head-underline>
-        <div class="grid grid-cols-5 gap-1 mt-5 categories-item" *ngIf="viewUserDetail.length > 0 ;else noViewData">
-            <app-button *ngFor="let item of viewUserDetail" [color]="'blue'" [message]="item"></app-button>
+        <app-head-underline [color]="underlineColor.black"  [title]="'Categories'"></app-head-underline>
+
+        <div class="grid grid-cols-4 gap-1 mt-5 categories-item" *ngIf="viewUserDetail.length > 0 ;else noViewData">
+            <span *ngFor="let item of viewUserDetail"
+                class="inline-flex items-center px-2 py-1 font-medium text-green-700 rounded-md text-md bg-green-50 inset-ring inset-ring-green-600/20">{{item}}
+            </span>
         </div>
         <ng-template #noViewData>
             <div class="flex justify-center mt-10">
