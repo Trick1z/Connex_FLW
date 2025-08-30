@@ -100,6 +100,8 @@ namespace MyAPI.Controllers.IssueForm
         }
 
 
+
+
         [HttpPost("TaskManagement/Assigned")]
         public async Task<IActionResult> TaskAssignedManagement(USP_Query_FormTasksByStatusResult param)
         {
@@ -130,6 +132,31 @@ namespace MyAPI.Controllers.IssueForm
             return Ok(await _issueInformService.TaskManagement(param, TaskManagementStatus.CancelCompleted));
         }
 
+
+
+
+
+        [HttpPost("SelectedTaskManagement/Assigned")]
+        public async Task<IActionResult> SelectedAssignedTaskManagement(List<USP_Query_FormTasksByStatusResult>  param)
+        {
+            return Ok(await _issueInformService.ListTaskManagement(param, TaskManagementStatus.Assigned));
+        }
+
+        [HttpPost("SelectedTaskManagement/Rejected")]
+        public async Task<IActionResult> SelectedRejectedTaskManagement(List<USP_Query_FormTasksByStatusResult> param)
+        {
+            return Ok(await _issueInformService.ListTaskManagement(param, TaskManagementStatus.Rejected));
+        }
+        [HttpPost("SelectedTaskManagement/Done")]
+        public async Task<IActionResult> SelectedDoneTaskManagement(List<USP_Query_FormTasksByStatusResult> param)
+        {
+            return Ok(await _issueInformService.ListTaskManagement(param, TaskManagementStatus.Done));
+        }
+        [HttpPost("SelectedTaskManagement/CancelAssigned")]
+        public async Task<IActionResult> SelectedCancelAssignedTaskManagement(List<USP_Query_FormTasksByStatusResult> param)
+        {
+            return Ok(await _issueInformService.ListTaskManagement(param, TaskManagementStatus.CancelAssigned));
+        }
 
     }
 }

@@ -9,6 +9,8 @@ import Swal from 'sweetalert2';
 import { USP_Query_FormTasksByStatusResult } from '../../models/assignedTask.model';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { Button, HeaderUnderline } from 'src/app/constants/color.const';
+import { SwalService } from 'src/app/modules/admin/services/swal.service';
+import { Alert } from 'src/app/constants/alert.const';
 
 @Component({
   selector: 'app-support-main',
@@ -28,14 +30,22 @@ export class SupportMainComponent implements OnInit {
   doneTaskDataSource!: DataSource;
   categoriesSearchId: string | null = null;
   borrowQuantity: number = 0;
-  DonePopupVisible: boolean = false;
   prepareData: any;
-  rejectPopupVisible: boolean = false;
   rejectDescriptions: string = "-"
+
+  rejectPopupVisible: boolean = false;
+  DonePopupVisible: boolean = false;
+
+  isAssignedMultiSelected: boolean = false;
+  isUnassignedMultiSelected: boolean = false;
+
+  assignedSelectedData!: Array<USP_Query_FormTasksByStatusResult>;
+  unassignedSelectedData!: Array<USP_Query_FormTasksByStatusResult>;
 
   constructor(
     private checkBoxService: CheckboxService,
-    private taskService: TaskService
+    private taskService: TaskService,
+    private swalService: SwalService,
   ) { }
 
   @ViewChild('unassignedGrid', { static: false }) unassignedGrid!: DxDataGridComponent;
@@ -69,6 +79,26 @@ export class SupportMainComponent implements OnInit {
   }
   onEndDateChange(e: Date) {
     this.endDate = e
+  }
+
+  onAssignedSelectionChanged(e: any) {
+    if (e.selectedRowsData.length > 0) {
+      this.isAssignedMultiSelected = true
+    } else {
+      this.isAssignedMultiSelected = false
+    }
+    this.assignedSelectedData = e.selectedRowsData
+    console.log(this.assignedSelectedData);
+
+
+  }
+  onUnassignedSelectionChanged(e: any) {
+    if (e.selectedRowsData.length > 0) {
+      this.isUnassignedMultiSelected = true;
+    } else {
+      this.isUnassignedMultiSelected = false;
+    }
+    this.unassignedSelectedData = e.selectedRowsData
   }
 
   initCategoriesCheckBox() {
@@ -203,27 +233,75 @@ export class SupportMainComponent implements OnInit {
     const newItem: USP_Query_FormTasksByStatusResult = { ...this.prepareData };
     this.taskService.taskManagement(newItem, status)
       .pipe(catchError(err => {
-        Swal.fire({
-          title: "Error",
-          icon: "error",
-          text: err?.error?.messages.update[0],
-          timer: 1500,
-          showConfirmButton: false
-        });
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
+
+
+        this.swalService.showErrorLog(err)
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 1500);
+
         return err
       }))
       .subscribe(() => {
         this.getTaskDataGrid();
-
-        Swal.fire({
-          title: "Done",
-          text: "You have completed the process",
-          timer: 1500,
-          showConfirmButton: false
-        });
+        this.swalService.showSuccessPopup(Alert.saveSuccessfully)
       });
+  }
+
+
+
+  onUnassignedSelectedSubmit() {
+
+    Swal.fire({
+      title: "ยืนยันหรือไม่ ?",
+      text: "ต้องการรับงานที่เลือกใช่หรือไม่",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่",
+      cancelButtonText: "ไม่"
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+        this.taskService.listTaskManagement(this.unassignedSelectedData, "Assigned")
+          .pipe(catchError(err => {
+            this.swalService.showErrorLog(err);
+            return err
+          })).subscribe(res => {
+            this.getTaskDataGrid();
+            this.swalService.showSuccessPopup(Alert.saveSuccessfully)
+
+          })
+      }
+    });
+
+
+
+  }
+
+  onAssignedSelectedSubmit(status: string) {
+    Swal.fire({
+      title: "ยืนยันหรือไม่ ?",
+      text: "ต้องการรับงานที่เลือกใช่หรือไม่",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "ใช่",
+      cancelButtonText: "ไม่"
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+        this.taskService.listTaskManagement(this.assignedSelectedData, status)
+          .pipe(catchError(err => {
+            this.swalService.showErrorLog(err);
+            return err
+          })).subscribe(res => {
+            this.getTaskDataGrid();
+            this.swalService.showSuccessPopup(Alert.saveSuccessfully)
+          })
+      }
+    });
   }
 }

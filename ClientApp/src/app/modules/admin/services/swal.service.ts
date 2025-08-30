@@ -36,6 +36,7 @@ export class SwalService {
         || err?.error?.messages?.date
         || err?.error?.messages?.location
         || err?.error?.messages?.quantity
+        || "พบข้อผิดดพลาดในระบบ กรุณาติดต่อเจ้าหน้าที่"
 
       ,
       icon: 'error',

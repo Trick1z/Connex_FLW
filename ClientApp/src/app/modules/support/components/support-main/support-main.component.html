@@ -47,26 +47,42 @@
 
     <div class="pl-10 pr-10 datagrid-assignment">
         <dx-data-grid #unassignedGrid [dataSource]="unassignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
-            [paging]="{ enabled: true, pageSize: 5 }">
+            [paging]="{ enabled: true, pageSize: 5 }" [selection]="{ mode: 'multiple', showCheckBoxesMode: 'always' }"
+            (onSelectionChanged)="onUnassignedSelectionChanged($event)">>
 
             <dxo-paging [pageSize]="5"></dxo-paging>
             <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
 
             <dxi-column [headerCellTemplate]="'wrapHeader'" dataField="docNo" caption="Document Number" minWidth="80"
                 width="100" alignment="center"></dxi-column>
+
             <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="100" width="120"
-                alignment="center"></dxi-column>
-            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
-            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80"></dxi-column>
+                alignment="left"></dxi-column>
+
+            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="left"></dxi-column>
+
+            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80" width="100"></dxi-column>
+
             <dxi-column dataField="rp_Location" caption="Location" minWidth="100" alignment="center"></dxi-column>
-            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" width="200"
-                alignment="center"></dxi-column>
+
+            <!-- <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" width="200"
+                alignment="center"></dxi-column> -->
+
+            <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"
+                cellTemplate="detectedTimeCell"></dxi-column>
+
+            <div *dxTemplate="let cell of 'detectedTimeCell'">
+                {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm' }}
+            </div>
+
             <dxi-column dataField="systemStatusCode" caption="Status" minWidth="80" width="140"
                 alignment="center"></dxi-column>
-            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="120" alignment="center"
-                [cellTemplate]="'actionCell'"></dxi-column>
+
+            <dxi-column *ngIf="!isUnassignedMultiSelected" [fixed]="true" [fixedPosition]="'right'" caption="Actions"
+                width="120" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+
             <div class="space-x-2 " *dxTemplate="let cell of 'actionCell'">
-                <app-button [color]="'blue'" [message]="'Take'" (clicked)="onSubmit(cell.data , 'Assigned')">
+                <app-button [color]="buttonColor.Take" [message]="'Take'" (clicked)="onSubmit(cell.data , 'Assigned')">
                 </app-button>
             </div>
 
@@ -81,6 +97,12 @@
             </div>
 
         </dx-data-grid>
+
+
+        <div class="mt-2" *ngIf="isUnassignedMultiSelected">
+            <app-button (clicked)="onUnassignedSelectedSubmit()"  [color]="buttonColor.Take" [message]="'Take Selected'">
+            </app-button>
+        </div>
     </div>
 </div>
 
@@ -93,32 +115,45 @@
 
     <div class="m-10">
         <dx-data-grid #assignedGrid [dataSource]="assignedTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
-            [paging]="{ enabled: true, pageSize: 5 }">
+            [paging]="{ enabled: true, pageSize: 5 }" [selection]="{ mode: 'multiple', showCheckBoxesMode: 'always' }"
+            (onSelectionChanged)="onAssignedSelectionChanged($event)">
 
-            <dxo-paging [pageSize]="5"></dxo-paging>
+            <dxo-paging [pageSize]=" 5"></dxo-paging>
             <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20]" [showInfo]="true"></dxo-pager>
 
             <dxi-column [headerCellTemplate]="'wrapHeader'" dataField="docNo" caption="Document Number" minWidth="80"
                 width="100" alignment="center"></dxi-column>
+
             <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="100" width="120"
-                alignment="center"></dxi-column>
-            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
-            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80" width="90"></dxi-column>
+                alignment="left"></dxi-column>
+
+            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="left"></dxi-column>
+
+            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80" width="100"></dxi-column>
+
             <dxi-column dataField="rp_Location" caption="Location" minWidth="100" width="150"
                 alignment="center"></dxi-column>
-            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" width="200"
-                alignment="center"></dxi-column>
+
+            <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"
+                cellTemplate="detectedTimeCell"></dxi-column>
+
+            <div *dxTemplate="let cell of 'detectedTimeCell'">
+                {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm' }}
+            </div>
+
             <dxi-column dataField="systemStatusCode" caption="Status" minWidth="80" width="140"
                 alignment="center"></dxi-column>
-            <dxi-column [fixed]="true" [fixedPosition]="'right'" caption="Actions" width="250" alignment="center"
-                [cellTemplate]="'actionCell'"></dxi-column>
+
+            <dxi-column *ngIf="!isAssignedMultiSelected" [fixed]="true" [fixedPosition]="'right'" caption="Actions"
+                width="250" alignment="center" [cellTemplate]="'actionCell'"></dxi-column>
+
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
-                <app-button [color]="'blue'" [message]="'Done'"
+                <app-button [color]="buttonColor.Save"[message]="'Done'"
                     (clicked)="onSubmit(cell.data,'Done','AssignedJob')"></app-button>
 
-                <app-button [color]="'red'" [message]="'Reject'"
+                <app-button [color]="buttonColor.Reject" [message]="'Reject'"
                     (clicked)=" onSubmit(cell.data,'Rejected','AssignedJob')"></app-button>
-                <app-button [color]="'yellow'" [message]="'Cancel'"
+                <app-button [color]="buttonColor.TaskCancel" [message]="'Cancel'"
                     (clicked)=" onSubmit(cell.data,'CancelAssigned','AssignedJob')"></app-button>
             </div>
 
@@ -131,6 +166,13 @@
             </div>
         </dx-data-grid>
 
+        <div *ngIf="isAssignedMultiSelected" class="mt-2 space-x-2">
+            <app-button (clicked)="onAssignedSelectedSubmit('Done')"
+             [color]="buttonColor.Save" [message]="'Done Selected'">
+            </app-button>
+            <app-button (clicked)="onAssignedSelectedSubmit('Rejected')" [color]="buttonColor.Reject" [message]="'Reject Selected'"></app-button>
+            <app-button (clicked)="onAssignedSelectedSubmit('CancelAssigned')" [color]="buttonColor.TaskCancel" [message]="'Cancel Selected'"></app-button>
+        </div>
     </div>
 </div>
 
@@ -142,7 +184,7 @@
     <div class="flex justify-end" id="">
     </div>
     <div class="flex m-5">
-        <dx-data-grid #doneeGrid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
+        <dx-data-grid #doneGrid [dataSource]="doneTaskDataSource" keyExpr="taskSeq" [showBorders]="true"
             [paging]="{ enabled: true, pageSize: 5 }">
 
             <dxo-paging [pageSize]="5"></dxo-paging>
@@ -151,13 +193,17 @@
             <dxi-column [headerCellTemplate]="'wrapHeader'" dataField="docNo" caption="Document Number" minWidth="80"
                 width="100" alignment="center"></dxi-column>
             <dxi-column dataField="issueCategoriesName" caption="Category" minWidth="100" width="120"
-                alignment="center"></dxi-column>
-            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="center"></dxi-column>
-            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80" width="90"></dxi-column>
+                alignment="left"></dxi-column>
+            <dxi-column dataField="productName" caption="ProductName" minWidth="120" alignment="left"></dxi-column>
+            <dxi-column dataField="br_Qty" caption="Quantity" minWidth="80" width="100"></dxi-column>
             <dxi-column dataField="rp_Location" caption="Location" minWidth="100" width="150"
                 alignment="center"></dxi-column>
-            <dxi-column dataField="detectedTime" caption="detected Time" minWidth="200" width="200"
-                alignment="center"></dxi-column>
+            <dxi-column alignment="center" dataField="detectedTime" caption="Detected Time"
+                cellTemplate="detectedTimeCell"></dxi-column>
+
+            <div *dxTemplate="let cell of 'detectedTimeCell'">
+                {{ cell.data.detectedTime | date:'dd MMM yyyy HH:mm' }}
+            </div>
             <dxi-column dataField="systemStatusCode" caption="Status" minWidth="80" width="140"
                 alignment="center"></dxi-column>
 
@@ -166,9 +212,9 @@
                 [cellTemplate]="'actionCell'"></dxi-column>
             <div class="space-x-2" *dxTemplate="let cell of 'actionCell'">
 
-                <div class="" *ngIf="cell.data.canCancel">
+                <div class="" *ngIf="cell.data.canCancelDone">
 
-                    <app-button [color]="'red'" [message]="'Cancel'"
+                    <app-button [color]="buttonColor.Cancel" [message]="'Cancel'"
                         (clicked)=" onSubmit(cell.data,'CancelCompleted')"></app-button>
 
 

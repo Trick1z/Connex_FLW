@@ -718,17 +718,25 @@ namespace Services.Implements
             return data;
         }
 
-        //public async Task<bool> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
-        //{
-        //    foreach (var item in param)
-        //    {
-        //        await TaskManagement(item, status);
-        //    }
-        //    return true;
-        //}
+        public async Task<bool> ListTaskManagement(List<USP_Query_FormTasksByStatusResult> param, string status)
+        {
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            foreach (var item in param)
+            {
+                await TaskManagement(item, status,false);
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+
+            return true;
+
+        }
 
 
-        public async Task<bool> TaskManagement(USP_Query_FormTasksByStatusResult param, string status)
+        public async Task<bool> TaskManagement(USP_Query_FormTasksByStatusResult param, string status , bool saveChanges = true)
         {
             var validate = new ValidateException();
             var userId = _claimsService.GetCurrentUserId();
@@ -736,19 +744,19 @@ namespace Services.Implements
             var userTaskSeq = await _context.IssueFormTask
                 .FirstOrDefaultAsync(t => t.FormId == param.FormId && t.TaskSeq == param.TaskSeq);
 
-            IsTaskFound(validate, userTaskSeq);
+            TaskFound(validate, userTaskSeq);
 
             var dateNow = DateTime.Now;
 
 
-            IsLatestData(param, validate, userTaskSeq);
+            CheckLatestData(param, validate, userTaskSeq);
+
             await UpdateTask(param, userTaskSeq, dateNow, status, userId);
             AddLog(userId, userTaskSeq, dateNow, status);
 
             await UpdateFormStatus(param, dateNow, userId);
-            await _context.SaveChangesAsync();
-
-            //Updateform 
+            if (saveChanges)
+                await _context.SaveChangesAsync();
 
 
             return true;
@@ -765,6 +773,7 @@ namespace Services.Implements
 
             if (!string.IsNullOrWhiteSpace(param.RejectReason))
                 userTaskSeq.RejectReason = param.RejectReason;
+
             userTaskSeq.SystemStatusCode = userStatusCode;
             userTaskSeq.ModifiedTime = dateNow;
 
@@ -799,7 +808,7 @@ namespace Services.Implements
             }
 
             _context.IssueFormTask.Update(userTaskSeq);
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
         }
 
         private async Task UpdateFormStatus(USP_Query_FormTasksByStatusResult param, DateTime dateNow, int userId)
@@ -877,7 +886,7 @@ namespace Services.Implements
             // Save Log
         }
 
-        private static bool IsLatestData(USP_Query_FormTasksByStatusResult param, ValidateException validate, IssueFormTask? userTaskSeq)
+        private static Task CheckLatestData(USP_Query_FormTasksByStatusResult param, ValidateException validate, IssueFormTask? userTaskSeq)
         {
 
             //ไม่เจอโยน validate
@@ -887,11 +896,11 @@ namespace Services.Implements
                 validate.Throw();
 
             }
+            return null;
 
-            return true;
         }
 
-        private static bool IsTaskFound(ValidateException validate, IssueFormTask? userTaskSeq)
+        private static Task TaskFound(ValidateException validate, IssueFormTask? userTaskSeq)
         {
             //ไม่เจอโยน validate
             if (userTaskSeq == null)
@@ -899,8 +908,8 @@ namespace Services.Implements
                 validate.Add(ValidateKey.Task,ValidateMsg.NotFound);
                 validate.Throw();
             }
+            return null;
 
-            return true;
         }
 
         public async Task<bool> DeleteForm(USP_Query_IssueFormsResult param)

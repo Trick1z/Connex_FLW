@@ -10,19 +10,19 @@ import { USP_Query_FormTasksByStatusResult } from '../models/assignedTask.model'
 export class TaskService {
 
   constructor(
-    private http : HttpClient
+    private http: HttpClient
   ) { }
 
-  getUserTask(param : DevExtremeParam<JobForUserParam>){
-    return this.http.post(`${environment.apiUrl}IssueInform/queryTask-user` ,param)
+  getUserTask(param: DevExtremeParam<JobForUserParam>) {
+    return this.http.post(`${environment.apiUrl}IssueInform/queryTask-user`, param)
   }
 
 
-  taskManagement(param : USP_Query_FormTasksByStatusResult , status : string){
-    return this.http.post(`${environment.apiUrl}IssueInform/TaskManagement/${status}`,param)
+  taskManagement(param: USP_Query_FormTasksByStatusResult, status: string) {
+    return this.http.post(`${environment.apiUrl}IssueInform/TaskManagement/${status}`, param)
   }
 
-   listTaskManagement(param : Array<USP_Query_FormTasksByStatusResult> , status : string){
-    return this.http.post(`${environment.apiUrl}IssueInform/ListTaskManagement/${status}`,param)
-  }  
+  listTaskManagement(param: Array<USP_Query_FormTasksByStatusResult>, status: string) {
+    return this.http.post(`${environment.apiUrl}IssueInform/SelectedTaskManagement/${status}`, param)
+  }
 }

@@ -89,7 +89,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_CategoriesResult>("EXEC @returnValue = [dbo].[USP_Query_Categories] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_CategoriesResult>("EXEC @returnValue = [dbo].[USP_Query_Categories] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -109,7 +109,7 @@ namespace Domain.Models
             {
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_ChartResult>("EXEC @returnValue = [dbo].[USP_Query_Chart]", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_ChartResult>("EXEC @returnValue = [dbo].[USP_Query_Chart]", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -161,7 +161,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_FormTaskDetailResult>("EXEC @returnValue = [dbo].[USP_Query_FormTaskDetail] @FormId = @FormId, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_FormTaskDetailResult>("EXEC @returnValue = [dbo].[USP_Query_FormTaskDetail] @FormId = @FormId, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -246,7 +246,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_FormTasksByStatusResult>("EXEC @returnValue = [dbo].[USP_Query_FormTasksByStatus] @UserId = @UserId, @Status = @Status, @SearchDocNo = @SearchDocNo, @SearchCategoriesItems = @SearchCategoriesItems, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_FormTasksByStatusResult>("EXEC @returnValue = [dbo].[USP_Query_FormTasksByStatus] @UserId = @UserId, @Status = @Status, @SearchDocNo = @SearchDocNo, @SearchCategoriesItems = @SearchCategoriesItems, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -339,7 +339,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_IssueFormsResult>("EXEC @returnValue = [dbo].[USP_Query_IssueForms] @DocNo = @DocNo, @FormStatus = @FormStatus, @ProductName = @ProductName, @Categories = @Categories, @StatusCode = @StatusCode, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_IssueFormsResult>("EXEC @returnValue = [dbo].[USP_Query_IssueForms] @DocNo = @DocNo, @FormStatus = @FormStatus, @ProductName = @ProductName, @Categories = @Categories, @StatusCode = @StatusCode, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -405,7 +405,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_IssueProductResult>("EXEC @returnValue = [dbo].[USP_Query_IssueProduct] @SearchProductName = @SearchProductName, @SearchCategoriesId = @SearchCategoriesId, @IsMap = @IsMap, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_IssueProductResult>("EXEC @returnValue = [dbo].[USP_Query_IssueProduct] @SearchProductName = @SearchProductName, @SearchCategoriesId = @SearchCategoriesId, @IsMap = @IsMap, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -489,7 +489,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_LogEnquiryResult>("EXEC @returnValue = [dbo].[USP_Query_LogEnquiry] @DocNo = @DocNo, @FormId = @FormId, @Username = @Username, @TaskSeq = @TaskSeq, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_LogEnquiryResult>("EXEC @returnValue = [dbo].[USP_Query_LogEnquiry] @DocNo = @DocNo, @FormId = @FormId, @Username = @Username, @TaskSeq = @TaskSeq, @StartDate = @StartDate, @EndDate = @EndDate, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -542,7 +542,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_NameResult>("EXEC @returnValue = [dbo].[USP_Query_Name] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_NameResult>("EXEC @returnValue = [dbo].[USP_Query_Name] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -562,7 +562,7 @@ namespace Domain.Models
             {
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_OverallFormsStatusResult>("EXEC @returnValue = [dbo].[USP_Query_OverallFormsStatus]", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_OverallFormsStatusResult>("EXEC @returnValue = [dbo].[USP_Query_OverallFormsStatus]", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -622,7 +622,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_OverallFormsStatusDetailResult>("EXEC @returnValue = [dbo].[USP_Query_OverallFormsStatusDetail] @DocNo = @DocNo, @Status = @Status, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_OverallFormsStatusDetailResult>("EXEC @returnValue = [dbo].[USP_Query_OverallFormsStatusDetail] @DocNo = @DocNo, @Status = @Status, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -654,7 +654,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_TaskLogsResult>("EXEC @returnValue = [dbo].[USP_Query_TaskLogs] @FormId = @FormId, @TaskSeq = @TaskSeq", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_TaskLogsResult>("EXEC @returnValue = [dbo].[USP_Query_TaskLogs] @FormId = @FormId, @TaskSeq = @TaskSeq", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
@@ -707,7 +707,7 @@ namespace Domain.Models
                 },
                 parameterreturnValue,
             };
-            var _ = await _context.SqlQueryAsync<USP_Query_WorkloadSummaryResult>("EXEC @returnValue = [dbo].[USP_Query_WorkloadSummary] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
+            var _ = await _context.SqlQueryToListAsync<USP_Query_WorkloadSummaryResult>("EXEC @returnValue = [dbo].[USP_Query_WorkloadSummary] @SearchText = @SearchText, @Skip = @Skip, @Take = @Take, @SortBy = @SortBy, @SortDirection = @SortDirection", sqlParameters, cancellationToken);
 
             returnValue?.SetValue(parameterreturnValue.Value);
 
